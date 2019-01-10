@@ -54,7 +54,7 @@ class Company
     }
 }
 
-class Human //사람 성향 --> 생성할 때 모든 float 값에 0~1 사이의 무작위 값을 부여
+class Human //사람 성향 --> 생성할 때 모든 float 값에 0~1 사이의 무작위 값을 부여 --> 일단 소수점 넷째 자리에서 반올림하게 만듬
 {
     public float econStance; //경제적 입장(0 : 극보수, 1: 극진보)
     float socialStance; //사회적 입장(0 : 극보수, 1: 극진보)
@@ -62,12 +62,12 @@ class Human //사람 성향 --> 생성할 때 모든 float 값에 0~1 사이의 
 
     public Human()
     {
-        econStance = Random.Range(0.0f, 1.0f);
-        socialStance = Random.Range(0.0f, 1.0f);
+        econStance = Mathf.Round(Random.Range(0.0f, 1.0f) * 10000) / 10000;
+        socialStance = Mathf.Round(Random.Range(0.0f, 1.0f) * 10000) / 10000;
         interests = new Dictionary<Setting.Fields, float>();
         foreach (Setting.Fields field in System.Enum.GetValues(typeof(Setting.Fields)))
         {
-            interests.Add(field, Random.Range(0.0f, 1.0f));
+            interests.Add(field, Mathf.Round(Random.Range(0.0f, 1.0f) * 10000) / 10000);
         }
     }
 }
@@ -86,7 +86,7 @@ class Reporter : Human
 class Article
 {
     Setting.Fields article_field; //어떤 관심사의 기사인가?
-    int vitality; //파급력
+    int virality; //파급력
     int date; //생성된 날짜
 }
 
