@@ -43,7 +43,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b74c25383769f2428b0d7886590d526, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingReporters: 4
-  startingMoney: 20
-  newsPoint: 10
+  news: {fileID: 1148269196815532, guid: c3d73399be27c5240849559ce24c8735, type: 3}
   papers: []

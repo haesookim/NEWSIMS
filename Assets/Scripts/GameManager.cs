@@ -1,12 +1,12 @@
-﻿using System.Collections;
+﻿using System.Collections;   
 using System.Collections.Generic;
 using UnityEngine;
 
-class Setting
+public class Setting
 {
     public int startingReporters; //시작할 때, 기자의 수
     public int startingMoney; //시작할 때, 시작 금액
-    int newsPoint; //신문에 기사를 배정할 수 있는 포인트
+    public int newsPoint; //신문에 기사를 배정할 수 있는 포인트
     public enum Fields { Game, Entertainment, Social, Sports }; //관심사 종류들
     public enum Names { 넥슨, 넷마블, 엔씨, 스마게, 데브 }; //기자 이름들
 
@@ -18,8 +18,9 @@ class Setting
     }
 }
 
-class Society
+public class Society
 {
+    public int day = 1; //사회 현재 날짜
     public List<Human> citizens = new List<Human>(); //사회 전체 시민 목록
 
     public void AddHumanToList(Human person) //Human을 리스트에 추가하는 함수
@@ -28,7 +29,7 @@ class Society
     }
 }
 
-class Company
+public class Company
 {
     public List<Reporter> reporters = new List<Reporter>(); //기자 목록
     public List<Article> articles = new List<Article>(); //현재 가지고 있는 기사 목록
@@ -54,7 +55,7 @@ class Company
     }
 }
 
-class Human //사람 성향 --> 생성할 때 모든 float 값에 0~1 사이의 무작위 값을 부여 --> 일단 소수점 넷째 자리에서 반올림하게 만듬
+public class Human //사람 성향 --> 생성할 때 모든 float 값에 0~1 사이의 무작위 값을 부여 --> 일단 소수점 넷째 자리에서 반올림하게 만듬
 {
     public float econStance; //경제적 입장(0 : 극보수, 1: 극진보)
     float socialStance; //사회적 입장(0 : 극보수, 1: 극진보)
@@ -72,7 +73,7 @@ class Human //사람 성향 --> 생성할 때 모든 float 값에 0~1 사이의 
     }
 }
 
-class Reporter : Human
+public class Reporter : Human
 {
     public string name; //이름
     int satisfaction = 100; //만족도 (0이 되면 퇴사?)
@@ -81,19 +82,69 @@ class Reporter : Human
     {
         name = System.Enum.GetName(typeof(Setting.Names),(int)Random.Range(0.0f, 4.0f));
     }
+
+    public void WriteArticle(Society society, Company company) //기사 쓰기
+    {
+        float temp = 0; //랜덤값의 최대값 제한을 위해 넣음
+        float sum = 0; //랜덤값에서 관심사 정보를 뽑아내기 위해 넣음
+        string temp_field = ""; //관심사 정보를 저장할 변수
+
+        foreach (Setting.Fields field in System.Enum.GetValues(typeof(Setting.Fields)))
+        {
+            temp += interests[field];
+        }
+
+        float rand_value = Mathf.Round(Random.Range(0.0f, temp) * 10000) / 10000;
+
+        foreach (Setting.Fields field in System.Enum.GetValues(typeof(Setting.Fields)))
+        {
+            if (rand_value >= sum && rand_value < sum + interests[field])
+            {
+                temp_field = field.ToString();
+                break;
+            }
+            sum += interests[field];
+        }
+
+        int temp_virality = 0; //파급력 정보를 저장할 변수
+
+        for (int i = 1; i <= 10; i++)
+        {
+            temp_virality = i;
+            float temp_rand = Random.Range(0.0f, 1.0f);
+            if (temp_rand <= 0.5f)
+            {
+                break;
+            }
+        }
+
+        Article article = new Article(temp_field, temp_virality, society.day);
+        company.AddArticleToList(article);
+    }
 }
 
-class Article
+public class Article
 {
-    Setting.Fields article_field; //어떤 관심사의 기사인가?
-    int virality; //파급력
-    int date; //생성된 날짜
+    public string article_field; //어떤 관심사의 기사인가?
+    public int virality; //파급력
+    public int date; //생성된 날짜
+
+    public Article(string af, int v, int d)
+    {
+        article_field = af;
+        virality = v;
+        date = d;
+    }
 }
 
 public class GameManager : MonoBehaviour {
 
     public static GameManager instance = null;
+    public GameObject news;
 
+    [HideInInspector] public int point; //남은 포인트
+    [HideInInspector] public bool in_menu = false; //메뉴가 켜져있는가?
+    [HideInInspector] public Company myCompany;
     [HideInInspector] public List<Drag> papers;
 
     void Awake()
@@ -109,9 +160,12 @@ public class GameManager : MonoBehaviour {
 
         DontDestroyOnLoad(gameObject); //파괴되지않아!
 
+        papers = new List<Drag>();
+
         Setting starting = new Setting(4, 20, 100); //시작 조건
+        point = starting.newsPoint;
         Society start_society = new Society(); //사회 구축
-        Company myCompany = new Company(starting.startingMoney, 0, 50f); //우리 회사 생성
+        myCompany = new Company(starting.startingMoney, 0, 50f); //우리 회사 생성
 
         for (int i = 0; i < 1000; i++) //시작할 때 1,000명의 시민 생성
         {
@@ -134,10 +188,29 @@ public class GameManager : MonoBehaviour {
 
         //Debug.Log는 랜덤하게 생성되었는지 확인하기 위해 넣어둠.
 
-        papers = new List<Drag>();
+        WriteArticles(start_society, myCompany); //나중에 날짜 넘어가는 함수에 넣어야 함.
+
+        for (int i = 0; i<  myCompany.articles.Count; i++) //Debug.Log는 랜덤하게 생성되었는지 확인하기 위해 넣어둠.
+        {
+            Debug.Log(myCompany.articles[i].article_field);
+            Debug.Log(myCompany.articles[i].virality);
+            Debug.Log(myCompany.articles[i].date);
+        }
     }
 
-    public void AddPaperToList(Drag script) //리스트에 추가
+    public void WriteArticles(Society society,Company company) //기자들이 각자 기사를 쓰는 함수
+    {
+        for (int i = 0; i < company.reporters.Count; i++)
+        {
+            company.reporters[i].WriteArticle(society, company);
+            if (company == myCompany)
+            {
+                Instantiate(news); //프리팹 생성
+            }
+        }
+    }
+
+   public void AddPaperToList(Drag script) //리스트에 추가
     {
         papers.Add(script);
     }
