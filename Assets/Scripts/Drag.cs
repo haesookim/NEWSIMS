@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 public class Drag : MonoBehaviour {
 
-    string eachField; //기사가 가지는 관심사
-    int eachVirality; //기사가 가지는 파급력
     int eachDate; //기사가 가지는 날짜
+    float eachminRange; //최소 수용 영역
+    float eachmaxRange; //최대 수용 영역
 
     bool inDesk = true; //책상 안에 존재하는가?
     float distance = 10;
@@ -15,6 +15,9 @@ public class Drag : MonoBehaviour {
     float timer2; //뗐을 때 시간
 
     public int eachPoint = 0; //기사가 가지는 포인트
+    public int eachVirality; //기사가 가지는 파급력
+    public string eachField; //기사가 가지는 관심사
+    public int eachIndex; //기사가 가지는 인덱스
 
     SpriteRenderer sr;
 
@@ -25,8 +28,11 @@ public class Drag : MonoBehaviour {
     {
         GameManager.instance.AddPaperToList(this);
         eachField = GameManager.instance.myCompany.articles[GameManager.instance.papers.Count - 1].article_field;
+        eachIndex = GameManager.instance.myCompany.articles[GameManager.instance.papers.Count - 1].write_reporter_index;
         eachVirality = GameManager.instance.myCompany.articles[GameManager.instance.papers.Count - 1].virality;
-        eachDate = GameManager.instance.myCompany.articles[GameManager.instance.papers.Count - 1].date; //article로부터 기사의 정보 받아옴
+        eachDate = GameManager.instance.myCompany.articles[GameManager.instance.papers.Count - 1].date;
+        eachminRange = GameManager.instance.myCompany.articles[GameManager.instance.papers.Count - 1].minRange;
+        eachmaxRange = GameManager.instance.myCompany.articles[GameManager.instance.papers.Count - 1].maxRange; //article로부터 기사의 정보 받아옴
         sr = GetComponent<SpriteRenderer>();
         timer1 = 0;
         timer2 = 0;

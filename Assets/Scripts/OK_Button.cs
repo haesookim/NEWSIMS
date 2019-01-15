@@ -25,7 +25,7 @@ public class OK_Button : MonoBehaviour
         {
             if (inputField.text != "") //인풋필드가 빈 상태가 아니라면
             {
-                if (int.Parse(inputField.text) <= GameManager.instance.point) //현재 남아있는 포인트보다 인풋필드 값이 작다면
+                if (int.Parse(inputField.text) <= GameManager.instance.point && (paperObject.eachPoint + int.Parse(inputField.text)) >= 0) //현재 남아있는 포인트보다 인풋필드 값이 작다면
                 {
                     GameManager.instance.point -= int.Parse(inputField.text); //포인트를 그만큼 감소시켜라
                     paperObject.eachPoint += int.Parse(inputField.text); //기사의 포인트를 그만큼 증가시켜라
