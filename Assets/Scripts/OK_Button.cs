@@ -29,6 +29,7 @@ public class OK_Button : MonoBehaviour
                 {
                     GameManager.instance.point -= int.Parse(inputField.text); //포인트를 그만큼 감소시켜라
                     paperObject.eachPoint += int.Parse(inputField.text); //기사의 포인트를 그만큼 증가시켜라
+
                     inputField.text = ""; //인풋필드 값을 초기화해라
                     GameManager.instance.in_menu = false;
                     GameObject lookpaper = GameObject.Find("LookPaper");

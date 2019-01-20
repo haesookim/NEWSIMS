@@ -6,8 +6,6 @@ using UnityEngine.UI;
 public class Drag : MonoBehaviour {
 
     int eachDate; //기사가 가지는 날짜
-    float eachminRange; //최소 수용 영역
-    float eachmaxRange; //최대 수용 영역
 
     bool inDesk = true; //책상 안에 존재하는가?
     float distance = 10;
@@ -18,6 +16,11 @@ public class Drag : MonoBehaviour {
     public int eachVirality; //기사가 가지는 파급력
     public string eachField; //기사가 가지는 관심사
     public int eachIndex; //기사가 가지는 인덱스
+    public float eachVertification; //기사가 가지는 검증도
+    public float eachminRange; //최소 수용 영역
+    public float eachmaxRange; //최대 수용 영역
+    public bool eachUp_virality; //기사가 가지는 심화 취재를 통한 파급력 증가 여부
+    public bool advanced = false; //기사에 대해 심화 취재를 지시했는가?
 
     SpriteRenderer sr;
 
@@ -27,12 +30,15 @@ public class Drag : MonoBehaviour {
     private void Start()
     {
         GameManager.instance.AddPaperToList(this);
-        eachField = GameManager.instance.myCompany.articles[GameManager.instance.papers.Count - 1].article_field;
-        eachIndex = GameManager.instance.myCompany.articles[GameManager.instance.papers.Count - 1].write_reporter_index;
-        eachVirality = GameManager.instance.myCompany.articles[GameManager.instance.papers.Count - 1].virality;
-        eachDate = GameManager.instance.myCompany.articles[GameManager.instance.papers.Count - 1].date;
-        eachminRange = GameManager.instance.myCompany.articles[GameManager.instance.papers.Count - 1].minRange;
-        eachmaxRange = GameManager.instance.myCompany.articles[GameManager.instance.papers.Count - 1].maxRange; //article로부터 기사의 정보 받아옴
+        Article new_Article = GameManager.instance.myCompany.articles[GameManager.instance.papers.Count - 1];
+        eachField = new_Article.article_field;
+        eachIndex = new_Article.write_reporter_index;
+        eachVirality = new_Article.virality;
+        eachDate = new_Article.date;
+        eachminRange = new_Article.minRange;
+        eachmaxRange = new_Article.maxRange;
+        eachVertification = new_Article.vertification;
+        eachUp_virality = new_Article.up_virality; //article로부터 기사의 정보 받아옴
         sr = GetComponent<SpriteRenderer>();
         timer1 = 0;
         timer2 = 0;
@@ -82,13 +88,28 @@ public class Drag : MonoBehaviour {
             }
             if (timer2 - timer1 < 0.13f) //클릭이라면
             {
-                GameManager.instance.in_menu = true;
-                GameObject lookpaper = GameObject.Find("LookPaper");
-                lookpaper.transform.GetChild(0).gameObject.SetActive(true); //확대창 켜기
-                lookpaper.transform.GetChild(0).transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = sr.sprite;
-                lookpaper.transform.GetChild(0).transform.GetChild(2).transform.GetChild(3).GetComponent<OK_Button>().paperObject = this; //클릭한 기사 정보 보내기
-                lookpaper.transform.GetChild(0).transform.GetChild(2).transform.GetChild(0).transform.GetChild(1).GetComponent<Text>().text = GameManager.instance.point.ToString(); //남아있는 포인트 텍스트 수정
-                lookpaper.transform.GetChild(0).transform.GetChild(2).transform.GetChild(1).transform.GetChild(1).GetComponent<Text>().text = eachPoint.ToString(); //배정된 포인트 텍스트 수정
+                if (!advanced) //심화 취재를 지시하지 않은 기사라면
+                {
+                    GameManager.instance.in_menu = true;
+                    GameObject lookpaper = GameObject.Find("LookPaper");
+                    lookpaper.transform.GetChild(0).gameObject.SetActive(true); //확대창 켜기
+                    lookpaper.transform.GetChild(0).transform.GetChild(2).gameObject.SetActive(true);
+                    lookpaper.transform.GetChild(0).transform.GetChild(3).gameObject.SetActive(false);
+                    lookpaper.transform.GetChild(0).transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = sr.sprite;
+                    lookpaper.transform.GetChild(0).transform.GetChild(2).transform.GetChild(3).GetComponent<OK_Button>().paperObject = this;
+                    lookpaper.transform.GetChild(0).transform.GetChild(2).transform.GetChild(4).GetComponent<Advance_Button>().paperObject = this; //클릭한 기사 정보 보내기
+                    lookpaper.transform.GetChild(0).transform.GetChild(2).transform.GetChild(0).transform.GetChild(1).GetComponent<Text>().text = GameManager.instance.point.ToString(); //남아있는 포인트 텍스트 수정
+                    lookpaper.transform.GetChild(0).transform.GetChild(2).transform.GetChild(1).transform.GetChild(1).GetComponent<Text>().text = eachPoint.ToString(); //배정된 포인트 텍스트 수정
+                }
+                else //심화 취재를 지시한 기사라면
+                {
+                    GameManager.instance.in_menu = true;
+                    GameObject lookpaper = GameObject.Find("LookPaper");
+                    lookpaper.transform.GetChild(0).gameObject.SetActive(true); //확대창 켜기
+                    lookpaper.transform.GetChild(0).transform.GetChild(2).gameObject.SetActive(false);
+                    lookpaper.transform.GetChild(0).transform.GetChild(3).gameObject.SetActive(true);
+                    lookpaper.transform.GetChild(0).transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = sr.sprite;
+                }
             }
         }
     }
