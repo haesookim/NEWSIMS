@@ -11,7 +11,7 @@ public class Setting
     public float startingPerkChance = 0.5f; //시작할 때 퍽을 가질 수 있는 확률
     public enum Fields { Game, Entertainment, Social, Sports, Economy }; //관심사 종류들
     public enum Names { 넥슨, 넷마블, 엔씨, 스마게, 데브 }; //기자 이름들
-    public enum Perks { 제목학원, 다작왕, 필력 }; //특성들
+    public enum Perks { 제목학원, 천재, 철저함, 학습, 다작 }; //특성들
 
     public Setting(int start_reporter, int start_money, int point)
     {
@@ -25,11 +25,11 @@ public class Society
 {
     public int day = 1; //사회 현재 날짜
     public List<Citizen> citizens = new List<Citizen>(); //사회 전체 시민 목록
-    public int[] citizens_knowledge = new int[4]; //인지도에 따른 시민 수
+    public int[] citizens_knowledge = new int[4]; //인지도별 시민 수
 
     public Society()
     {
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++) //초기화
         {
             citizens_knowledge[i] = 0;
         }
@@ -62,7 +62,7 @@ public class Company
     public List<Reporter> reporters = new List<Reporter>(); //기자 목록
     public List<Article> articles = new List<Article>(); //현재 가지고 있는 기사 목록
     public int index = 0; //기자를 구분하기 위한 인덱스
-    public int money; //돈. 기자 1인당 하루에 1 지출
+    public int money; //돈. 기자 1인당 하루에 (기자 레벨 + 1) 지출
     float credibility; //신뢰도
 
     public Company(int m, float c)
@@ -76,7 +76,7 @@ public class Company
         reporters.Add(reporter);
     }
 
-    public void RemoveReporterToList(Reporter reporter)
+    public void RemoveReporterToList(Reporter reporter) //Reporter를 리스트에서 지우는 함수 <-- 퇴사했을 때 사용
     {
         reporters.Remove(reporter);
     }
@@ -114,7 +114,7 @@ public class Citizen : Human
     {
         float temp_percent = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++) //인지도 정하기
         {
             knowledge = i;
             
@@ -143,15 +143,25 @@ public class Reporter : Human
 {
     public int reporter_index; //기자 인덱스
     public string name; //이름
+    public int writing; //필력, 시작할 때 0~20 사이의 무작위 값
+    public int logic; //논리력, 시작할 때 0~20 사이의 무작위 값
+    public int survey; //조사 능력, 시작할 때 0~20 사이의 무작위 값
+    public int level; //레벨
+    public int exp; //경험치. (2^level)*totalPaper만큼의 경험치를 쌓으면 레벨업
     public int satisfaction = 100; //만족도 (0이 되면 퇴사)
     List<string> perks = new List<string>(); //기자에게 붙은 특성들
 
     public Reporter(Setting setting, Company company)
     {
+        level = 0; //레벨 0에서 시작
+        exp = 0; //경험치 0에서 시작
+        writing = Random.Range(0, 21);
+        logic = Random.Range(0, 21);
+        survey = Random.Range(0, 21);
         reporter_index = company.index;
         name = System.Enum.GetName(typeof(Setting.Names),Random.Range(0, System.Enum.GetValues(typeof(Setting.Names)).Length));
         float rand_value = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
-        if (rand_value <= setting.startingPerkChance)
+        if (rand_value <= setting.startingPerkChance) //특성 넣기
         {
             string temp_perk = System.Enum.GetName(typeof(Setting.Perks), Random.Range(0, System.Enum.GetValues(typeof(Setting.Perks)).Length));
             AddPerkToList(temp_perk);
@@ -161,6 +171,54 @@ public class Reporter : Human
     public void AddPerkToList(string perk) //특성을 리스트에 추가하는 함수
     {
         perks.Add(perk);
+        switch (perk) //넣어졌을 때 바로 발동하는 특성들
+        {
+            case "제목학원":
+                writing += 10;
+                break;
+            case "천재":
+                logic += 10;
+                break;
+            case "철저함":
+                survey += 10;
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void LevelUp() //레벨업
+    {
+        writing += Random.Range(0, 6);
+        logic += Random.Range(0, 6);
+        survey += Random.Range(0, 6); //모든 능력치가 0~5 사이의 무작위 값만큼 상승
+
+        if (perks.Count != System.Enum.GetValues(typeof(Setting.Perks)).Length) //가지고 있는 퍽의 갯수가 전체 퍽의 갯수와 같지 않다면
+        {
+            float rand_value = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
+            if (rand_value <= 0.5f) //특성 넣기
+            {
+                string temp_perk = "";
+                int temp_count = 0;
+                while (temp_count < perks.Count)
+                {
+                    temp_count = 0;
+                    string temp_temp_perk = System.Enum.GetName(typeof(Setting.Perks), Random.Range(0, System.Enum.GetValues(typeof(Setting.Perks)).Length));
+                    for (int i = 0; i < perks.Count; i++)
+                    {
+                        if (temp_temp_perk == perks[i])
+                        {
+                            break;
+                        }
+                        temp_count++;
+                    }
+                    temp_perk = temp_temp_perk;
+                }
+                AddPerkToList(temp_perk);
+            }
+        }
+        exp = 0;
+        level++;
     }
 
     public void WriteArticle(Society society, Company company, Reporter reporter) //기사 쓰기
@@ -198,7 +256,15 @@ public class Reporter : Human
             }
         }
 
-        Article article = new Article(temp_field, temp_virality, society.day, reporter);
+        float temp_rand_value = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
+        if (temp_rand_value <= reporter.writing * 0.01)
+        {
+            temp_virality += 1;
+        }
+
+        float temp_vertification = (60+reporter.survey+ (Mathf.Floor(Random.Range(0.0f, 20.0f) * 100) / 100)) /100f; //검증도 정보를 저장할 변수
+
+        Article article = new Article(temp_field, temp_virality, society.day, temp_vertification, reporter);
         company.AddArticleToList(article);
     }
 }
@@ -209,15 +275,19 @@ public class Article
     public int write_reporter_index; //어떤 기자에 의해 작성된 기사인가?
     public int virality; //파급력
     public int date; //생성된 날짜
+    public float vertification; //검증도
+    public float paperRatio; //전체에서 이 기사가 차지한 지면의 비율, eachPoint/Setting.newsPoint
     public float minRange = 0f; //최소 수용 영역
     public float maxRange = 1f; //최대 수용 영역
 
-    public Article(string af, int v, int d, Reporter reporter)
+    public Article(string af, int v, int d, float ve, Reporter reporter)
     {
         article_field = af;
         write_reporter_index = reporter.reporter_index;
         virality = v;
         date = d;
+        vertification = ve;
+        paperRatio = 0f;
         if (article_field == "Economy") //경제 기사라면
         {
             float temp1 = Mathf.Floor(Random.Range(reporter.econStance - 0.3f, reporter.econStance + 0.3f) * 10000) / 10000;
@@ -277,12 +347,12 @@ public class GameManager : MonoBehaviour {
 
         DontDestroyOnLoad(gameObject); //파괴되지않아!
 
-        MC = GameObject.Find("Main Camera");
+        MC = GameObject.Find("Main Camera"); //메인 카메라 오브젝트 저장
 
         papers = new List<Drag>();
 
         starting = new Setting(4, 20, 100); //시작 조건
-        point = starting.newsPoint;
+        point = starting.newsPoint; //뉴스 포인트를 지정
         start_society = new Society(); //사회 구축
         myCompany = new Company(starting.startingMoney, 50f); //우리 회사 생성
 
@@ -304,12 +374,14 @@ public class GameManager : MonoBehaviour {
                 Debug.Log("리포터 " + i + " 의 " + field + " 관심사 : " + myCompany.reporters[i].interests[field]);
             }*/
         }
+        myCompany.reporters[myCompany.reporters.Count - 1].LevelUp(); //마지막 기자에게 즉시 레벨업 한 번
+
         /*Debug.Log("총 사람 수 : " + start_society.citizens.Count);
         Debug.Log("회사 기자 수 : " + myCompany.reporters.Count);*/
 
         //Debug.Log는 랜덤하게 생성되었는지 확인하기 위해 넣어둠.
 
-        WriteArticles(start_society, myCompany);
+        WriteArticles(start_society, myCompany); //첫 기사 작성
 
         /*for (int i = 0; i<  myCompany.articles.Count; i++) //Debug.Log는 랜덤하게 생성되었는지 확인하기 위해 넣어둠.
         {
@@ -374,7 +446,11 @@ public class GameManager : MonoBehaviour {
         }
         papers.Clear();  //하루가 지났으니 전 기사는 지움
         start_society.day++; //하루가 지남
-        myCompany.money -= myCompany.reporters.Count; //기자 수만큼 돈 나감
+        for (int i = 0; i < myCompany.reporters.Count; i++)
+        {
+            myCompany.money -= myCompany.reporters[i].level + 1; //기자 수만큼 돈 나감(레벨 + 1)
+        }
+
         for (int i = 0; i < papers.Count; i++) //기사가 선정되지 않으면 만족도 감소
         {
             if (papers[i].eachPoint == 0)
@@ -392,6 +468,7 @@ public class GameManager : MonoBehaviour {
                 }
             }
         }
+
         MC.transform.GetChild(0).GetChild(0).GetChild(1).GetComponent<Text>().text = start_society.day.ToString();
         MC.transform.GetChild(0).GetChild(0).GetChild(3).GetComponent<Text>().text = myCompany.money.ToString();
         MC.transform.GetChild(0).GetChild(0).GetChild(5).GetComponent<Text>().text = myCompany.reporters.Count.ToString();
