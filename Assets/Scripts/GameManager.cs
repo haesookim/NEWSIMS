@@ -455,7 +455,7 @@ public class GameManager : MonoBehaviour {
             {
                 for (int j = 0; j < start_society.citizens.Count; j++) //모든 시민들에 대해
                 {
-                    if ((start_society.citizens[j].knowledge > 0) && (start_society.citizens[j].interests[(Setting.Fields)System.Enum.Parse(typeof(Setting.Fields), papers[i].eachField)] >= (10-papers[i].eachVirality)*0.2f / ((float)papers[i].eachPoint/starting.newsPoint))) //인지도 > 0 && 해당 기사의 분야에 대한 관심도가 (10-파급력)*0.2 / 지면배정비율 보다 높으면
+                    if ((start_society.citizens[j].knowledge > 0) && (start_society.citizens[j].interests[(Setting.Fields)System.Enum.Parse(typeof(Setting.Fields), papers[i].eachField)] >= (10-papers[i].eachVirality)*0.05f / ((float)papers[i].eachPoint/starting.newsPoint))) //인지도 > 0 && 해당 기사의 분야에 대한 관심도가 (10-파급력)*0.05 / 지면배정비율 보다 높으면
                     {
                         Debug.Log("1");
                         myCompany.money += start_society.citizens[j].knowledge; //인지도만큼 돈을 올려라.

@@ -100,6 +100,8 @@ public class Drag : MonoBehaviour {
                     lookpaper.transform.GetChild(0).transform.GetChild(2).transform.GetChild(4).GetComponent<Advance_Button>().paperObject = this; //클릭한 기사 정보 보내기
                     lookpaper.transform.GetChild(0).transform.GetChild(2).transform.GetChild(0).transform.GetChild(1).GetComponent<Text>().text = GameManager.instance.point.ToString(); //남아있는 포인트 텍스트 수정
                     lookpaper.transform.GetChild(0).transform.GetChild(2).transform.GetChild(1).transform.GetChild(1).GetComponent<Text>().text = eachPoint.ToString(); //배정된 포인트 텍스트 수정
+
+                    SimTest();
                 }
                 else //심화 취재를 지시한 기사라면
                 {
@@ -112,6 +114,16 @@ public class Drag : MonoBehaviour {
                 }
             }
         }
+    }
+
+    void SimTest()
+    {
+        GameObject lookpaper = GameObject.Find("LookPaper");
+        lookpaper.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(1).GetComponent<Text>().text = eachField;
+        lookpaper.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(3).GetComponent<Text>().text = eachVirality.ToString();
+        lookpaper.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(5).GetComponent<Text>().text = eachVertification.ToString();
+        lookpaper.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(7).GetComponent<Text>().text = eachminRange.ToString();
+        lookpaper.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(9).GetComponent<Text>().text = eachmaxRange.ToString();
     }
 
     private void OnTriggerStay2D(Collider2D collision)
