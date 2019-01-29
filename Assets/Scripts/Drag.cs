@@ -14,6 +14,7 @@ public class Drag : MonoBehaviour {
 
     public int eachPoint = 0; //기사가 가지는 포인트
     public int eachVirality; //기사가 가지는 파급력
+    public string eachName; //기사가 가지는 제목
     public string eachField; //기사가 가지는 관심사
     public int eachIndex; //기사가 가지는 인덱스
     public float eachVertification; //기사가 가지는 검증도
@@ -21,6 +22,11 @@ public class Drag : MonoBehaviour {
     public float eachmaxRange; //최대 수용 영역
     public bool eachUp_virality; //기사가 가지는 심화 취재를 통한 파급력 증가 여부
     public bool advanced = false; //기사에 대해 심화 취재를 지시했는가?
+    public GameObject paperlist; //리스트 텍스트 프리팹
+
+    [HideInInspector] public GameObject list; //해당하는 리스트 텍스트
+
+    GameObject content;
 
     SpriteRenderer sr;
 
@@ -31,6 +37,7 @@ public class Drag : MonoBehaviour {
     {
         GameManager.instance.AddPaperToList(this);
         Article new_Article = GameManager.instance.myCompany.articles[GameManager.instance.papers.Count - 1];
+        eachName = new_Article.article_name;
         eachField = new_Article.article_field;
         eachIndex = new_Article.write_reporter_index;
         eachVirality = new_Article.virality;
@@ -42,6 +49,8 @@ public class Drag : MonoBehaviour {
         sr = GetComponent<SpriteRenderer>();
         timer1 = 0;
         timer2 = 0;
+        content = GameObject.Find("Window").transform.GetChild(1).GetChild(0).GetChild(0).GetChild(3).GetChild(0).GetChild(0).gameObject; //Content 창 가져옴
+        MakeList();
     }
 
     private void OnMouseDown() //누를 때 클릭된 프리팹을 앞으로 옮김
@@ -126,7 +135,7 @@ public class Drag : MonoBehaviour {
         lookpaper.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(9).GetComponent<Text>().text = eachmaxRange.ToString();
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision) //책상 안에 있다면 움직이게
     {
         if (collision.gameObject.tag == "Desk")
         {
@@ -134,11 +143,30 @@ public class Drag : MonoBehaviour {
         }
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    private void OnTriggerExit2D(Collider2D collision) //책상 밖에 있다면 돌아오게
     {
         if (collision.gameObject.tag == "Desk")
         {
             inDesk = false;
         }
+    }
+
+    private void MakeList() //처음으로 Content 창 안에 리스트 텍스트 만드는 작업
+    {
+        GameObject ls = Instantiate(paperlist, content.transform);
+        list = ls;
+        PaperList pls = list.GetComponent<PaperList>();
+        pls.name = eachName;
+        pls.point = eachPoint;
+        pls.TextUpdate();
+    }
+
+    public void ChangeListContent() //배정된 포인트에 따라 목록을 업데이트하는 함수
+    {
+        list = content.transform.GetChild(GameManager.instance.papers.IndexOf(this)).gameObject;
+        PaperList pls = list.GetComponent<PaperList>();
+        pls.name = eachName;
+        pls.point = eachPoint;
+        pls.TextUpdate();
     }
 }

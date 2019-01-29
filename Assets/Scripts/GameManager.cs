@@ -9,7 +9,7 @@ public class Setting
     public int startingMoney; //시작할 때, 시작 금액
     public int newsPoint; //신문에 기사를 배정할 수 있는 포인트
     public float startingPerkChance = 0.5f; //시작할 때 퍽을 가질 수 있는 확률
-    public enum Fields { Game, Entertainment, Social, Sports, Economy }; //관심사 종류들
+    public enum Fields { 연예, 사회, 스포츠, 경제, 정치, 생활, 사건사고 }; //관심사 종류들
     public enum Names { 넥슨, 넷마블, 엔씨, 스마게, 데브 }; //기자 이름들
     public enum Perks { 제목학원, 천재, 철저함, 학습, 다작 }; //특성들
 
@@ -157,6 +157,7 @@ public class Reporter : Human
     public class advancedNews
     {
         public string adv_field = ""; //관심 분야
+        public string adv_name = ""; //제목
         public int adv_virality = 0; //파급력
         public float adv_vertification = 0f; //검증도
         public float adv_minRange = 0f; //최소 수용 영역
@@ -286,6 +287,7 @@ public class Reporter : Human
         else //심화 취재를 요구했다면
         {
             Article article = new Article(reporter.adn.adv_field, reporter.adn.adv_virality, society.day, reporter.adn.adv_vertification, reporter);
+            article.article_name = reporter.adn.adv_name;
             article.minRange = reporter.adn.adv_minRange;
             article.maxRange = reporter.adn.adv_maxRange;
             article.up_virality = reporter.adn.adv_up_virality;
@@ -312,6 +314,7 @@ public class Reporter : Human
 public class Article
 {
     public string article_field; //어떤 관심사의 기사인가?
+    public string article_name; //어떤 제목의 기사인가?
     public int write_reporter_index; //어떤 기자에 의해 작성된 기사인가?
     public int virality; //파급력
     public int date; //생성된 날짜
@@ -322,12 +325,27 @@ public class Article
 
     public Article(string af, int v, int d, float ve, Reporter reporter)
     {
+        List<Dictionary<string, object>> data = CSVReader.Read("PaperName"); //CSV를 불러옴
+
         article_field = af;
         write_reporter_index = reporter.reporter_index;
+        int temp_j = 0;
+
+       while (true) //끝이 나올 때까지 인덱스를 증가(주의 : CSV에서 첫째 줄이 가장 긴 친구가 아니면 에러남.)
+        {
+            if (data[temp_j][article_field].ToString() == "끝")
+            {
+                break;
+            }
+            temp_j++;
+        }
+
+        int temp_name_index = Random.Range(0, temp_j);
+        article_name = data[temp_name_index][article_field].ToString();
         virality = v;
         date = d;
         vertification = ve;
-        if (article_field == "Economy") //경제 기사라면
+        if (article_field == "경제") //경제 기사라면
         {
             float temp1 = Mathf.Floor(Random.Range(reporter.econStance - 0.3f, reporter.econStance + 0.3f) * 10000) / 10000;
             float temp2 = Mathf.Floor(Random.Range(reporter.econStance - 0.3f, reporter.econStance + 0.3f) * 10000) / 10000;
@@ -342,7 +360,7 @@ public class Article
                 maxRange = temp2;
             }
         }
-        else if (article_field == "Social") //사회 기사라면
+        else if (article_field == "사회") //사회 기사라면
         {
             float temp1 = Mathf.Floor(Random.Range(reporter.socialStance - 0.3f, reporter.socialStance + 0.3f) * 10000) / 10000;
             float temp2 = Mathf.Floor(Random.Range(reporter.socialStance - 0.3f, reporter.socialStance + 0.3f) * 10000) / 10000;
@@ -371,7 +389,10 @@ public class GameManager : MonoBehaviour {
     [HideInInspector] public Society start_society;
     [HideInInspector] public Company myCompany;
     [HideInInspector] public List<Drag> papers;
-    [HideInInspector] public GameObject MC; //메인 카메라 오브젝트
+
+    private GameObject officeWindow; //오피스 화면
+    private GameObject deskWindow; //책상 화면
+    private GameObject papersWindow; //페이퍼 모아둔 빈 오브젝트
 
     void Awake()
     {
@@ -386,7 +407,9 @@ public class GameManager : MonoBehaviour {
 
         DontDestroyOnLoad(gameObject); //파괴되지않아!
 
-        MC = GameObject.Find("Main Camera"); //메인 카메라 오브젝트 저장
+        officeWindow = GameObject.Find("Window").transform.GetChild(0).gameObject;
+        deskWindow = GameObject.Find("Window").transform.GetChild(1).gameObject;
+        papersWindow = GameObject.Find("Window").transform.GetChild(1).GetChild(3).gameObject;
 
         papers = new List<Drag>();
 
@@ -437,7 +460,7 @@ public class GameManager : MonoBehaviour {
             company.reporters[i].WriteArticle(society, company, company.reporters[i]);
             if (company == myCompany)
             {
-                Instantiate(news); //프리팹 생성
+                Instantiate(news,papersWindow.transform); //프리팹 생성
             }
         }
     }
@@ -457,7 +480,6 @@ public class GameManager : MonoBehaviour {
                 {
                     if ((start_society.citizens[j].knowledge > 0) && (start_society.citizens[j].interests[(Setting.Fields)System.Enum.Parse(typeof(Setting.Fields), papers[i].eachField)] >= (10-papers[i].eachVirality)*0.05f / ((float)papers[i].eachPoint/starting.newsPoint))) //인지도 > 0 && 해당 기사의 분야에 대한 관심도가 (10-파급력)*0.05 / 지면배정비율 보다 높으면
                     {
-                        Debug.Log("1");
                         myCompany.money += start_society.citizens[j].knowledge; //인지도만큼 돈을 올려라.
                         myCompany.circulation++; //발행부수를 하나 올려라.
                     }
@@ -551,6 +573,7 @@ public class GameManager : MonoBehaviour {
         myCompany.articles.Clear();
         for (int i = 0; i < papers.Count; i++)
         {
+            Destroy(papers[i].list);
             Destroy(papers[i].gameObject);
         }
         papers.Clear();  //하루가 지났으니 전 기사는 지움
@@ -560,9 +583,11 @@ public class GameManager : MonoBehaviour {
             myCompany.money -= myCompany.reporters[i].level + 1; //기자 수만큼 돈 나감(레벨 + 1)
         }
 
-        MC.transform.GetChild(0).GetChild(0).GetChild(1).GetComponent<Text>().text = start_society.day.ToString();
-        MC.transform.GetChild(0).GetChild(0).GetChild(3).GetComponent<Text>().text = myCompany.money.ToString();
-        MC.transform.GetChild(0).GetChild(0).GetChild(5).GetComponent<Text>().text = myCompany.reporters.Count.ToString();
+        deskWindow.SetActive(false);
+        officeWindow.SetActive(true);
+        officeWindow.transform.GetChild(0).GetChild(0).GetChild(1).GetComponent<Text>().text = start_society.day.ToString();
+        officeWindow.transform.GetChild(0).GetChild(0).GetChild(3).GetComponent<Text>().text = myCompany.money.ToString();
+        officeWindow.transform.GetChild(0).GetChild(0).GetChild(5).GetComponent<Text>().text = myCompany.reporters.Count.ToString();
         point = starting.newsPoint - minus_sum; //포인트 리셋
         myCompany.circulation = 0; //발행부수 리셋
         WriteArticles(start_society, myCompany); //다시 기사 씀

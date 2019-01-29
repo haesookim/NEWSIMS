@@ -8,6 +8,7 @@ public class OK_Button : MonoBehaviour
 {
     public InputField inputField; //인풋필드를 저장함
     public Drag paperObject; //선택한 기사를 저장함
+    public ListSort lsst;
 
     // Start is called before the first frame update
     void Start()
@@ -35,6 +36,8 @@ public class OK_Button : MonoBehaviour
                     GameObject lookpaper = GameObject.Find("LookPaper");
                     lookpaper.transform.GetChild(0).transform.GetChild(2).transform.GetChild(0).transform.GetChild(1).GetComponent<Text>().text = GameManager.instance.point.ToString(); //남아있는 포인트 텍스트 수정
                     lookpaper.transform.GetChild(0).transform.GetChild(2).transform.GetChild(1).transform.GetChild(1).GetComponent<Text>().text = "0"; //배정된 포인트 텍스트 수정
+                    lsst.Sorting(); //정렬
+                    
                     lookpaper.transform.GetChild(0).gameObject.SetActive(false); //확대창 끄기
                 }
             }
