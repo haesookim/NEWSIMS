@@ -9,9 +9,10 @@ public class Setting
     public int startingMoney; //시작할 때, 시작 금액
     public int newsPoint; //신문에 기사를 배정할 수 있는 포인트
     public float startingPerkChance = 0.5f; //시작할 때 퍽을 가질 수 있는 확률
+    public float fakePossibility = 0.5f; //기사의 검증되지 않은 부분이 실제로 가짜일 확률 
     public enum Fields { 연예, 사회, 스포츠, 경제, 정치, 생활, 사건사고 }; //관심사 종류들
     public enum Names { 넥슨, 넷마블, 엔씨, 스마게, 데브 }; //기자 이름들
-    public enum Perks { 제목학원, 천재, 철저함, 학습, 다작 }; //특성들
+    public enum Perks { 제목학원, 천재, 철저함, 학습, 다작, 멀티태스킹 }; //특성들
 
     public Setting(int start_reporter, int start_money, int point)
     {
@@ -88,7 +89,7 @@ public class Company
     }
 }
 
-public class Human //사람 성향 --> 생성할 때 모든 float 값에 0~1 사이의 무작위 값을 부여 --> 일단 소수점 넷째 자리에서 반올림하게 만듬
+public class Human : MonoBehaviour //사람 성향 --> 생성할 때 모든 float 값에 0~1 사이의 무작위 값을 부여 --> 일단 소수점 넷째 자리에서 반올림하게 만듬
 {
     public float econStance; //경제적 입장(0 : 극보수, 1: 극진보)
     public float socialStance; //사회적 입장(0 : 극보수, 1: 극진보)
@@ -160,8 +161,8 @@ public class Reporter : Human
         public string adv_name = ""; //제목
         public int adv_virality = 0; //파급력
         public float adv_vertification = 0f; //검증도
-        public float adv_minRange = 0f; //최소 수용 영역
-        public float adv_maxRange = 1f; //최대 수용 영역
+        public float adv_centerStance = 0f; //기사의 입장
+        public float adv_tolerance = 0f; //Center로부터 얼마나 떨어진 사람까지 우호적으로 받아들이는가?
         public bool adv_up_virality = false; //파급력이 올랐는가?
     }
 
@@ -279,34 +280,167 @@ public class Reporter : Human
                 temp_virality += 1;
             }
 
-            float temp_vertification = (60 + reporter.survey + (Mathf.Floor(Random.Range(0.0f, 20.0f) * 100) / 100)) / 100f; //검증도 정보를 저장할 변수
+            float temp_vertification = (50 + reporter.survey - (temp_virality * 5) + (Mathf.Floor(Random.Range(0.0f, 20.0f) * 100) / 100)) / 100f; //검증도 정보를 저장할 변수
 
             Article article = new Article(temp_field, temp_virality, society.day, temp_vertification, reporter);
             company.AddArticleToList(article);
+
+            if (company == GameManager.instance.myCompany)
+            {
+                Instantiate(GameManager.instance.news, GameManager.instance.papersWindow.transform); //프리팹 생성
+            }
         }
         else //심화 취재를 요구했다면
         {
             Article article = new Article(reporter.adn.adv_field, reporter.adn.adv_virality, society.day, reporter.adn.adv_vertification, reporter);
             article.article_name = reporter.adn.adv_name;
-            article.minRange = reporter.adn.adv_minRange;
-            article.maxRange = reporter.adn.adv_maxRange;
+            article.centerStance = reporter.adn.adv_centerStance;
+            article.tolerance = reporter.adn.adv_tolerance;
             article.up_virality = reporter.adn.adv_up_virality;
 
-            if (!article.up_virality) //파급력 상승
-            {
-                float rand_value = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
+            float new_vertification = (50 + reporter.survey - (article.virality * 5) + (Mathf.Floor(Random.Range(0.0f, 20.0f) * 100) / 100)) / 100f; //검증도 정보를 저장할 변수
 
-                if (rand_value <= reporter.interests[(Setting.Fields)System.Enum.Parse(typeof(Setting.Fields), article.article_field)])
+            float temp_rand_value = Random.Range(0.0f, 1.0f);
+
+            if (temp_rand_value > new_vertification * GameManager.instance.starting.fakePossibility)
+            {
+                if (!article.up_virality) //파급력 상승
                 {
-                    article.virality++;
-                    article.up_virality = true;
+                    float rand_value = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
+
+                    if (rand_value <= reporter.interests[(Setting.Fields)System.Enum.Parse(typeof(Setting.Fields), article.article_field)])
+                    {
+                        article.virality++;
+                        article.up_virality = true;
+                    }
+                }
+
+                article.vertification = 1 - ((1 - article.vertification) * (1 - new_vertification));
+                company.AddArticleToList(article);
+
+                if (company == GameManager.instance.myCompany)
+                {
+                    Instantiate(GameManager.instance.news, GameManager.instance.papersWindow.transform); //프리팹 생성
                 }
             }
-
-            float temp_vertification = (60 + reporter.survey + (Mathf.Floor(Random.Range(0.0f, 20.0f) * 100) / 100)) / 100f; //검증도 정보를 저장할 변수
-            article.vertification = 1 - ((1 - article.vertification) * (1 - temp_vertification));
-            company.AddArticleToList(article);
+            
             reporter.advance_news = false; //심화 취재 여부 체크 해제
+
+            for (int i = 0; i < reporter.perks.Count; i++) //퍽 중에 멀티태스킹이 있다면 심화취재를 보내도 다음날 기사를 생성한다.
+            {
+                if (reporter.perks[i] == "멀티태스킹")
+                {
+                    float temp = 0; //랜덤값의 최대값 제한을 위해 넣음
+                    float sum = 0; //랜덤값에서 관심사 정보를 뽑아내기 위해 넣음
+                    string temp_field = ""; //관심사 정보를 저장할 변수
+
+                    foreach (Setting.Fields field in System.Enum.GetValues(typeof(Setting.Fields)))
+                    {
+                        temp += interests[field];
+                    }
+
+                    float rand_value = Mathf.Floor(Random.Range(0.0f, temp) * 10000) / 10000;
+
+                    foreach (Setting.Fields field in System.Enum.GetValues(typeof(Setting.Fields)))
+                    {
+                        if (rand_value >= sum && rand_value < sum + interests[field])
+                        {
+                            temp_field = field.ToString();
+                            break;
+                        }
+                        sum += interests[field];
+                    }
+
+                    int temp_virality = 0; //파급력 정보를 저장할 변수
+
+                    for (int j = 1; j <= 10; j++)
+                    {
+                        temp_virality = j;
+                        float temp_rand = Random.Range(0.0f, 1.0f);
+                        if (temp_rand <= 0.5f)
+                        {
+                            break;
+                        }
+                    }
+
+                    float temp_rand_value2 = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
+                    if (temp_rand_value2 <= reporter.writing * 0.01)
+                    {
+                        temp_virality += 1;
+                    }
+
+                    float temp_vertification = (50 + reporter.survey - (temp_virality * 5) + (Mathf.Floor(Random.Range(0.0f, 20.0f) * 100) / 100)) / 100f; //검증도 정보를 저장할 변수
+
+                    Article article2 = new Article(temp_field, temp_virality, society.day, temp_vertification, reporter);
+                    company.AddArticleToList(article2);
+
+                    if (company == GameManager.instance.myCompany)
+                    {
+                        Instantiate(GameManager.instance.news, GameManager.instance.papersWindow.transform); //프리팹 생성
+                    }
+                    break;
+                }
+            }
+        }
+
+        for (int i = 0; i < reporter.perks.Count; i++) //퍽 중에 다작이 있다면 20%확률로 기사를 하나 더 쓴다.
+        {
+            if (reporter.perks[i] == "다작")
+            {
+                float rand_value_perk = Random.Range(0.0f, 1.0f);
+                if (rand_value_perk > 0.8f)
+                {
+                    float temp = 0; //랜덤값의 최대값 제한을 위해 넣음
+                    float sum = 0; //랜덤값에서 관심사 정보를 뽑아내기 위해 넣음
+                    string temp_field = ""; //관심사 정보를 저장할 변수
+
+                    foreach (Setting.Fields field in System.Enum.GetValues(typeof(Setting.Fields)))
+                    {
+                        temp += interests[field];
+                    }
+
+                    float rand_value = Mathf.Floor(Random.Range(0.0f, temp) * 10000) / 10000;
+
+                    foreach (Setting.Fields field in System.Enum.GetValues(typeof(Setting.Fields)))
+                    {
+                        if (rand_value >= sum && rand_value < sum + interests[field])
+                        {
+                            temp_field = field.ToString();
+                            break;
+                        }
+                        sum += interests[field];
+                    }
+
+                    int temp_virality = 0; //파급력 정보를 저장할 변수
+
+                    for (int j = 1; j <= 10; j++)
+                    {
+                        temp_virality = j;
+                        float temp_rand = Random.Range(0.0f, 1.0f);
+                        if (temp_rand <= 0.5f)
+                        {
+                            break;
+                        }
+                    }
+
+                    float temp_rand_value = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
+                    if (temp_rand_value <= reporter.writing * 0.01)
+                    {
+                        temp_virality += 1;
+                    }
+
+                    float temp_vertification = (50 + reporter.survey - (temp_virality * 5) + (Mathf.Floor(Random.Range(0.0f, 20.0f) * 100) / 100)) / 100f; //검증도 정보를 저장할 변수
+
+                    Article article = new Article(temp_field, temp_virality, society.day, temp_vertification, reporter);
+                    company.AddArticleToList(article);
+
+                    if (company == GameManager.instance.myCompany)
+                    {
+                        Instantiate(GameManager.instance.news, GameManager.instance.papersWindow.transform); //프리팹 생성
+                    }
+                }
+                break;
+            }
         }
     }
 }
@@ -319,8 +453,8 @@ public class Article
     public int virality; //파급력
     public int date; //생성된 날짜
     public float vertification; //검증도
-    public float minRange = 0f; //최소 수용 영역
-    public float maxRange = 1f; //최대 수용 영역
+    public float centerStance = 0f; //기사의 입장
+    public float tolerance = 0f; //Center로부터 얼마나 떨어진 사람까지 우호적으로 받아들이는가?
     public bool up_virality = false; //심화 취재를 통한 파급력 증가 여부
 
     public Article(string af, int v, int d, float ve, Reporter reporter)
@@ -347,33 +481,13 @@ public class Article
         vertification = ve;
         if (article_field == "경제") //경제 기사라면
         {
-            float temp1 = Mathf.Floor(Random.Range(reporter.econStance - 0.3f, reporter.econStance + 0.3f) * 10000) / 10000;
-            float temp2 = Mathf.Floor(Random.Range(reporter.econStance - 0.3f, reporter.econStance + 0.3f) * 10000) / 10000;
-            if (temp1 >= temp2)
-            {
-                minRange = temp2;
-                maxRange = temp1;
-            }
-            else
-            {
-                minRange = temp1;
-                maxRange = temp2;
-            }
+            centerStance = Mathf.Floor(Random.Range(reporter.econStance - 0.1f, reporter.econStance + 0.1f) * 10000) / 10000;
+            tolerance = 0.1f + (reporter.logic * 0.01f);
         }
         else if (article_field == "사회") //사회 기사라면
         {
-            float temp1 = Mathf.Floor(Random.Range(reporter.socialStance - 0.3f, reporter.socialStance + 0.3f) * 10000) / 10000;
-            float temp2 = Mathf.Floor(Random.Range(reporter.socialStance - 0.3f, reporter.socialStance + 0.3f) * 10000) / 10000;
-            if (temp1 >= temp2)
-            {
-                minRange = temp2;
-                maxRange = temp1;
-            }
-            else
-            {
-                minRange = temp1;
-                maxRange = temp2;
-            }
+            centerStance = Mathf.Floor(Random.Range(reporter.socialStance - 0.1f, reporter.socialStance + 0.1f) * 10000) / 10000;
+            tolerance = 0.1f + (reporter.logic * 0.01f);
         }
     }
 }
@@ -392,7 +506,9 @@ public class GameManager : MonoBehaviour {
 
     private GameObject officeWindow; //오피스 화면
     private GameObject deskWindow; //책상 화면
-    private GameObject papersWindow; //페이퍼 모아둔 빈 오브젝트
+    public GameObject papersWindow; //페이퍼 모아둔 빈 오브젝트
+    private Animator DayAnimator; //날짜 애니메이터
+    private Text DayText; //날짜 텍스트
 
     void Awake()
     {
@@ -406,14 +522,19 @@ public class GameManager : MonoBehaviour {
         }
 
         DontDestroyOnLoad(gameObject); //파괴되지않아!
+    }
 
+    public void InitGame()
+    {
         officeWindow = GameObject.Find("Window").transform.GetChild(0).gameObject;
         deskWindow = GameObject.Find("Window").transform.GetChild(1).gameObject;
         papersWindow = GameObject.Find("Window").transform.GetChild(1).GetChild(3).gameObject;
+        DayAnimator = GameObject.Find("Day").GetComponent<Animator>();
+        DayText = GameObject.Find("Day").transform.GetChild(0).GetChild(0).GetComponent<Text>();
 
         papers = new List<Drag>();
 
-        starting = new Setting(4, 20, 100); //시작 조건
+        starting = new Setting(6, 20, 100); //시작 조건
         point = starting.newsPoint; //뉴스 포인트를 지정
         start_society = new Society(); //사회 구축
         myCompany = new Company(starting.startingMoney, 50f); //우리 회사 생성
@@ -421,9 +542,9 @@ public class GameManager : MonoBehaviour {
         for (int i = 0; i < 1000; i++) //시작할 때 1,000명의 시민 생성
         {
             Citizen who = new Citizen();
-            start_society.AddCitizenToList(who);          
+            start_society.AddCitizenToList(who);
         }
-        
+
         for (int i = 0; i < starting.startingReporters; i++) //startingReporters만큼의 우리 회사의 기자 생성
         {
             Reporter newReporter = new Reporter(starting, myCompany);
@@ -458,10 +579,6 @@ public class GameManager : MonoBehaviour {
         for (int i = 0; i < company.reporters.Count; i++)
         {
             company.reporters[i].WriteArticle(society, company, company.reporters[i]);
-            if (company == myCompany)
-            {
-                Instantiate(news,papersWindow.transform); //프리팹 생성
-            }
         }
     }
 
@@ -472,16 +589,55 @@ public class GameManager : MonoBehaviour {
 
     public void AfterDay() //신문 발행 후 하루가 지남
     {
+        float socialAverageApproval = 0f;
+
+        for (int i = 0; i < start_society.citizens.Count; i++)
+        {
+            socialAverageApproval += start_society.citizens[i].approval;
+        }
+
+        socialAverageApproval = Mathf.Floor((socialAverageApproval / start_society.citizens.Count) * 10000) / 10000;
+
         for (int i = 0; i < papers.Count; i++)
         {
             if (papers[i].eachPoint > 0) //기사에 0보다 높은 포인트를 배정했다면
             {
                 for (int j = 0; j < start_society.citizens.Count; j++) //모든 시민들에 대해
                 {
-                    if ((start_society.citizens[j].knowledge > 0) && (start_society.citizens[j].interests[(Setting.Fields)System.Enum.Parse(typeof(Setting.Fields), papers[i].eachField)] >= (10-papers[i].eachVirality)*0.05f / ((float)papers[i].eachPoint/starting.newsPoint))) //인지도 > 0 && 해당 기사의 분야에 대한 관심도가 (10-파급력)*0.05 / 지면배정비율 보다 높으면
+                    if ((start_society.citizens[j].knowledge > 0) && (start_society.citizens[j].interests[(Setting.Fields)System.Enum.Parse(typeof(Setting.Fields), papers[i].eachField)] >= (10-papers[i].eachVirality)*0.02f / (start_society.citizens[j].approval * ((float)papers[i].eachPoint/starting.newsPoint)))) //인지도 > 0 && 해당 기사의 분야에 대한 관심도가 (10-파급력)*0.02 / 지면배정비율 보다 높으면
                     {
                         myCompany.money += start_society.citizens[j].knowledge; //인지도만큼 돈을 올려라.
+                        if (start_society.citizens[j].approval >= 0.9f)
+                        {
+                            myCompany.money += 2 * start_society.citizens[j].knowledge;
+                        }
                         myCompany.circulation++; //발행부수를 하나 올려라.
+                        if (papers[i].eachField == "사회") //지지도의 변화
+                        {
+                            float difference = Mathf.Abs(start_society.citizens[j].socialStance - papers[i].eachcenterStance);
+                            if (papers[i].eachtolerance >= difference)
+                            {
+                                start_society.citizens[j].approval = 1 - ((1 - start_society.citizens[j].approval)*(1 - 0.1f * papers[i].eachtolerance * socialAverageApproval / difference));
+                                start_society.citizens[j].socialStance += (papers[i].eachcenterStance - start_society.citizens[j].socialStance) / 10;
+                            }
+                            else
+                            {
+                                start_society.citizens[j].approval *= 1 - (0.1f*difference);
+                            }
+                        }
+                        else if (papers[i].eachField == "경제") //지지도의 변화
+                        {
+                            float difference = Mathf.Abs(start_society.citizens[j].econStance - papers[i].eachcenterStance);
+                            if (papers[i].eachtolerance >= difference)
+                            {
+                                start_society.citizens[j].approval = 1 - ((1 - start_society.citizens[j].approval) * (1 - 0.1f * papers[i].eachtolerance * socialAverageApproval / difference));
+                                start_society.citizens[j].socialStance += (papers[i].eachcenterStance - start_society.citizens[j].econStance) / 10;
+                            }
+                            else
+                            {
+                                start_society.citizens[j].approval *= 1 - (0.1f * difference);
+                            }
+                        }
                     }
                     int sum = 0; //사회 전체에서 자기보다 인지도가 높은 시민의 수
                     for (int k = 3; k >= 0; k--)
@@ -524,7 +680,7 @@ public class GameManager : MonoBehaviour {
             }
 
             float temp_rand_value = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
-            if (temp_rand_value < 1 - papers[i].eachVertification) //오보가 난 경우
+            if (temp_rand_value < (1 - papers[i].eachVertification)*starting.fakePossibility) //오보가 난 경우
             {
                 minus_sum += papers[i].eachPoint;
                 myCompany.money -= (int)(myCompany.circulation * 3 * ((float)papers[i].eachPoint / starting.newsPoint));
@@ -591,5 +747,7 @@ public class GameManager : MonoBehaviour {
         point = starting.newsPoint - minus_sum; //포인트 리셋
         myCompany.circulation = 0; //발행부수 리셋
         WriteArticles(start_society, myCompany); //다시 기사 씀
+        DayText.text = "Day " + start_society.day;
+        DayAnimator.SetTrigger("Active");
     }
 }

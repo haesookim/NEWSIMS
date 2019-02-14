@@ -18,8 +18,8 @@ public class Drag : MonoBehaviour {
     public string eachField; //기사가 가지는 관심사
     public int eachIndex; //기사가 가지는 인덱스
     public float eachVertification; //기사가 가지는 검증도
-    public float eachminRange; //최소 수용 영역
-    public float eachmaxRange; //최대 수용 영역
+    public float eachcenterStance; //기사의 입장
+    public float eachtolerance; //Center로부터 얼마나 떨어진 사람까지 우호적으로 받아들이는가?
     public bool eachUp_virality; //기사가 가지는 심화 취재를 통한 파급력 증가 여부
     public bool advanced = false; //기사에 대해 심화 취재를 지시했는가?
     public GameObject paperlist; //리스트 텍스트 프리팹
@@ -42,8 +42,8 @@ public class Drag : MonoBehaviour {
         eachIndex = new_Article.write_reporter_index;
         eachVirality = new_Article.virality;
         eachDate = new_Article.date;
-        eachminRange = new_Article.minRange;
-        eachmaxRange = new_Article.maxRange;
+        eachcenterStance = new_Article.centerStance;
+        eachtolerance = new_Article.tolerance;
         eachVertification = new_Article.vertification;
         eachUp_virality = new_Article.up_virality; //article로부터 기사의 정보 받아옴
         sr = GetComponent<SpriteRenderer>();
@@ -131,8 +131,8 @@ public class Drag : MonoBehaviour {
         lookpaper.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(1).GetComponent<Text>().text = eachField;
         lookpaper.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(3).GetComponent<Text>().text = eachVirality.ToString();
         lookpaper.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(5).GetComponent<Text>().text = eachVertification.ToString();
-        lookpaper.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(7).GetComponent<Text>().text = eachminRange.ToString();
-        lookpaper.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(9).GetComponent<Text>().text = eachmaxRange.ToString();
+        lookpaper.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(7).GetComponent<Text>().text = eachcenterStance.ToString();
+        lookpaper.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(9).GetComponent<Text>().text = eachtolerance.ToString();
     }
 
     private void OnTriggerStay2D(Collider2D collision) //책상 안에 있다면 움직이게

@@ -45,8 +45,8 @@ public class Advance_Button : MonoBehaviour
                 GameManager.instance.myCompany.reporters[temp_index].adn.adv_name = paperObject.eachName;
                 GameManager.instance.myCompany.reporters[temp_index].adn.adv_virality = paperObject.eachVirality;
                 GameManager.instance.myCompany.reporters[temp_index].adn.adv_vertification = paperObject.eachVertification;
-                GameManager.instance.myCompany.reporters[temp_index].adn.adv_minRange = paperObject.eachminRange;
-                GameManager.instance.myCompany.reporters[temp_index].adn.adv_maxRange = paperObject.eachmaxRange;
+                GameManager.instance.myCompany.reporters[temp_index].adn.adv_centerStance = paperObject.eachcenterStance;
+                GameManager.instance.myCompany.reporters[temp_index].adn.adv_tolerance = paperObject.eachtolerance;
                 GameManager.instance.myCompany.reporters[temp_index].adn.adv_up_virality = paperObject.eachUp_virality; //
                 GameManager.instance.myCompany.reporters[temp_index].advance_news = true;
 
