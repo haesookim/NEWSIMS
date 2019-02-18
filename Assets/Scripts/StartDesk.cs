@@ -8,5 +8,9 @@ public class StartDesk : MonoBehaviour
     void Start()
     {
         GameManager.instance.InitGame();
+
+        //SOUND
+        AudioManager.instance.StartMusic("gameplay");
+        //
     }
 }

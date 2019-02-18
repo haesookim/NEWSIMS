@@ -46,6 +46,10 @@ public class DeskButton : MonoBehaviour
             {
                 DeskWindow.SetActive(true);
                 OfficeWindow.SetActive(false);
+
+                //SOUND
+                AudioManager.instance.StartSFX("DeskClick");
+                //
             }
         }
     }
