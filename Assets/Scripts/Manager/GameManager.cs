@@ -57,11 +57,6 @@ public class GameManager : Singleton<GameManager>
         DEBUG_PrintReporter();
         DEBUG_PrintCompanyandArticle();
     }
-
-    void Update() {
-        
-    }
-
    
     void DEBUG_PrintReporter()
     {

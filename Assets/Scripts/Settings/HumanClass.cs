@@ -90,7 +90,6 @@ public class Reporter : Human
         survey = Random.Range(0, 21);
 
         reporter_index = index;
-       // reporter_index = company.index;
         advance_news = false;
         adn = new advancedNews();
         name = System.Enum.GetName(typeof(Setting.Names),Random.Range(0, System.Enum.GetValues(typeof(Setting.Names)).Length));
@@ -162,7 +161,7 @@ public class Reporter : Human
 
     public void WriteArticle(Society society, Company company) //기사 쓰기
     {
-        if (!this.advance_news) //심화 취재를 요구하지 않았다면
+        if (!advance_news) //심화 취재를 요구하지 않았다면
         {
             Article article = CreatArticle(company,society);
             company.AddArticleToList(article);
