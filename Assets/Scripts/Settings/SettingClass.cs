@@ -55,6 +55,7 @@ public class Society
     }
 }
 
+[System.Serializable]
 public class Company
 {
     public List<Reporter> reporters = new List<Reporter>(); //기자 목록
@@ -86,7 +87,6 @@ public class Company
         articles.Add(_article);
     }
 }
-
 
 [System.Serializable]
 public class Article

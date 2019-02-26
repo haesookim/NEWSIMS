@@ -12,7 +12,7 @@ public class DayScreen : MonoBehaviour
     
     void FadeIn(Society society, Company company)
     {
-        GetComponentInChildren<Text>().text = "Day " + GameManager.Instance.dateText.text;
+        GetComponentInChildren<Text>().text = "Day " + GameManager.Instance.society.day;
         GetComponent<Animator>().SetTrigger("Active");
     }
 }

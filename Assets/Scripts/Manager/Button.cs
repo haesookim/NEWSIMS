@@ -11,7 +11,8 @@ public class Button : MonoBehaviour
         DisplayOffice,
         DisappearPaperMenu,
         DividePoint,
-        SetDeepenArticle
+        SetDeepenArticle,
+        EndofDay
 
     }
 
@@ -56,6 +57,10 @@ public class Button : MonoBehaviour
                 SetDeepenArticle();
                 break;
 
+            case function.EndofDay :
+                EndofDay();
+                break;
+
         }
     }
 
@@ -63,6 +68,8 @@ public class Button : MonoBehaviour
    {
        if(!GameManager.Instance.in_DeskMenu)
        {
+           AudioManager.Instance.StartSFX("DeskClick");
+
            GameManager.Instance.deskWindow.SetActive(true);
            GameManager.Instance.officeWindow.SetActive(false);
            GameManager.Instance.in_DeskMenu = true;
@@ -97,8 +104,15 @@ public class Button : MonoBehaviour
     
     public void SetDeepenArticle() //심화취재 버튼 클릭시
     {
+        GameManager.Instance.selectedPaper.reporter.advance_news = true;
         GameManager.Instance.selectedPaper.article.advance = true;
+        GameManager.Instance.selectedPaper.reporter.adn = GameManager.Instance.selectedPaper.article;
         GameManager.Instance.temp_point = 0;
         DisappearPaperMenu();
+    }
+
+    public void EndofDay()
+    {
+        GameManager.Instance.EndofDay();
     }
 }

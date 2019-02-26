@@ -5,10 +5,10 @@ using UnityEngine;
 /// <summary>
 /// Manages every music/SFX
 /// </summary>
-public class AudioManager : MonoBehaviour
+public class AudioManager : Singleton<AudioManager>
 {
 
-    public static AudioManager instance = null;
+    //public static AudioManager instance = null;
     public AudioSource musicSou;
     public AudioSource sfxSou;
     public AudioSource sfxSou2;
@@ -18,13 +18,8 @@ public class AudioManager : MonoBehaviour
 
     public float fadeSpeed = 1f;
 
-    void Awake()
+    public override void Awake()
     {
-        if (instance == null)
-            instance = this;
-        else if (instance != this)
-            Destroy(gameObject);
-
         DontDestroyOnLoad(gameObject); 
     }
 

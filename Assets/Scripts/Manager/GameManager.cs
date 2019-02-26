@@ -11,7 +11,8 @@ public class GameManager : Singleton<GameManager>
     [HideInInspector] public int temp_point; //배정할 포인트의 임시 저장공간
 
     [HideInInspector] public Society society;
-    [HideInInspector] public Company company;
+    public Company company;
+    
     
     [HideInInspector] public bool in_DeskMenu = false; 
     [HideInInspector] public bool in_PaperMenu = false; //페이퍼메뉴가 켜져있는가?
@@ -51,9 +52,7 @@ public class GameManager : Singleton<GameManager>
 
         //하루의 시작
         BeginningofDay();
-        //dayManager.Play(); //하루의 시작 !
-
-                
+                 
         DEBUG_PrintReporter();
         DEBUG_PrintCompanyandArticle();
     }
@@ -88,7 +87,7 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    public void InitGame()
+    void InitGame()
     {
         //화면 전환용 캐싱
         GameObject window = GameObject.Find("Window").gameObject;
@@ -96,15 +95,27 @@ public class GameManager : Singleton<GameManager>
         deskWindow = window.transform.GetChild(1).gameObject;
         paperWindow = deskWindow.transform.GetChild(1).gameObject;
 
-        //기본 표시 사항 업데이트
-        dateText.text = society.day.ToString();
-        moneyText.text = company.money.ToString();
-        numberOfreporterText.text = company.reporters.Count.ToString();
+        SetWindowDefault();
 
+        AudioManager.Instance.StartMusic("gameplay");
+    }
+
+    public void SetWindowDefault()
+    {
         officeWindow.SetActive(true);
         deskWindow.SetActive(false); 
         paperWindow.SetActive(false);
+        in_PaperMenu = false;
+        in_DeskMenu = false;
         //테스트마다 껏다켰다하기 귀찮아서
+    }
+
+    void Update() 
+     {
+         //기본 표시 사항 업데이트
+        dateText.text = society.day.ToString();
+        moneyText.text = company.money.ToString();
+        numberOfreporterText.text = company.reporters.Count.ToString();
     }
 
     public void CreatGame()
@@ -138,11 +149,24 @@ public class GameManager : Singleton<GameManager>
     public void BeginningofDay()
     {
         EventManager.Instance.Do_BeginningofDay(society,company); //하루의 시작 이벤트 호출
+        PublishArticle();
+        
     }
 
     public void EndofDay()
     {
         EventManager.Instance.Do_EndofDay(society,company);
+
+        while(paper.Count != 0)
+        {
+            Destroy(paper[0]);
+            paper.RemoveAt(0);
+        }
+
+        society.day++;
+        SetWindowDefault();
+        BeginningofDay();
+
         //이벤트만 만들어두고 내용은 미구현. todo: 신문발행하고 기자들 액션 취한 후 시민들이 보고 스탯변동. 
     }
 
@@ -150,16 +174,21 @@ public class GameManager : Singleton<GameManager>
     ///게임 내 DeskWindow에 기사 오브젝트를 생성.   
     ///기자와 기사에 관한 정보를 모두 담고 있고, 인스펙터에서 확인 가능
     ///</summary>
-    public void PublishArticle(Reporter _reporter, Article _article) 
+    public void PublishArticle() 
     {
+        while(company.articles.Count != 0)
+        {
             GameObject paperObject = Instantiate(PaperPrefab,PaperPrefab.transform.position,Quaternion.identity,deskWindow.transform);
             Paper temp_paper = paperObject.GetComponent<Paper>();
-            temp_paper.reporter = _reporter;
-            temp_paper.article = _article;
+            temp_paper.reporter = company.reporters[company.articles[0].write_reporter_index-1];
+            temp_paper.article = company.articles[0];
 
             Vector3 paprerPosition = new Vector3(paperObject.transform.position.x,paperObject.transform.position.y,temp_paper.reporter.reporter_index);
             paperObject.transform.position = paprerPosition;
             paper.Add(paperObject);
+            company.articles.RemoveAt(0);
+        }
+            
     }
     
     public void UpdatePaperInfo() //일단 급하게 find로 때움. 기사 정보 업데이트함수

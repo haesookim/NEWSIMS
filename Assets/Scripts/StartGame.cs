@@ -7,7 +7,7 @@ public class StartGame : MonoBehaviour
     //SOUND
     private void Awake()
     {
-        AudioManager.instance.StartMusic("title");
+        AudioManager.Instance.StartMusic("title");
     }
     //
 

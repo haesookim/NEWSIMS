@@ -66,7 +66,9 @@ public class Reporter : Human
     public int exp; //경험치. (2^level)*totalPaper만큼의 경험치를 쌓으면 레벨업
     public int satisfaction = 100; //만족도 (0이 되면 퇴사)
     public bool advance_news; //심화 취재 체크 여부
-    public advancedNews adn; //심화 취재 정보 저장용
+
+    //public advancedNews adn; //심화 취재 정보 저장용
+    public Article adn; //심화 취재 정보 저장용
     public List<string> perks = new List<string>(); //기자에게 붙은 특성들
 
     public class advancedNews
@@ -91,7 +93,7 @@ public class Reporter : Human
 
         reporter_index = index;
         advance_news = false;
-        adn = new advancedNews();
+        //adn = new advancedNews();
         name = System.Enum.GetName(typeof(Setting.Names),Random.Range(0, System.Enum.GetValues(typeof(Setting.Names)).Length));
 
         float rand_value = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
@@ -165,17 +167,13 @@ public class Reporter : Human
         {
             Article article = CreatArticle(company,society);
             company.AddArticleToList(article);
-            GameManager.Instance.PublishArticle(this,article);
+           // GameManager.Instance.PublishArticle(this,article);
         }
         else //심화 취재를 요구했다면
         {
-            Article article = new Article(this.adn.adv_field, this.adn.adv_virality, society.day, this.adn.adv_vertification, this);
-            article.article_name = this.adn.adv_name;
-            article.centerStance = this.adn.adv_centerStance;
-            article.tolerance = this.adn.adv_tolerance;
-            article.up_virality = this.adn.adv_up_virality;
+            Article article = adn;
 
-            float new_vertification = (50 + this.survey - (article.virality * 5) + (Mathf.Floor(Random.Range(0.0f, 20.0f) * 100) / 100)) / 100f; //검증도 정보를 저장할 변수
+            float new_vertification = (50 + survey - (article.virality * 5) + (Mathf.Floor(Random.Range(0.0f, 20.0f) * 100) / 100)) / 100f; //검증도 정보를 저장할 변수
 
             float temp_rand_value = Random.Range(0.0f, 1.0f);
 
@@ -185,7 +183,7 @@ public class Reporter : Human
                 if (!article.up_virality) //파급력 상승
                 {
                     float rand_value = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
-                    if (rand_value <= this.interests[(Setting.Fields)System.Enum.Parse(typeof(Setting.Fields), article.article_field)])
+                    if (rand_value <= interests[(Setting.Fields)System.Enum.Parse(typeof(Setting.Fields), article.article_field)])
 
                     {
                         article.virality++;
@@ -197,30 +195,33 @@ public class Reporter : Human
                 company.AddArticleToList(article);
             }
             
-            this.advance_news = false; //심화 취재 여부 체크 해제
+            advance_news = false; //심화 취재 여부 체크 해제
 
-            for (int i = 0; i < this.perks.Count; i++) //퍽 중에 멀티태스킹이 있다면 심화취재를 보내도 다음날 기사를 생성한다.
+            for (int i = 0; i < perks.Count; i++) //퍽 중에 멀티태스킹이 있다면 심화취재를 보내도 다음날 기사를 생성한다.
             {
-                if (this.perks[i] == "멀티태스킹")
+                if (perks[i] == "멀티태스킹")
                 {
+                    Debug.Log(reporter_index+" 가 멀티태스킹하여 오늘도 기사를 씁니다!");
+
                     Article article2 = CreatArticle(company,society);
                     company.AddArticleToList(article2);
-                    GameManager.Instance.PublishArticle(this,article2);
+                   // GameManager.Instance.PublishArticle(this,article2);
                     break;
                 }
             }
         }
 
-        for (int i = 0; i < this.perks.Count; i++) //퍽 중에 다작이 있다면 20%확률로 기사를 하나 더 쓴다.
+        for (int i = 0; i < perks.Count; i++) //퍽 중에 다작이 있다면 20%확률로 기사를 하나 더 쓴다.
         {
-            if (this.perks[i] == "다작")
+            if (perks[i] == "다작")
             {
                 float rand_value_perk = Random.Range(0.0f, 1.0f);
                 if (rand_value_perk > 0.8f)
                 {
+                    Debug.Log(reporter_index+" 가 기사를 하나 더 씁니다!");
                     Article article = CreatArticle(company,society);
                     company.AddArticleToList(article);
-                    GameManager.Instance.PublishArticle(this,article);
+                   // GameManager.Instance.PublishArticle(this,article);
                 }
                 break;
             }
