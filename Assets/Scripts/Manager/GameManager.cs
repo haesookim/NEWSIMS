@@ -17,23 +17,29 @@ public class GameManager : Singleton<GameManager>
     [HideInInspector] public bool in_DeskMenu = false; 
     [HideInInspector] public bool in_PaperMenu = false; //페이퍼메뉴가 켜져있는가?
 
+
+    /////////////////////////////////////////화면컨트롤용 
     [HideInInspector] public GameObject officeWindow; //오피스 화면
     [HideInInspector] public GameObject deskWindow; //책상 화면
     [HideInInspector] public GameObject paperWindow; //상세 기사 화면
     public Paper selectedPaper; //상세 기사화면에 출력될 기사
+    //////////////////////////////////////////
 
 
     [Header("기사 오브젝트 작성용 데이터 풀")]
-    public List<GameObject> paper;
+    public List<GameObject> papers; //현재 생성되어있는 기사 오브젝트들
     public Sprite[] PaperImages; //이미지 데이터
     public Sprite[] ReporterImages; //이미지 데이터
     public GameObject PaperPrefab; //게임 내에 생성될 기사 오브젝트의 프리팹
 
-    [Header("Office Window Text 오브젝트")]
+    [Header("Office Window 오브젝트")]
     public Text dateText;
     public Text moneyText;
     public Text numberOfreporterText;
 
+    [Header("Desk Window 오브젝트")]
+    public ScrollRect paperTextView;
+    public GameObject newspaper;
 
     ///////////////////////////////////////////////////////////디버그용. 나중에 삭제
     [Header("FOR DEBUG")]
@@ -157,10 +163,10 @@ public class GameManager : Singleton<GameManager>
     {
         EventManager.Instance.Do_EndofDay(society,company);
 
-        while(paper.Count != 0)
+        while(papers.Count != 0)
         {
-            Destroy(paper[0]);
-            paper.RemoveAt(0);
+            Destroy(papers[0]);
+            papers.RemoveAt(0);
         }
 
         society.day++;
@@ -176,17 +182,23 @@ public class GameManager : Singleton<GameManager>
     ///</summary>
     public void PublishArticle() 
     {
+        Text view = paperTextView.content.GetComponentInChildren<Text>();
         while(company.articles.Count != 0)
         {
-            GameObject paperObject = Instantiate(PaperPrefab,PaperPrefab.transform.position,Quaternion.identity,deskWindow.transform);
+            Vector3 publishPosition = new Vector3(Random.Range(-1.0f,6.0f),Random.Range(-2f,3.0f),0); //랜덤위치에 등장
+            GameObject paperObject = Instantiate(PaperPrefab,publishPosition,Quaternion.identity,deskWindow.transform);
             Paper temp_paper = paperObject.GetComponent<Paper>();
             temp_paper.reporter = company.reporters[company.articles[0].write_reporter_index-1];
             temp_paper.article = company.articles[0];
+            //기사 오브젝트에 데이터 입력
 
             Vector3 paprerPosition = new Vector3(paperObject.transform.position.x,paperObject.transform.position.y,temp_paper.reporter.reporter_index);
-            paperObject.transform.position = paprerPosition;
-            paper.Add(paperObject);
+            paperObject.transform.position = paprerPosition; //z값 변경
+            papers.Add(paperObject);
             company.articles.RemoveAt(0);
+
+            view.text += "\n" + temp_paper.article.article_name + "\t" + "배분도: n";
+
         }
             
     }

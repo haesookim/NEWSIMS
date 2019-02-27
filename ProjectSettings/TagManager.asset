@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Desk
   - Paper
+  - NewsPaper
   layers:
   - Default
   - TransparentFX
