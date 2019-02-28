@@ -5,7 +5,7 @@ using UnityEngine;
 //실제 게임에 등장하는 기사 오브젝트 정보
 public class Paper : MonoBehaviour
 {
-    public Sprite reporterImage;
+    //public Sprite reporterImage;
     public Sprite paperImage;
     public Reporter reporter;
     public Article article;
@@ -19,10 +19,10 @@ public class Paper : MonoBehaviour
 
     void SetImage() //랜덤으로 기자 이미지와 기사 이미지 설정
     {
-        int randomFace = Random.Range(0,GameManager.Instance.ReporterImages.Length);
+        //int randomFace = Random.Range(0,GameManager.Instance.ReporterImages.Length);
         int randomPaper = Random.Range(0,GameManager.Instance.PaperImages.Length);
         
-        reporterImage = GameManager.Instance.ReporterImages[randomFace];
+        //reporterImage = GameManager.Instance.ReporterImages[randomFace];
         paperImage = GameManager.Instance.PaperImages[randomPaper];
 
     }

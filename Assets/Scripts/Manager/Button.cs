@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public class Button : MonoBehaviour
@@ -12,8 +13,14 @@ public class Button : MonoBehaviour
         DisappearPaperMenu,
         DividePoint,
         SetDeepenArticle,
-        EndofDay
-
+        EndofDay,
+        DisplayReporter,
+        DisappearReporter,
+        PageNumber,
+        DetailReporter,
+        BackButton,
+        MyButton,
+        EmployButton
     }
 
     [Header("클릭 시 실행될 함수")]
@@ -60,7 +67,27 @@ public class Button : MonoBehaviour
             case function.EndofDay :
                 EndofDay();
                 break;
-
+            case function.DisplayReporter :
+                ReporterWindow();
+                break;
+            case function.DisappearReporter :
+                DisappearReporterWindow();
+                break;
+            case function.PageNumber :
+                PageChange();
+                break;
+            case function.DetailReporter :
+                ReporterDetail();
+                break;
+            case function.BackButton :
+                BackButton();
+                break;
+            case function.MyButton :
+                MyButton();
+                break;
+            case function.EmployButton :
+                EmployButton();
+                break;
         }
     }
 
@@ -114,5 +141,96 @@ public class Button : MonoBehaviour
     public void EndofDay()
     {
         GameManager.Instance.EndofDay();
+    }
+
+    public void ReporterWindow() //인사관리 명부 클릭시
+    {
+        if (GameManager.Instance.in_DeskMenu && !GameManager.Instance.in_ReporterMenu)
+        {
+            GameManager.Instance.reporterManager.SetActive(true);
+            GameManager.Instance.in_ReporterMenu = true;
+        }
+    }
+
+    public void DisappearReporterWindow() //인사관리창 X버튼 클릭시
+    {
+        if (GameManager.Instance.in_DeskMenu && GameManager.Instance.in_ReporterMenu)
+        {
+            MyButton();
+            GameManager.Instance.reporterManager.transform.GetChild(1).GetChild(0).gameObject.SetActive(true);
+            GameManager.Instance.Page.SetActive(true);
+            for (int i = 0; i < GameManager.Instance.detail.transform.GetChild(13).childCount; i++)
+            {
+                GameManager.Instance.detail.transform.GetChild(13).GetChild(i).GetComponent<Text>().text = "";
+            }
+            GameManager.Instance.detail.gameObject.SetActive(false);
+            GameManager.Instance.HideOtherReporter(0);
+            GameManager.Instance.reporterManager.SetActive(false);
+            GameManager.Instance.in_ReporterMenu = false;
+        }
+    }
+
+    public void PageChange()
+    {
+        int num = transform.GetComponent<PageButton>().page_num;
+        GameManager.Instance.HideOtherReporter(num-1);
+    }
+
+    public void ReporterDetail()
+    {
+        GameManager.Instance.reporterManager.transform.GetChild(1).GetChild(0).gameObject.SetActive(false);
+        GameManager.Instance.Page.SetActive(false);
+        GameManager.Instance.detail.gameObject.SetActive(true);
+
+        Reporter rp = transform.GetComponent<VisualizeReporter>().reporter;
+
+        //Detail에 정보 넣기
+        GameManager.Instance.detail.transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = rp.reporterImage;
+        GameManager.Instance.detail.transform.GetChild(2).GetComponent<Text>().text = "이름 : " + rp.name;
+        GameManager.Instance.detail.transform.GetChild(3).GetComponent<Text>().text = "주 분야 : " + transform.GetComponent<VisualizeReporter>().mf;
+        GameManager.Instance.detail.transform.GetChild(4).GetComponent<Text>().text = "레벨 : " + rp.level.ToString();
+        GameManager.Instance.detail.transform.GetChild(5).GetComponent<Text>().text = "경험치 : " + rp.exp.ToString();
+        GameManager.Instance.detail.transform.GetChild(6).GetComponent<Text>().text = "필력 : " + rp.writing.ToString();
+        GameManager.Instance.detail.transform.GetChild(7).GetComponent<Text>().text = "논리력 : " + rp.logic.ToString();
+        GameManager.Instance.detail.transform.GetChild(8).GetComponent<Text>().text = "조사력 : " + rp.survey.ToString();
+        GameManager.Instance.detail.transform.GetChild(9).GetComponent<Text>().text = "경제적 입장 : " + rp.econStance.ToString();
+        GameManager.Instance.detail.transform.GetChild(10).GetComponent<Text>().text =  "사회적 입장 : " + rp.socialStance.ToString();
+        GameManager.Instance.detail.transform.GetChild(11).GetComponent<Text>().text = "만족도 : " + rp.satisfaction.ToString();
+        for (int i = 0; i < rp.perks.Count; i++)
+        {
+            GameManager.Instance.detail.transform.GetChild(13).GetChild(i).GetComponent<Text>().text = rp.perks[i];
+        }
+        //
+    }
+
+    public void BackButton()
+    {
+        GameManager.Instance.reporterManager.transform.GetChild(1).GetChild(0).gameObject.SetActive(true);
+        GameManager.Instance.Page.SetActive(true);
+        for(int i = 0; i < GameManager.Instance.detail.transform.GetChild(13).childCount; i++){
+            GameManager.Instance.detail.transform.GetChild(13).GetChild(i).GetComponent<Text>().text = "";
+        }
+        GameManager.Instance.detail.gameObject.SetActive(false);
+    }
+
+    public void MyButton()
+    {
+        GameManager.Instance.reporterManager.transform.GetChild(1).gameObject.SetActive(true);
+        GameManager.Instance.reporterManager.transform.GetChild(2).gameObject.SetActive(false);
+    }
+
+    public void EmployButton()
+    {
+        GameManager.Instance.reporterManager.transform.GetChild(1).GetChild(0).gameObject.SetActive(true);
+        GameManager.Instance.Page.SetActive(true);
+        for (int i = 0; i < GameManager.Instance.detail.transform.GetChild(13).childCount; i++)
+        {
+            GameManager.Instance.detail.transform.GetChild(13).GetChild(i).GetComponent<Text>().text = "";
+        }
+        GameManager.Instance.detail.gameObject.SetActive(false);
+        GameManager.Instance.HideOtherReporter(0);
+
+        GameManager.Instance.reporterManager.transform.GetChild(1).gameObject.SetActive(false);
+        GameManager.Instance.reporterManager.transform.GetChild(2).gameObject.SetActive(true);
     }
 }

@@ -57,6 +57,7 @@ public class Citizen : Human
 [System.Serializable]
 public class Reporter : Human
 {
+    public Sprite reporterImage; //기자 얼굴
     public int reporter_index; //기자 인덱스
     public string name; //이름
     public int writing; //필력, 시작할 때 0~20 사이의 무작위 값
@@ -84,6 +85,9 @@ public class Reporter : Human
 
     public Reporter(Setting setting, Company company, int index)
     {
+        int randomFace = Random.Range(0, GameManager.Instance.ReporterImages.Length);
+        reporterImage = GameManager.Instance.ReporterImages[randomFace];
+
         level = 0; //레벨 0에서 시작
         exp = 0; //경험치 0에서 시작
 

@@ -42,7 +42,7 @@ public class Drag : MonoBehaviour
     private void OnMouseDown() //누를 때 클릭된 프리팹을 앞으로 옮김
     {
         inClick = true;
-        if (!GameManager.Instance.in_PaperMenu)
+        if (!GameManager.Instance.in_PaperMenu && !GameManager.Instance.in_ReporterMenu)
         {
             timer1 = Time.realtimeSinceStartup;
             originPosition = transform.position;
@@ -55,7 +55,7 @@ public class Drag : MonoBehaviour
     private void OnMouseDrag() //드래그했을 때 이동
     {
         inClick = true;
-        if (!GameManager.Instance.in_PaperMenu) 
+        if (!GameManager.Instance.in_PaperMenu && !GameManager.Instance.in_ReporterMenu) 
         {
             Vector3 mousePosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10);
             objPosition = Camera.main.ScreenToWorldPoint(mousePosition);
@@ -67,7 +67,7 @@ public class Drag : MonoBehaviour
     private void OnMouseUp() //마우스를 뗐을 때
     {
         inClick = false;
-        if (!GameManager.Instance.in_PaperMenu)
+        if (!GameManager.Instance.in_PaperMenu && !GameManager.Instance.in_ReporterMenu)
         {
             timer2 = Time.realtimeSinceStartup;
             
@@ -105,7 +105,7 @@ public class Drag : MonoBehaviour
     
     private void OnMouseOver() //마우스 올리고 있을 때
     {
-        if(!inClick && !GameManager.Instance.in_PaperMenu)
+        if(!inClick && !GameManager.Instance.in_PaperMenu && !GameManager.Instance.in_ReporterMenu)
             infoWindow.SetActive(true);  
         else 
             infoWindow.SetActive(false);  
