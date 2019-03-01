@@ -99,8 +99,6 @@ public class Article
     public float centerStance = 0f; //기사의 입장
     public float tolerance = 0f; //Center로부터 얼마나 떨어진 사람까지 우호적으로 받아들이는가?
 
-    public int assignedPoint; //기사에 할당된 포인트
-
     public bool advance = false; //심화 취재의 대상인가?
     public bool up_virality = false; //심화 취재를 통한 파급력 증가 여부
 

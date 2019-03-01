@@ -167,7 +167,6 @@ public class Reporter : Human
         {
             Article article = CreatArticle(company,society);
             company.AddArticleToList(article);
-           // GameManager.Instance.PublishArticle(this,article);
         }
         else //심화 취재를 요구했다면
         {
@@ -205,7 +204,6 @@ public class Reporter : Human
 
                     Article article2 = CreatArticle(company,society);
                     company.AddArticleToList(article2);
-                   // GameManager.Instance.PublishArticle(this,article2);
                     break;
                 }
             }
@@ -221,7 +219,6 @@ public class Reporter : Human
                     Debug.Log(reporter_index+" 가 기사를 하나 더 씁니다!");
                     Article article = CreatArticle(company,society);
                     company.AddArticleToList(article);
-                   // GameManager.Instance.PublishArticle(this,article);
                 }
                 break;
             }

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 532144354087383481}
   - component: {fileID: 3698026991075535306}
   - component: {fileID: 531253677297371980}
-  - component: {fileID: 5392417214485685448}
+  - component: {fileID: 9148575112200282840}
   - component: {fileID: 225414188062621653}
   m_Layer: 0
   m_Name: AssignedPaper
@@ -72,15 +72,15 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: 57ccdd42c9e84ac4b9bf4e8fc7debebc, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1f111caa872631d4ca7a31332b202daa, type: 3}
   m_Color: {r: 0.9695743, g: 1, b: 0.5424528, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 2.52, y: 3.03}
+  m_Size: {x: 0.56, y: 0.8}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!61 &3698026991075535306
@@ -101,7 +101,7 @@ BoxCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 1}
     oldSize: {x: 0.56, y: 0.8}
-    newSize: {x: 2.52, y: 3.03}
+    newSize: {x: 0.56, y: 0.8}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -130,7 +130,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &5392417214485685448
+--- !u!114 &9148575112200282840
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -142,6 +142,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 049c55a4788418640ae4626583df062a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  originData: {fileID: 0}
 --- !u!114 &225414188062621653
 MonoBehaviour:
   m_ObjectHideFlags: 0

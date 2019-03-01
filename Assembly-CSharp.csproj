@@ -61,11 +61,11 @@
      <Compile Include="Assets\Scripts\Manager\GameManager.cs" />
      <Compile Include="Assets\Scripts\Manager\LoadingSceneManager.cs" />
      <Compile Include="Assets\Scripts\Manager\Singleton.cs" />
-     <Compile Include="Assets\Scripts\Paper\AssignedPaper.cs" />
+     <Compile Include="Assets\Scripts\Paper\AssignedPaperDrag.cs" />
      <Compile Include="Assets\Scripts\Paper\Drag.cs" />
      <Compile Include="Assets\Scripts\Paper\NewsPaper.cs" />
      <Compile Include="Assets\Scripts\Paper\Paper.cs" />
-     <Compile Include="Assets\Scripts\PointSlider.cs" />
+     <Compile Include="Assets\Scripts\Paper\PaperDrag.cs" />
      <Compile Include="Assets\Scripts\Settings\HumanClass.cs" />
      <Compile Include="Assets\Scripts\Settings\SettingClass.cs" />
      <Compile Include="Assets\Scripts\StartGame.cs" />

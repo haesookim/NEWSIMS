@@ -156,7 +156,6 @@ public class GameManager : Singleton<GameManager>
     {
         EventManager.Instance.Do_BeginningofDay(society,company); //하루의 시작 이벤트 호출
         PublishArticle();
-        
     }
 
     public void EndofDay()
@@ -183,50 +182,28 @@ public class GameManager : Singleton<GameManager>
     public void PublishArticle() 
     {
         Text view = paperTextView.content.GetComponentInChildren<Text>();
-        while(company.articles.Count != 0)
+        
+        for(int i=0; i<company.articles.Count; i++)
         {
-            Vector3 publishPosition = new Vector3(Random.Range(-1.0f,6.0f),Random.Range(-2f,3.0f),0); //랜덤위치에 등장
-            GameObject paperObject = Instantiate(PaperPrefab,publishPosition,Quaternion.identity,deskWindow.transform);
-            Paper temp_paper = paperObject.GetComponent<Paper>();
-            temp_paper.reporter = company.reporters[company.articles[0].write_reporter_index-1];
-            temp_paper.article = company.articles[0];
-            //기사 오브젝트에 데이터 입력
-
-            Vector3 paprerPosition = new Vector3(paperObject.transform.position.x,paperObject.transform.position.y,temp_paper.reporter.reporter_index);
-            paperObject.transform.position = paprerPosition; //z값 변경
-            papers.Add(paperObject);
-            company.articles.RemoveAt(0);
-
-            view.text += "\n" + temp_paper.article.article_name + "\t" + "배분도: n";
-
-        }
+            Vector3 publishPosition = new Vector3(Random.Range(-2.0f,5.0f),Random.Range(-3f,3.0f),0); //WorkDesk위 랜덤위치에 등장
+            CreateArticle(publishPosition,i);
             
+            view.text += "\n" + company.articles[i].article_name + "\t" + "배분도: n";            
+            //지난 기록을 보려면.. 삭제하면 안되고 계속 쌓아야 할듯? 구조도 변경해야 할거고.
+        }
     }
-    
-    public void UpdatePaperInfo() //일단 급하게 find로 때움. 기사 정보 업데이트함수
+
+    public void CreateArticle(Vector3 position, int _article_index)
     {
-        Text totalPoint = GameObject.Find("PointNumber").GetComponent<Text>();
-        totalPoint.text = point.ToString();
-        Text[] info = GameObject.Find("PaperInfo").GetComponentsInChildren<Text>();
-        info[1].text = selectedPaper.reporter.name;
-        info[3].text = selectedPaper.article.article_field;
-        info[5].text = selectedPaper.article.virality.ToString();
-        info[7].text = selectedPaper.article.vertification.ToString();
-        info[9].text = selectedPaper.article.centerStance.ToString();
-        info[11].text = selectedPaper.article.tolerance.ToString();
+        GameObject paperObject = Instantiate(PaperPrefab,position,Quaternion.identity,deskWindow.transform);
+        Paper temp_paper = paperObject.GetComponent<Paper>();
+        temp_paper.reporter = company.reporters[company.articles[_article_index].write_reporter_index-1];
+        temp_paper.article = company.articles[_article_index];
+        //기사 오브젝트에 데이터 입력
+
+        Vector3 paprerPosition = new Vector3(paperObject.transform.position.x,paperObject.transform.position.y,temp_paper.reporter.reporter_index);
+        paperObject.transform.position = paprerPosition; //z값 변경
+        papers.Add(paperObject);
     }
-
-    public void DisplayPaperMenu() //상세 기사화면 띄우기
-   {
-        in_PaperMenu = true;
-        paperWindow.SetActive(true);
-
-        bool advance = selectedPaper.article.advance;
-        paperWindow.transform.GetChild(1).gameObject.SetActive(!advance);
-        paperWindow.transform.GetChild(2).gameObject.SetActive(advance);
-
-        if(!advance)
-            UpdatePaperInfo();
-   }
 
 }

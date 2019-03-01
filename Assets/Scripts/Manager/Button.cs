@@ -49,10 +49,6 @@ public class Button : MonoBehaviour
                 DisappearPaperMenu();
                 break;
 
-            case function.DividePoint :
-                DividePoint();
-                break;
-
             case function.SetDeepenArticle :
                 SetDeepenArticle();
                 break;
@@ -94,13 +90,6 @@ public class Button : MonoBehaviour
         GameManager.Instance.paperWindow.transform.GetChild(2).gameObject.SetActive(false);
    }
 
-    public void DividePoint() //확인 버튼 클릭시 포인트 분배 처리
-    {
-        GameManager.Instance.selectedPaper.article.assignedPoint = GameManager.Instance.temp_point;
-        GameManager.Instance.point -= GameManager.Instance.temp_point;
-        GameManager.Instance.temp_point = 0;
-        DisappearPaperMenu();
-    }
     
     public void SetDeepenArticle() //심화취재 버튼 클릭시
     {
