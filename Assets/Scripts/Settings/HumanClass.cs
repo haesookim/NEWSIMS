@@ -67,6 +67,7 @@ public class Reporter : Human
     public int exp; //경험치. (2^level)*totalPaper만큼의 경험치를 쌓으면 레벨업
     public int satisfaction = 100; //만족도 (0이 되면 퇴사)
     public bool advance_news; //심화 취재 체크 여부
+    public bool is_fired; //해고되었는지 여부
 
     //public advancedNews adn; //심화 취재 정보 저장용
     public Article adn; //심화 취재 정보 저장용
@@ -97,6 +98,8 @@ public class Reporter : Human
 
         reporter_index = index;
         advance_news = false;
+        is_fired = false;
+
         //adn = new advancedNews();
         name = System.Enum.GetName(typeof(Setting.Names),Random.Range(0, System.Enum.GetValues(typeof(Setting.Names)).Length));
 

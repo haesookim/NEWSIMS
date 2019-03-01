@@ -6723,6 +6723,7 @@ GameObject:
   - component: {fileID: 1106420049}
   - component: {fileID: 1106420048}
   - component: {fileID: 1106420047}
+  - component: {fileID: 1106420051}
   m_Layer: 0
   m_Name: FireButton
   m_TagString: Untagged
@@ -6854,6 +6855,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1106420045}
   m_CullTransparentMesh: 0
+--- !u!114 &1106420051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1106420045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c341cdc1322e74241835e3e747c4ed9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  functionName: 13
 --- !u!1 &1109490081
 GameObject:
   m_ObjectHideFlags: 0
@@ -10012,6 +10026,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1620669643}
+  - component: {fileID: 1620669644}
   m_Layer: 0
   m_Name: ReporterManage
   m_TagString: Untagged
@@ -10037,6 +10052,73 @@ Transform:
   m_Father: {fileID: 1412841844}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1620669644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1620669642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02575915adba45a46952712d8887f0a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vrs: []
+  myReporter:
+    econStance: 0
+    socialStance: 0
+    reporterImage: {fileID: 0}
+    reporter_index: 0
+    name: 
+    writing: 0
+    logic: 0
+    survey: 0
+    level: 0
+    exp: 0
+    satisfaction: 0
+    advance_news: 0
+    is_fired: 0
+    adn:
+      article_field: 
+      article_name: 
+      write_reporter_index: 0
+      virality: 0
+      date: 0
+      vertification: 0
+      centerStance: 0
+      tolerance: 0
+      assignedPoint: 0
+      advance: 0
+      up_virality: 0
+    perks: []
+  employReporter:
+    econStance: 0
+    socialStance: 0
+    reporterImage: {fileID: 0}
+    reporter_index: 0
+    name: 
+    writing: 0
+    logic: 0
+    survey: 0
+    level: 0
+    exp: 0
+    satisfaction: 0
+    advance_news: 0
+    is_fired: 0
+    adn:
+      article_field: 
+      article_name: 
+      write_reporter_index: 0
+      virality: 0
+      date: 0
+      vertification: 0
+      centerStance: 0
+      tolerance: 0
+      assignedPoint: 0
+      advance: 0
+      up_virality: 0
+    perks: []
 --- !u!1 &1623551617
 GameObject:
   m_ObjectHideFlags: 0

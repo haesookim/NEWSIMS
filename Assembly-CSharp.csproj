@@ -74,6 +74,7 @@
     <Compile Include="Assets\Scripts\Paper\Paper.cs" />
     <Compile Include="Assets\Scripts\PointSlider.cs" />
     <Compile Include="Assets\Scripts\Reporter\PageButton.cs" />
+    <Compile Include="Assets\Scripts\Reporter\ReporterManager.cs" />
     <Compile Include="Assets\Scripts\Reporter\VisualizeReporter.cs" />
     <Compile Include="Assets\Scripts\Settings\HumanClass.cs" />
     <Compile Include="Assets\Scripts\Settings\SettingClass.cs" />

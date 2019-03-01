@@ -20,7 +20,8 @@ public class Button : MonoBehaviour
         DetailReporter,
         BackButton,
         MyButton,
-        EmployButton
+        EmployButton,
+        FireButton
     }
 
     [Header("클릭 시 실행될 함수")]
@@ -87,6 +88,9 @@ public class Button : MonoBehaviour
                 break;
             case function.EmployButton :
                 EmployButton();
+                break;
+            case function.FireButton :
+                FireButton();
                 break;
         }
     }
@@ -182,7 +186,17 @@ public class Button : MonoBehaviour
         GameManager.Instance.Page.SetActive(false);
         GameManager.Instance.detail.gameObject.SetActive(true);
 
-        Reporter rp = transform.GetComponent<VisualizeReporter>().reporter;
+        GameManager.Instance.reporterManager.GetComponent<ReporterManager>().myReporter = transform.GetComponent<VisualizeReporter>().reporter;
+        Reporter rp = GameManager.Instance.reporterManager.GetComponent<ReporterManager>().myReporter;
+
+        if (!rp.is_fired)
+        {
+            GameManager.Instance.detail.transform.GetChild(14).GetComponent<Image>().color = new Color(255f,255f,255f);
+        }
+        else
+        {
+            GameManager.Instance.detail.transform.GetChild(14).GetComponent<Image>().color = new Color(255f, 255f, 0f);
+        }
 
         //Detail에 정보 넣기
         GameManager.Instance.detail.transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = rp.reporterImage;
@@ -232,5 +246,39 @@ public class Button : MonoBehaviour
 
         GameManager.Instance.reporterManager.transform.GetChild(1).gameObject.SetActive(false);
         GameManager.Instance.reporterManager.transform.GetChild(2).gameObject.SetActive(true);
+    }
+
+    public void FireButton()
+    {
+        if (!ReporterManager.Instance.myReporter.is_fired)
+        {
+            for (int i = 0; i < GameManager.Instance.company.reporters.Count; i++)
+            {
+                if (ReporterManager.Instance.myReporter.reporter_index == GameManager.Instance.company.reporters[i].reporter_index)
+                {
+                    GameManager.Instance.company.reporters[i].is_fired = true;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < GameManager.Instance.company.reporters.Count; i++)
+            {
+                if (ReporterManager.Instance.myReporter.reporter_index == GameManager.Instance.company.reporters[i].reporter_index)
+                {
+                    GameManager.Instance.company.reporters[i].is_fired = false;
+                    break;
+                }
+            }
+        }
+
+        for (int i = 0; i < ReporterManager.Instance.vrs.Count; i++)
+        {
+            ReporterManager.Instance.vrs[i].UpdateStatus();
+            ReporterManager.Instance.vrs[i].DisplayFireIcon();
+        }
+
+        BackButton();
     }
 }

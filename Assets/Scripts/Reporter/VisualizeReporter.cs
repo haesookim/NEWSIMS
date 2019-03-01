@@ -20,6 +20,8 @@ public class VisualizeReporter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        ReporterManager.Instance.AddVrsToList(this);
+
         reporterImage.sprite = reporter.reporterImage;
 
         name.text = "이름 : " + reporter.name;
@@ -61,6 +63,18 @@ public class VisualizeReporter : MonoBehaviour
                 survey.text = "조사력 : " + reporter.survey.ToString();
                 break;
             }
+        }
+    }
+
+    public void DisplayFireIcon()
+    {
+        if (!reporter.is_fired)
+        {
+            transform.GetChild(7).gameObject.SetActive(false);
+        }
+        else
+        {
+            transform.GetChild(7).gameObject.SetActive(true);
         }
     }
 }
