@@ -18,9 +18,9 @@ public class AssignedPaperDrag : Drag
     }
 
 
+
     protected override void OnMouseUp() 
     {
-        inClick = false;
         if (!GameManager.Instance.in_PaperMenu)
         {
             timer2 = Time.realtimeSinceStartup;
@@ -39,16 +39,11 @@ public class AssignedPaperDrag : Drag
 
             if (timer2 - timer1 < 0.13f) //클릭이라면
             {
-                SearchAround();
+              //  SearchAround();
             }
         }
     }
 
-    void SearchAround()
-    {
-        Debug.Log("실행!");
-        NewsPaper.Instance.SearchAround(this);
-    }
 
     void ReturnArticle() //지면에서 빼기 
     {
@@ -64,6 +59,13 @@ public class AssignedPaperDrag : Drag
         if(other.CompareTag("WorkDesk"))
         {
                 inWorkDesk = true;
+         }
+    }
+
+    private void OnTriggerExit2D(Collider2D other) {
+        if(other.CompareTag("WorkDesk"))
+        {
+                inWorkDesk = false;
          }
     }
 

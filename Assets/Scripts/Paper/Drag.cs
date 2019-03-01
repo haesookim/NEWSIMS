@@ -31,6 +31,7 @@ public class Drag : MonoBehaviour
         inClick = true;
         if (!GameManager.Instance.in_PaperMenu)
         {
+            
             timer1 = Time.realtimeSinceStartup;
             originPosition = transform.position;
             spriteRender.sortingOrder = 5;   

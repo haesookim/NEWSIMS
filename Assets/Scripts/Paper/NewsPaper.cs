@@ -35,8 +35,8 @@ public class NewsPaper : Singleton<NewsPaper>
 {
     public bool inPaper;
     Grid grid = new Grid(); 
-    Vector3[,] paperIndex; //인덱스에 따른 위치좌표를 저장한 배열
-    AssignedPaperData[,] assignedPapers; //실제 인덱스에 들어있는 기사오브젝트 정보
+    public Vector3[,] paperIndex; //인덱스에 따른 위치좌표를 저장한 배열
+    public AssignedPaperData[,] assignedPapers; //실제 인덱스에 들어있는 기사오브젝트 정보
 
     AssignedPaperData outerNULL; //배열의 외곽 체크용 NULL 데이터
    
@@ -81,9 +81,9 @@ public class NewsPaper : Singleton<NewsPaper>
         
 
         //배열 내부 위치값 설정
-        for(int i = 1 ; i< grid.x -1; i++)
+        for(int i = 0 ; i< grid.x -1; i++)
         {
-            for(int j = 1; j< grid.y -1; j++)
+            for(int j = 0; j< grid.y -1; j++)
             {
                 paperIndex[j,i] = new Vector3( transform.position.x + (i*2*0.56f), transform.position.y + (-j * 1.5f * 0.80f),0);
                 assignedPapers[j,i] = null;
@@ -113,23 +113,24 @@ public class NewsPaper : Singleton<NewsPaper>
         int x = Mathf.FloorToInt( (_x - transform.position.x) / (2f * 0.56f)); //위치값 - 기준값 / x스케일 * 기사프리팹크기
         int y = Mathf.FloorToInt( (_y - transform.position.y) / (1.5f * -0.8f));
 
-        x = Mathf.Clamp(x,0,grid.x - 1);
-        y = Mathf.Clamp(y,0,grid.y - 1);
+        x = Mathf.Clamp(x,0,grid.x - 3);
+        y = Mathf.Clamp(y,0,grid.y - 3);
 
         Grid index= new Grid(x,y);
         return index;
     }
 
-    public void PreviewPaper(Transform paper)
+    public void PreviewPaper(Vector3 paper)
     {
-        origin = paper.gameObject.transform.position;
+        origin = paper;
         index = ConvertPositionToArray(origin.y,origin.x);
 
-        if(paperIndex[index.y,index.x] != null)
+        if(assignedPapers[index.y,index.x] != outerNULL)
         {   
             preview.transform.position = paperIndex[index.y,index.x];
         }
     }
+
 
     /////////////////////// 배치한 기사의 이동, 확장(탐색), 제외
     public void MovePaperAToB(Grid _A, Grid _B) //이동
@@ -143,109 +144,4 @@ public class NewsPaper : Singleton<NewsPaper>
         assignedPapers[paper.y,paper.x] = null;
     }
 
-    public void ExpandPaper() //확장
-    {
-
-    }
-
-    public struct EmptyDirection
-    {
-        public bool north; public bool south; public bool east; public bool west;
-    }
-
-    public void SearchAround(AssignedPaperDrag paper)
-    {
-        EmptyDirection emptyDirection = new EmptyDirection();;
-        Grid size = paper.size;
-
-        Grid paperIndex = paper.index;
-        Grid searchRange = new Grid(paperIndex.x + (size.x - 1), paperIndex.y + (size.y-1)); //탐색 범위
-        for(int i = paperIndex.x; i <searchRange.x; i++ )
-        {
-            for(int j = paperIndex.y; j<searchRange.y; j++)
-            {
-                emptyDirection = ConditionCheck(paperIndex);
-            }
-        }
-
-       DEBUG_Direction(emptyDirection);
-
-    }
-
-    void DEBUG_Direction(EmptyDirection direction)
-    {
-         if(direction.north) Debug.Log("위가 비었습니다");
-         if(direction.south) Debug.Log("아래가 비었습니다");
-         if(direction.west) Debug.Log("서쪽이 비었습니다");
-         if(direction.east) Debug.Log("동쪽이 비었습니다");
-    }
-
-
-    EmptyDirection ConditionCheck(Grid originIndex)
-    {
-        EmptyDirection emptyDirection = new EmptyDirection();
-        AssignedPaperData origin = assignedPapers[index.y,index.x];
-
-        //1칸짜리 기사일 경우
-        if(Direction(-1,0) != origin && Direction(1,0) != origin && Direction(0,-1) != origin && Direction(0,1) != origin)
-        {
-            if(Direction(1,0) == null) emptyDirection.north = true;
-            if(Direction(-1,0) == null) emptyDirection.south = true;
-            if(Direction(0,1) == null) emptyDirection.east = true;
-            if(Direction(0,-1) == null) emptyDirection.west = true;
-        }
-        else //2칸 이상의 기사일 경우
-        {
-            //상단
-            if(Direction(-1,0) == origin && Direction(1,0) != origin) 
-            {
-                if(Direction(1,0) == null) emptyDirection.north = true;
-
-                if(Direction(0,1) == origin && Direction(0,-1) != origin) 
-                    if(Direction(0,-1) == null) emptyDirection.west = true;
-                
-                if(Direction(0,1) == origin && Direction(0,-1) == origin) 
-                    //아무것도 하지 않음
-               
-                if(Direction(0,1) != origin && Direction(0,-1) == origin) 
-                    if(Direction(0,1) == null) emptyDirection.east = true;
-                
-            }
-
-            //중단
-            else if(Direction(-1,0) == origin && Direction(1,0) == origin) 
-            {
-                if(Direction(0,1) == origin && Direction(0,-1) != origin) 
-                    if(Direction(0,-1) == null) emptyDirection.west = true;
-                
-                if(Direction(0,1) == origin && Direction(0,-1) == origin) 
-                    //아무것도 하지 않음
-               
-                if(Direction(0,1) != origin && Direction(0,-1) == origin) 
-                    if(Direction(0,1) == null) emptyDirection.east = true;
-            }
-
-            //하단
-            else if(Direction(-1,0) != origin && Direction(1,0) == origin) 
-            {
-                if(Direction(-1,0) == null) emptyDirection.south = true;
-
-                if(Direction(0,1) == origin && Direction(0,-1) != origin) 
-                    if(Direction(0,-1) == null) emptyDirection.west = true;
-                
-                if(Direction(0,1) == origin && Direction(0,-1) == origin) 
-                    //아무것도 하지 않음
-               
-                if(Direction(0,1) != origin && Direction(0,-1) == origin) 
-                    if(Direction(0,1) == null) emptyDirection.east = true;
-            }    
-        }
-        
-        return emptyDirection;
-    }
-
-    AssignedPaperData Direction(int _y, int _x)
-    {
-        return assignedPapers[index.y + _y,index.x + _x];
-    }
 }

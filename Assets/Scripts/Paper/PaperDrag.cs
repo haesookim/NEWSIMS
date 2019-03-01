@@ -50,14 +50,13 @@ public class PaperDrag : Drag
         if(other.CompareTag("NewsPaper"))
         {
             NewsPaper.Instance.inPaper = true;
-            NewsPaper.Instance.PreviewPaper(transform);
+            NewsPaper.Instance.PreviewPaper(transform.position);
         }
     }
 
     void OnTriggerExit2D(Collider2D other) {
         if(other.CompareTag("NewsPaper"))
         {
-            Debug.Log("ddd");
             NewsPaper.Instance.inPaper = false;
         }
     }
