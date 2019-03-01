@@ -287,3 +287,107 @@ public class Reporter : Human
 
 }
 
+//리포터를 그냥 쓰면 이벤트매니저에서 뭐라고 해서 고용 가능 기자를 따로 만듬
+[System.Serializable] 
+public class EmReporter : Human
+{
+    public Sprite reporterImage; //기자 얼굴
+    public int reporter_index; //기자 인덱스
+    public string name; //이름
+    public int writing; //필력, 시작할 때 0~20 사이의 무작위 값
+    public int logic; //논리력, 시작할 때 0~20 사이의 무작위 값
+    public int survey; //조사 능력, 시작할 때 0~20 사이의 무작위 값
+    public int level; //레벨
+
+    public bool is_employed; //고용되었는가?
+    public int buyout; //고용값
+
+    public List<string> perks = new List<string>(); //기자에게 붙은 특성들
+
+    public EmReporter(Setting setting, Company company, int index)
+    {
+        int randomFace = Random.Range(0, GameManager.Instance.ReporterImages.Length);
+        reporterImage = GameManager.Instance.ReporterImages[randomFace];
+
+        level = 0; //레벨 0에서 시작
+
+        writing = Random.Range(0, 21);
+        logic = Random.Range(0, 21);
+        survey = Random.Range(0, 21);
+
+        reporter_index = index;
+        is_employed = false;
+
+        name = System.Enum.GetName(typeof(Setting.Names), Random.Range(0, System.Enum.GetValues(typeof(Setting.Names)).Length));
+
+        float rand_value = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
+        if (rand_value <= setting.startingPerkChance) //특성 넣기
+        {
+            string temp_perk = System.Enum.GetName(typeof(Setting.Perks), Random.Range(0, System.Enum.GetValues(typeof(Setting.Perks)).Length));
+            AddPerkToList(temp_perk);
+        }
+
+        while (true)
+        {
+            float temp_levelUp = Random.Range(0.0f, 1.0f);
+            if (temp_levelUp >= 0.05)
+            {
+                break;
+            }
+            LevelUp();
+        }
+        buyout = (writing + logic + survey) / 2;
+    }
+
+    public void AddPerkToList(string perk) //특성을 리스트에 추가하는 함수
+    {
+        perks.Add(perk);
+        switch (perk) //넣어졌을 때 바로 발동하는 특성들
+        {
+            case "제목학원":
+                writing += 10;
+                break;
+            case "천재":
+                logic += 10;
+                break;
+            case "철저함":
+                survey += 10;
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void LevelUp() //레벨업
+    {
+        writing += Random.Range(0, 6);
+        logic += Random.Range(0, 6);
+        survey += Random.Range(0, 6); //모든 능력치가 0~5 사이의 무작위 값만큼 상승
+
+        if (perks.Count != System.Enum.GetValues(typeof(Setting.Perks)).Length) //가지고 있는 퍽의 갯수가 전체 퍽의 갯수와 같지 않다면
+        {
+            float rand_value = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
+            if (rand_value <= 0.5f) //특성 넣기
+            {
+                string temp_perk = "";
+                int temp_count = 0;
+                while (temp_count < perks.Count)
+                {
+                    temp_count = 0;
+                    string temp_temp_perk = System.Enum.GetName(typeof(Setting.Perks), Random.Range(0, System.Enum.GetValues(typeof(Setting.Perks)).Length));
+                    for (int i = 0; i < perks.Count; i++)
+                    {
+                        if (temp_temp_perk == perks[i])
+                        {
+                            break;
+                        }
+                        temp_count++;
+                    }
+                    temp_perk = temp_temp_perk;
+                }
+                AddPerkToList(temp_perk);
+            }
+        }
+        level++;
+    }
+}

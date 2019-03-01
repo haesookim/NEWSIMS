@@ -58,6 +58,7 @@ public class Society
 public class Company
 {
     public List<Reporter> reporters = new List<Reporter>(); //기자 목록
+    public List<EmReporter> em_reporters = new List<EmReporter>(); //고용 가능 기자 목록
     
     public List<Article> articles = new List<Article>(); //현재 가지고 있는 기사 목록
     public int index = 0; //기자를 구분하기 위한 인덱스
