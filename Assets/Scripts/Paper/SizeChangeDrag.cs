@@ -8,18 +8,27 @@ public class SizeChangeDrag : MonoBehaviour
     public AssignedPaperDrag assignedPaper; // 기사 오브젝트
 
     Transform preview;
+    SpriteRenderer previewSprite;
+    Color previewOriginColor;
+
     Vector3 scale;
+    Vector3 beforeScale = new Vector3(1,1,0);
 
     Vector3 originPosition;
+
+    bool canSizeChange;
 
     private void Start() {
         assignedPaper = GetComponentInParent<AssignedPaperDrag>();
         preview = NewsPaper.Instance.preview.GetComponent<Transform>();
+        previewSprite = preview.GetComponent<SpriteRenderer>();
+        previewOriginColor = previewSprite.color;
+
         originPosition = assignedPaper.gameObject.transform.position;
     }
 
     private void OnMouseDown() {
-        Debug.Log("ㅗ");
+       
     }
 
     private void OnMouseDrag() {
@@ -34,15 +43,36 @@ public class SizeChangeDrag : MonoBehaviour
         preview.localScale = new Vector3(1,1,0);
         NewsPaper.Instance.inPaper = false;
 
-        Transform ass = assignedPaper.gameObject.GetComponent<Transform>();
-        ass.localScale = scale;
+        AssignedPaperData data = NewsPaper.Instance.assignedPapers[assignedPaper.index.y,assignedPaper.index.x];
 
+        if(canSizeChange)
+            if(beforeScale != scale)
+            {
+                //기존 범위의 데이터를 삭제하고 1*1사이즈 기준으로 되돌림.
+                DeleteDatainPaper();
+                NewsPaper.Instance.assignedPapers[assignedPaper.index.y,assignedPaper.index.x] = data;
+
+                //새로운 범위로 저장
+                for(int i = 0; i<scale.x; i++)
+                {
+                    for(int j =0; j<scale.y; j++)
+                    {
+                        NewsPaper.Instance.assignedPapers[assignedPaper.index.y+j,assignedPaper.index.x+i] = data;
+                    }
+                }
+                beforeScale = scale;
+                assignedPaper.gameObject.transform.localScale = scale;
+            }
     }
 
     void PreviewSizeChange()
     {
         NewsPaper.Instance.inPaper = true;
+        
         NewsPaper.Instance.PreviewPaper(new Vector3(assignedPaper.transform.position.x+0.01f,assignedPaper.transform.position.y,0));
+       
+
+        //프리뷰의 확장 사이즈를 알기 위한 값
         int x = mouseIndex.x - assignedPaper.index.x +1;
         int y = mouseIndex.y - assignedPaper.index.y +1;
 
@@ -50,20 +80,83 @@ public class SizeChangeDrag : MonoBehaviour
         if(y < 1) y = 1;
         scale = new Vector3(x,y,0);
 
-        preview.localScale = scale;
+        CheckingInside();
 
-        for(int i = 0 ; i < x; i++ )
+        preview.localScale = scale; 
+    }
+
+    //프리뷰 내의 지역을 탐색하여 확장 가능한지를 판정
+    void CheckingInside()
+    {
+        bool temp = false;
+        bool breakCheck = false;
+
+        for(int i = 0 ; i < scale.x; i++ )
         {
-            for(int j = 0; j < y; j++)
+            for(int j = 0; j < scale.y; j++)
             {
-                if(NewsPaper.Instance.assignedPapers[y,x] != 
-                NewsPaper.Instance.assignedPapers[assignedPaper.index.y,assignedPaper.index.x])
+                if(i == 0 && j == 0) //1*1 일 때 예외처리
                 {
-                    assignedPaper.gameObject.transform.position = originPosition;
+                    temp = true;
+                    continue;
+                }
+
+                if(NewsPaper.Instance.assignedPapers[assignedPaper.index.y+j,assignedPaper.index.x+i] != null)
+                {
+                    //주변 칸이 비어있지 않은데 그 칸에 자신의 데이터가 아니면 => 다른 무언가 차있을 경우
+                    if(NewsPaper.Instance.assignedPapers[assignedPaper.index.y+j,assignedPaper.index.x+i] != 
+                    NewsPaper.Instance.assignedPapers[assignedPaper.index.y,assignedPaper.index.x])
+                    {
+                        temp = false;
+                        breakCheck = true;
+                        break;
+                    }
+                    else
+                        temp = true;
 
                 }
+                else
+                    temp = true;
             }
+
+            if(breakCheck) break;
         }
 
+        canSizeChange = temp;
+
+        if(!canSizeChange)
+            previewSprite.color = new Color32(255,0,0,80);
+        else
+            previewSprite.color = previewOriginColor;     
     }
+ 
+        //사라질 때 지면 내 데이터도 지움
+        private void OnDisable() {
+            DeleteDatainPaper();
+        }
+
+        void DeleteDatainPaper()
+        {
+            for(int i = 0; i<beforeScale.x; i++)
+            {
+                for(int j =0; j<beforeScale.y; j++)
+                {
+                    NewsPaper.Instance.assignedPapers[assignedPaper.index.y+j,assignedPaper.index.x+i] = null;
+                }
+            }    
+        }
+
+               /////DEBUG_전체 지면 훑기
+        void DEBUG_DisplayAllPaperArray()
+        {
+            Debug.Log("---시작");
+            for(int i =0; i < 6; i++)
+            {
+                for(int j =0; j<5; j++)
+                {
+                    Debug.Log("(" + j + " , " + i + " )  " + NewsPaper.Instance.assignedPapers[j,i]);
+                }
+            }
+            Debug.Log("---끝");
+        }
 }

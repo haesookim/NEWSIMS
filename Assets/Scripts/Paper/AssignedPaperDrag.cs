@@ -26,8 +26,8 @@ public class AssignedPaperDrag : Drag
             timer2 = Time.realtimeSinceStartup;
             
             if (!inWorkDesk)
-            {
-                //originPosition = transform.position;                
+            {             
+                transform.position = originPosition;
             }
             else
             {
@@ -39,11 +39,10 @@ public class AssignedPaperDrag : Drag
 
             if (timer2 - timer1 < 0.13f) //클릭이라면
             {
-              //  SearchAround();
+              
             }
         }
     }
-
 
     void ReturnArticle() //지면에서 빼기 
     {
@@ -52,7 +51,7 @@ public class AssignedPaperDrag : Drag
         originData.transform.position = objPosition;
         originData.SetActive(true); //배정 시 숨겨 둔 기사 오브젝트를 복원
 
-        NewsPaper.Instance.ExcludePaper(index); // 지면 인덱스에서 제외
+        NewsPaper.Instance.assignedPapers[index.y,index.x] = null; // 지면 인덱스에서 제외
     }
 
     void OnTriggerEnter2D(Collider2D other){

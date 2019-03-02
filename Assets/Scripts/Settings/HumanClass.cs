@@ -227,53 +227,51 @@ public class Reporter : Human
 
     Article CreatArticle(Company company, Society society)
     {
-    float temp = 0; //랜덤값의 최대값 제한을 위해 넣음
-            float sum = 0; //랜덤값에서 관심사 정보를 뽑아내기 위해 넣음
-            string temp_field = ""; //관심사 정보를 저장할 변수
+        float temp = 0; //랜덤값의 최대값 제한을 위해 넣음
+        float sum = 0; //랜덤값에서 관심사 정보를 뽑아내기 위해 넣음
+        string temp_field = ""; //관심사 정보를 저장할 변수
 
-            foreach (Setting.Fields field in System.Enum.GetValues(typeof(Setting.Fields)))
+        foreach (Setting.Fields field in System.Enum.GetValues(typeof(Setting.Fields)))
+        {
+            temp += interests[field];
+        }
+
+        float rand_value = Mathf.Floor(Random.Range(0.0f, temp) * 10000) / 10000;
+
+        foreach (Setting.Fields field in System.Enum.GetValues(typeof(Setting.Fields)))
+        {
+            if (rand_value >= sum && rand_value < sum + interests[field])
             {
-                temp += interests[field];
+                temp_field = field.ToString();
+                break;
             }
+            sum += interests[field];
+        }
 
-            float rand_value = Mathf.Floor(Random.Range(0.0f, temp) * 10000) / 10000;
+        int temp_virality = 0; //파급력 정보를 저장할 변수
 
-            foreach (Setting.Fields field in System.Enum.GetValues(typeof(Setting.Fields)))
+        for (int i = 1; i <= 10; i++)
+        {
+            temp_virality = i;
+            float temp_rand = Random.Range(0.0f, 1.0f);
+            if (temp_rand <= 0.5f)
             {
-                if (rand_value >= sum && rand_value < sum + interests[field])
-                {
-                    temp_field = field.ToString();
-                    break;
-                }
-                sum += interests[field];
+                break;
             }
+        }
 
-            int temp_virality = 0; //파급력 정보를 저장할 변수
+        float temp_rand_value = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
+        if (temp_rand_value <= this.writing * 0.01f)
 
-            for (int i = 1; i <= 10; i++)
-            {
-                temp_virality = i;
-                float temp_rand = Random.Range(0.0f, 1.0f);
-                if (temp_rand <= 0.5f)
-                {
-                    break;
-                }
-            }
+        {
+            temp_virality += 1;
+        }
 
-            float temp_rand_value = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
-            if (temp_rand_value <= this.writing * 0.01f)
+        float temp_vertification = (50 + this.survey - (temp_virality * 5) + (Mathf.Floor(Random.Range(0.0f, 20.0f) * 100) / 100)) / 100f; //검증도 정보를 저장할 변수
 
-            {
-                temp_virality += 1;
-            }
+        Article article = new Article(temp_field, temp_virality, society.day, temp_vertification, this);
 
-            float temp_vertification = (50 + this.survey - (temp_virality * 5) + (Mathf.Floor(Random.Range(0.0f, 20.0f) * 100) / 100)) / 100f; //검증도 정보를 저장할 변수
-
-            Article article = new Article(temp_field, temp_virality, society.day, temp_vertification, this);
-
-            return article;
-}
-
-
+        return article;
+    }
 }
 

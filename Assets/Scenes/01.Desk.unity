@@ -1067,6 +1067,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   point: 0
   temp_point: 0
+  company:
+    reporters: []
+    articles: []
+    index: 0
+    money: 0
+    circulation: 0
   in_DeskMenu: 0
   in_PaperMenu: 0
   officeWindow: {fileID: 0}
@@ -3196,36 +3202,6 @@ Transform:
   - {fileID: 1005181210}
   m_Father: {fileID: 1412841844}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1005146197
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1005146198}
-  m_Layer: 0
-  m_Name: "TODO:AssignedPaper \uC2A4\uD06C\uB9BD\uD2B8 \uC9DC\uAE30"
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1005146198
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1005146197}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.24183163, y: 0.15239148, z: -0.12839824}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1005181209
 GameObject:
@@ -5422,7 +5398,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 4
   m_Sprite: {fileID: 21300000, guid: 1f111caa872631d4ca7a31332b202daa, type: 3}
   m_Color: {r: 0.5411765, g: 0.762916, b: 1, a: 0.3137255}
   m_FlipX: 0

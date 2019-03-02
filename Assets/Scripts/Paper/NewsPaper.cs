@@ -80,7 +80,7 @@ public class NewsPaper : Singleton<NewsPaper>
             assignedPapers[i,grid.x] = outerNULL;
         
 
-        //배열 내부 위치값 설정
+        //배열 내부 인덱스당 위치값 설정
         for(int i = 0 ; i< grid.x -1; i++)
         {
             for(int j = 0; j< grid.y -1; j++)
@@ -132,16 +132,12 @@ public class NewsPaper : Singleton<NewsPaper>
     }
 
 
-    /////////////////////// 배치한 기사의 이동, 확장(탐색), 제외
+    /////////////////////// 배치한 기사의 이동, (혹시 구현하게 될 경우를 대비해 남겨둠)
     public void MovePaperAToB(Grid _A, Grid _B) //이동
     {
         assignedPapers[_B.y,_B.x] = assignedPapers[_A.y,_A.x];
         assignedPapers[_A.y,_A.x] = null;
     }
 
-    public void ExcludePaper(Grid paper) // 제외
-    {
-        assignedPapers[paper.y,paper.x] = null;
-    }
 
 }

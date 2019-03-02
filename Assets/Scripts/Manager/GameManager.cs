@@ -106,24 +106,6 @@ public class GameManager : Singleton<GameManager>
         AudioManager.Instance.StartMusic("gameplay");
     }
 
-    public void SetWindowDefault()
-    {
-        officeWindow.SetActive(true);
-        deskWindow.SetActive(false); 
-        paperWindow.SetActive(false);
-        in_PaperMenu = false;
-        in_DeskMenu = false;
-        //테스트마다 껏다켰다하기 귀찮아서
-    }
-
-    void Update() 
-     {
-         //기본 표시 사항 업데이트
-        dateText.text = society.day.ToString();
-        moneyText.text = company.money.ToString();
-        numberOfreporterText.text = company.reporters.Count.ToString();
-    }
-
     public void CreatGame()
     {
         /* 게임 최초 생성시 */
@@ -147,6 +129,25 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+
+    public void SetWindowDefault()
+    {
+        officeWindow.SetActive(true);
+        deskWindow.SetActive(false); 
+        paperWindow.SetActive(false);
+        in_PaperMenu = false;
+        in_DeskMenu = false;
+        //테스트마다 껏다켰다하기 귀찮아서
+    }
+
+    void Update() 
+     {
+         //기본 표시 사항 업데이트
+        dateText.text = society.day.ToString();
+        moneyText.text = company.money.ToString();
+        numberOfreporterText.text = company.reporters.Count.ToString();
+    }
+
     public void LoadGame()
     {
         //todo: 저장한 게임 데이터를 불러와 매칭한다.
@@ -160,19 +161,22 @@ public class GameManager : Singleton<GameManager>
 
     public void EndofDay()
     {
-        EventManager.Instance.Do_EndofDay(society,company);
+        
 
         while(papers.Count != 0)
         {
-            Destroy(papers[0]);
-            papers.RemoveAt(0);
+            //Destroy(papers[0]);
+            //papers.RemoveAt(0);
         }
+        EventManager.Instance.Do_EndofDay(society,company);
 
         society.day++;
         SetWindowDefault();
         BeginningofDay();
 
-        //이벤트만 만들어두고 내용은 미구현. todo: 신문발행하고 기자들 액션 취한 후 시민들이 보고 스탯변동. 
+        System.GC.Collect(); //매일 메모리 찌꺼기를 비움.
+
+        //todo: 신문발행하고 기자들 액션 취한 후 시민들이 보고 스탯변동. 
     }
 
     ///<summary>
@@ -182,15 +186,19 @@ public class GameManager : Singleton<GameManager>
     public void PublishArticle() 
     {
         Text view = paperTextView.content.GetComponentInChildren<Text>();
+        view.text =" ";
         
         for(int i=0; i<company.articles.Count; i++)
         {
             Vector3 publishPosition = new Vector3(Random.Range(-2.0f,5.0f),Random.Range(-3f,3.0f),0); //WorkDesk위 랜덤위치에 등장
             CreateArticle(publishPosition,i);
             
-            view.text += "\n" + company.articles[i].article_name + "\t" + "배분도: n";            
+            view.text += "\n" + company.articles[i].article_name + "\t" + "배분도: n";         
             //지난 기록을 보려면.. 삭제하면 안되고 계속 쌓아야 할듯? 구조도 변경해야 할거고.
         }
+
+        int count = company.articles.Count;
+        company.articles.RemoveRange(0,count);
     }
 
     public void CreateArticle(Vector3 position, int _article_index)

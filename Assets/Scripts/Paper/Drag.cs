@@ -22,9 +22,10 @@ public class Drag : MonoBehaviour
     protected virtual void Start()
     {
        spriteRender = GetComponent<SpriteRenderer>();       
+       EventManager.DayEvent_End += EndDay;
     }
 
-
+    protected virtual void EndDay(Society society, Company company) { Destroy(gameObject);}
     
     protected virtual void OnMouseDown() //누를 때 클릭된 프리팹을 앞으로 옮김
     {

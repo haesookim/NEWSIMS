@@ -8,14 +8,13 @@ public class PaperDrag : Drag
     GameObject infoWindow;
     Text[] infoText;
     
-
-
     protected override void Start()
     {
         infoWindow = transform.GetChild(0).gameObject;
         SetInfoText();
         base.Start();
     }
+
 
     ///<param name = "infoText[0]"> 기사 제목 </param>
     ///<param name = "infoText[1]"> 기자,분야 등 </param>
