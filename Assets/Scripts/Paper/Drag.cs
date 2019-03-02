@@ -25,12 +25,16 @@ public class Drag : MonoBehaviour
        EventManager.DayEvent_End += EndDay;
     }
 
-    protected virtual void EndDay(Society society, Company company) { Destroy(gameObject);}
+    protected virtual void EndDay(Society society, Company company) 
+    {
+        if(this != null)
+            Destroy(gameObject);
+    }
     
     protected virtual void OnMouseDown() //누를 때 클릭된 프리팹을 앞으로 옮김
     {
         inClick = true;
-        if (!GameManager.Instance.in_PaperMenu)
+        if (!GameManager.Instance.in_PaperMenu && !GameManager.Instance.in_ReporterMenu)
         {
             
             timer1 = Time.realtimeSinceStartup;
@@ -44,7 +48,7 @@ public class Drag : MonoBehaviour
     protected virtual void OnMouseDrag() //드래그했을 때 이동
     {
         inClick = true;
-        if (!GameManager.Instance.in_PaperMenu) 
+        if (!GameManager.Instance.in_PaperMenu && !GameManager.Instance.in_ReporterMenu) 
         {
             Vector3 mousePosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10);
             objPosition = Camera.main.ScreenToWorldPoint(mousePosition);
@@ -57,7 +61,7 @@ public class Drag : MonoBehaviour
     protected virtual void OnMouseUp() //마우스를 뗐을 때
     {
         inClick = false;
-        if (!GameManager.Instance.in_PaperMenu)
+        if (!GameManager.Instance.in_PaperMenu && !GameManager.Instance.in_ReporterMenu)
         {
             timer2 = Time.realtimeSinceStartup;
             

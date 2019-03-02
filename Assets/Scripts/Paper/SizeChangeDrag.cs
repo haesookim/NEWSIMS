@@ -6,11 +6,14 @@ public class SizeChangeDrag : MonoBehaviour
 {
     Grid mouseIndex ; //현재 마우스위치의 인덱스
     public AssignedPaperDrag assignedPaper; // 기사 오브젝트
+    public Paper paperData ; //배분도 업데이트를 위해서... 일단은 급조. 나중에 Ratio를 쓰던가 해서 고칠것.
 
-    Transform preview;
+    ///// 미리보기 이미지 컨트롤
+    Transform preview; 
     SpriteRenderer previewSprite;
     Color previewOriginColor;
 
+    ///// 배정된 기사의 사이즈 조절에 필요
     Vector3 scale;
     Vector3 beforeScale = new Vector3(1,1,0);
 
@@ -20,6 +23,11 @@ public class SizeChangeDrag : MonoBehaviour
 
     private void Start() {
         assignedPaper = GetComponentInParent<AssignedPaperDrag>();
+        paperData = assignedPaper.originData.GetComponent<Paper>();
+        
+        //급조된 부분.ㅋㅋ
+        paperData.UpdateViewText("1");
+
         preview = NewsPaper.Instance.preview.GetComponent<Transform>();
         previewSprite = preview.GetComponent<SpriteRenderer>();
         previewOriginColor = previewSprite.color;
@@ -58,10 +66,11 @@ public class SizeChangeDrag : MonoBehaviour
                     for(int j =0; j<scale.y; j++)
                     {
                         NewsPaper.Instance.assignedPapers[assignedPaper.index.y+j,assignedPaper.index.x+i] = data;
-                    }
+                     }
                 }
                 beforeScale = scale;
                 assignedPaper.gameObject.transform.localScale = scale;
+                paperData.UpdateViewText((beforeScale.x * beforeScale.y).ToString());
             }
     }
 
@@ -113,7 +122,6 @@ public class SizeChangeDrag : MonoBehaviour
                     }
                     else
                         temp = true;
-
                 }
                 else
                     temp = true;
@@ -144,6 +152,7 @@ public class SizeChangeDrag : MonoBehaviour
                     NewsPaper.Instance.assignedPapers[assignedPaper.index.y+j,assignedPaper.index.x+i] = null;
                 }
             }    
+            paperData.UpdateViewText("0");
         }
 
                /////DEBUG_전체 지면 훑기

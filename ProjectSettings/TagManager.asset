@@ -8,6 +8,7 @@ TagManager:
   - Paper
   - NewsPaper
   - WorkDesk
+  - AdvanceBox
   layers:
   - Default
   - TransparentFX

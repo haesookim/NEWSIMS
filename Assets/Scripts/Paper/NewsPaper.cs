@@ -24,10 +24,15 @@ public class AssignedPaperData{
     public GameObject originData;
     public Grid paperIndex;
 
+    public Article article;
+
     public AssignedPaperData( GameObject data, Grid index)
     {
         originData = data;
         paperIndex = index;
+
+        if(data != null)
+            article = originData.GetComponent<Paper>().article;
     }
 }
 

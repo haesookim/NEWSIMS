@@ -36,7 +36,7 @@ public class PaperDrag : Drag
 
     private void OnMouseOver() //마우스 올리고 있을 때
     {
-        if(!inClick && !GameManager.Instance.in_PaperMenu)
+        if(!inClick && !GameManager.Instance.in_ReporterMenu)
             infoWindow.SetActive(true);  
         else 
             infoWindow.SetActive(false);  

@@ -146,17 +146,17 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: a56f2b9cf3b93e84eb74b2c2f8a2bab5, type: 3}
-    m_FontSize: 14
+    m_FontSize: 12
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 1
     m_MaxSize: 40
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
-    m_LineSpacing: 1.2
+    m_LineSpacing: 1.4
   m_Text: "\uAE30\uC790:\n\uBD84\uC57C:\n"
 --- !u!1 &4375540374871250220
 GameObject:
@@ -430,7 +430,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0.28, y: -0.4}
@@ -479,11 +479,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86b3a135c1bc047468886ac748d7e573, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reporterImage: {fileID: 0}
   paperImage: {fileID: 0}
   reporter:
     econStance: 0
     socialStance: 0
+    reporterImage: {fileID: 0}
     reporter_index: 0
     name: 
     writing: 0
@@ -493,6 +493,7 @@ MonoBehaviour:
     exp: 0
     satisfaction: 0
     advance_news: 0
+    is_fired: 0
     adn:
       article_field: 
       article_name: 
@@ -502,7 +503,6 @@ MonoBehaviour:
       vertification: 0
       centerStance: 0
       tolerance: 0
-      assignedPoint: 0
       advance: 0
       up_virality: 0
     perks: []
@@ -515,7 +515,6 @@ MonoBehaviour:
     vertification: 0
     centerStance: 0
     tolerance: 0
-    assignedPoint: 0
     advance: 0
     up_virality: 0
 --- !u!114 &2242003007071069051

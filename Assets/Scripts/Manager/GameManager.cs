@@ -16,12 +16,14 @@ public class GameManager : Singleton<GameManager>
     
     [HideInInspector] public bool in_DeskMenu = false; 
     [HideInInspector] public bool in_PaperMenu = false; //페이퍼메뉴가 켜져있는가?
+    [HideInInspector] public bool in_ReporterMenu = false; //인사관리 창이 켜져있는가?
 
 
     /////////////////////////////////////////화면컨트롤용 
     [HideInInspector] public GameObject officeWindow; //오피스 화면
     [HideInInspector] public GameObject deskWindow; //책상 화면
     [HideInInspector] public GameObject paperWindow; //상세 기사 화면
+    [HideInInspector] public GameObject reporterManager; //인사관리 화면
     public Paper selectedPaper; //상세 기사화면에 출력될 기사
     //////////////////////////////////////////
 
@@ -38,8 +40,17 @@ public class GameManager : Singleton<GameManager>
     public Text numberOfreporterText;
 
     [Header("Desk Window 오브젝트")]
-    public ScrollRect paperTextView;
+    public Transform textView;
+ 
+    public GameObject scrollviewText;
+    [Space(20)]
+
     public GameObject newspaper;
+    public GameObject ReportButton;
+    public GameObject[] Pages;
+    public GameObject PageButton;
+    public GameObject[] details;
+    public GameObject EmReportButton;
 
     ///////////////////////////////////////////////////////////디버그용. 나중에 삭제
     [Header("FOR DEBUG")]
@@ -100,6 +111,7 @@ public class GameManager : Singleton<GameManager>
         officeWindow = window.transform.GetChild(0).gameObject;
         deskWindow = window.transform.GetChild(1).gameObject;
         paperWindow = deskWindow.transform.GetChild(1).gameObject;
+        reporterManager = deskWindow.transform.GetChild(6).gameObject;
 
         SetWindowDefault();
 
@@ -119,8 +131,22 @@ public class GameManager : Singleton<GameManager>
             Reporter newReporter = new Reporter(setting, company, i+1);
             company.AddReporterToList(newReporter);
             company.index++; //
+            CreateReporterButton(i, newReporter);
         }
         company.reporters[company.reporters.Count - 1].LevelUp(); //마지막 기자에게 즉시 레벨업 한 번
+
+        for (int i = 0; i < 6; i++) //고용 가능한 기자 생성
+        {
+            EmReporter emReporter = new EmReporter(setting, company, i);
+            company.em_reporters.Add(emReporter);
+            CreateEmReporterButton(i, emReporter);
+        }
+
+        PageNumbering(company, 2);
+        HideOtherReporter(2, 0);
+
+        PageNumbering(company, 1);
+        HideOtherReporter(1, 0);
 
         for (int i = 0; i < 1000; i++) //시작할 때 1,000명의 시민 생성
         {
@@ -161,12 +187,9 @@ public class GameManager : Singleton<GameManager>
 
     public void EndofDay()
     {
-        
-
         while(papers.Count != 0)
         {
-            //Destroy(papers[0]);
-            //papers.RemoveAt(0);
+            papers.RemoveAt(0);
         }
         EventManager.Instance.Do_EndofDay(society,company);
 
@@ -185,16 +208,12 @@ public class GameManager : Singleton<GameManager>
     ///</summary>
     public void PublishArticle() 
     {
-        Text view = paperTextView.content.GetComponentInChildren<Text>();
-        view.text =" ";
-        
         for(int i=0; i<company.articles.Count; i++)
         {
             Vector3 publishPosition = new Vector3(Random.Range(-2.0f,5.0f),Random.Range(-3f,3.0f),0); //WorkDesk위 랜덤위치에 등장
             CreateArticle(publishPosition,i);
             
-            view.text += "\n" + company.articles[i].article_name + "\t" + "배분도: n";         
-            //지난 기록을 보려면.. 삭제하면 안되고 계속 쌓아야 할듯? 구조도 변경해야 할거고.
+            
         }
 
         int count = company.articles.Count;
@@ -209,9 +228,166 @@ public class GameManager : Singleton<GameManager>
         temp_paper.article = company.articles[_article_index];
         //기사 오브젝트에 데이터 입력
 
+        Text view = Instantiate(scrollviewText,scrollviewText.transform.position,Quaternion.identity,textView).GetComponent<Text>();
+        temp_paper.viewText = view;         
+        temp_paper.UpdateViewText("0");
+        //텍스트뷰에 기사 제목 업데이트
+        //지난 기록을 보려면.. 삭제하면 안되고 계속 쌓아야 할듯? 구조도 변경해야 할거고.
+
         Vector3 paprerPosition = new Vector3(paperObject.transform.position.x,paperObject.transform.position.y,temp_paper.reporter.reporter_index);
         paperObject.transform.position = paprerPosition; //z값 변경
         papers.Add(paperObject);
+    }
+
+    //인사관리창에서 회사 기자들을 표시하는 프리팹 생성
+    public void CreateReporterButton(int number, Reporter reporter)
+    {
+        switch (number%3)
+        {
+            case 0:
+                GameObject temp_rep = Instantiate(ReportButton,reporterManager.transform.GetChild(1).GetChild(0));
+                temp_rep.GetComponent<VisualizeReporter>().reporter = reporter;
+                break;
+            case 1:
+                GameObject temp_rep2 = Instantiate(ReportButton, reporterManager.transform.GetChild(1).GetChild(0));
+                temp_rep2.transform.localPosition = new Vector3(0f, 0f, 0f);
+                temp_rep2.GetComponent<VisualizeReporter>().reporter = reporter;
+                break;
+            case 2:
+                GameObject temp_rep3 = Instantiate(ReportButton, reporterManager.transform.GetChild(1).GetChild(0));
+                temp_rep3.transform.localPosition = new Vector3(0f, -150f, 0f);
+                temp_rep3.GetComponent<VisualizeReporter>().reporter = reporter;
+                break;
+        }
+    }
+
+    public void CreateEmReporterButton(int number, EmReporter emreporter)
+    {
+        switch (number % 3)
+        {
+            case 0:
+                GameObject temp_rep = Instantiate(EmReportButton, reporterManager.transform.GetChild(2).GetChild(0));
+                temp_rep.GetComponent<VisualizeEmReporter>().emreporter = emreporter;
+                break;
+            case 1:
+                GameObject temp_rep2 = Instantiate(EmReportButton, reporterManager.transform.GetChild(2).GetChild(0));
+                temp_rep2.transform.localPosition = new Vector3(0f, 0f, 0f);
+                temp_rep2.GetComponent<VisualizeEmReporter>().emreporter = emreporter;
+                break;
+            case 2:
+                GameObject temp_rep3 = Instantiate(EmReportButton, reporterManager.transform.GetChild(2).GetChild(0));
+                temp_rep3.transform.localPosition = new Vector3(0f, -150f, 0f);
+                temp_rep3.GetComponent<VisualizeEmReporter>().emreporter = emreporter;
+                break;
+        }
+    }
+
+    //인사관리창에서 한 페이지만 보여주기
+    public void HideOtherReporter(int child_num, int a)
+    {
+        for (int i = 0; i < reporterManager.transform.GetChild(child_num).GetChild(0).childCount; i++)
+        {
+            reporterManager.transform.GetChild(child_num).GetChild(0).GetChild(i).gameObject.SetActive(false);
+        }
+
+        if (child_num == 1)
+        {
+            if (3 * a + 1 <= company.reporters.Count)
+            {
+                reporterManager.transform.GetChild(child_num).GetChild(0).GetChild(3 * a + 0).gameObject.SetActive(true);
+            }
+            if (3 * a + 2 <= company.reporters.Count)
+            {
+                reporterManager.transform.GetChild(child_num).GetChild(0).GetChild(3 * a + 1).gameObject.SetActive(true);
+            }
+            if (3 * a + 3 <= company.reporters.Count)
+            {
+                reporterManager.transform.GetChild(child_num).GetChild(0).GetChild(3 * a + 2).gameObject.SetActive(true);
+            }
+        }
+        else if(child_num == 2)
+        {
+            if (3 * a + 1 <= company.em_reporters.Count)
+            {
+                reporterManager.transform.GetChild(child_num).GetChild(0).GetChild(3 * a + 0).gameObject.SetActive(true);
+            }
+            if (3 * a + 2 <= company.em_reporters.Count)
+            {
+                reporterManager.transform.GetChild(child_num).GetChild(0).GetChild(3 * a + 1).gameObject.SetActive(true);
+            }
+            if (3 * a + 3 <= company.em_reporters.Count)
+            {
+                reporterManager.transform.GetChild(child_num).GetChild(0).GetChild(3 * a + 2).gameObject.SetActive(true);
+            }
+        }
+        
+
+        for (int i = 0; i < Pages[child_num-1].transform.childCount; i++)
+        {
+            Pages[child_num-1].transform.GetChild(i).GetChild(0).GetComponent<Text>().color = new Color(0f, 0f, 0f);
+        }
+        Pages[child_num-1].transform.GetChild(a).GetChild(0).GetComponent<Text>().color = new Color(255f,0f,0f);
+    }
+
+    //인사관리창 페이지 넘버 달기
+    public void PageNumbering(Company company, int child_num)
+    {
+        if (child_num == 1)
+        {
+            int namuge = company.reporters.Count % 3;
+            if (namuge == 0)
+            {
+                int div = company.reporters.Count / 3;
+                for (int i = 1; i <= div; i++)
+                {
+                    GameObject pbt = Instantiate(PageButton, Pages[child_num - 1].transform);
+                    pbt.GetComponent<PageButton>().page_num = i;
+                    pbt.GetComponent<PageButton>().child_num = child_num;
+                    pbt.transform.GetChild(0).GetComponent<Text>().text = i.ToString();
+                    pbt.transform.localPosition = new Vector3(-400f + 45f * (i - 1), -240f, 0f);
+                }
+            }
+            else
+            {
+                int div = company.reporters.Count / 3;
+                for (int i = 1; i <= div + 1; i++)
+                {
+                    GameObject pbt = Instantiate(PageButton, Pages[child_num - 1].transform);
+                    pbt.GetComponent<PageButton>().page_num = i;
+                    pbt.GetComponent<PageButton>().child_num = child_num;
+                    pbt.transform.GetChild(0).GetComponent<Text>().text = i.ToString();
+                    pbt.transform.localPosition = new Vector3(-400f + 45f * (i - 1), -240f, 0f);
+                }
+            }
+        }
+        else if (child_num == 2)
+        {
+            int namuge = company.em_reporters.Count % 3;
+            if (namuge == 0)
+            {
+                int div = company.em_reporters.Count / 3;
+                for (int i = 1; i <= div; i++)
+                {
+                    GameObject pbt = Instantiate(PageButton, Pages[child_num - 1].transform);
+                    pbt.GetComponent<PageButton>().page_num = i;
+                    pbt.GetComponent<PageButton>().child_num = child_num;
+                    pbt.transform.GetChild(0).GetComponent<Text>().text = i.ToString();
+                    pbt.transform.localPosition = new Vector3(-400f + 45f * (i - 1), -240f, 0f);
+                }
+            }
+            else
+            {
+                int div = company.em_reporters.Count / 3;
+                for (int i = 1; i <= div + 1; i++)
+                {
+                    GameObject pbt = Instantiate(PageButton, Pages[child_num - 1].transform);
+                    pbt.GetComponent<PageButton>().page_num = i;
+                    pbt.GetComponent<PageButton>().child_num = child_num;
+                    pbt.transform.GetChild(0).GetComponent<Text>().text = i.ToString();
+                    pbt.transform.localPosition = new Vector3(-400f + 45f * (i - 1), -240f, 0f);
+                }
+            }
+        }
     }
 
 }
