@@ -139,7 +139,7 @@ public class SizeChangeDrag : MonoBehaviour
     }
  
         //사라질 때 지면 내 데이터도 지움
-        private void OnDisable() {
+        private void OnDistroy() {
             DeleteDatainPaper();
         }
 
