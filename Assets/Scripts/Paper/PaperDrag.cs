@@ -5,51 +5,53 @@ using UnityEngine.UI;
 
 public class PaperDrag : Drag
 {
-    GameObject infoWindow;
-    Text[] infoText;
-    
+
     protected override void Start()
     {
-        infoWindow = transform.GetChild(0).gameObject;
-        SetInfoText();
         base.Start();
     }
 
-
-    ///<param name = "infoText[0]"> 기사 제목 </param>
-    ///<param name = "infoText[1]"> 기자,분야 등 </param>
-    void SetInfoText()
+    protected override void OnMouseUp() //마우스를 뗐을 때
     {
-        infoText = GetComponentsInChildren<Text>();
-        Paper paper = GetComponent<Paper>();
-        infoText[0].text = paper.article.article_name;
-        infoText[1].text = paper.reporter.name + "\n" + paper.article.article_field;
-        infoWindow.SetActive(false);
+        inClick = false;
+        if (!GameManager.Instance.in_PaperMenu && !GameManager.Instance.in_ReporterMenu)
+        {
+            timer2 = Time.realtimeSinceStartup;
+            
+            if(NewsPaper.Instance.inAdvance)
+            {
+                gameObject.SetActive(false);
+                
+                Debug.Log(("심화취재를 지시합니다"));
+            }
+
+
+            if (!NewsPaper.Instance.inPaper)
+                originPosition = transform.position;                
+            else
+                NewsPaper.Instance.CreatAssignedPaper(gameObject);
+
+            spriteRender.sortingOrder = 2;
+
+            if (timer2 - timer1 < 0.13f) //클릭이라면
+            {
+                
+            }
+        }
     }
 
-
-    private void OnMouseExit() 
-    {
-        if(!inClick)
-         infoWindow.SetActive(false);   
-    }
-
-    private void OnMouseOver() //마우스 올리고 있을 때
-    {
-        if(!inClick && !GameManager.Instance.in_ReporterMenu)
-            infoWindow.SetActive(true);  
-        else 
-            infoWindow.SetActive(false);  
-    }   
-
- 
-    //지면 위에 오브젝트를 끌고 있을 때
+   
+    //지면,심화취재박스 위에 오브젝트를 끌고 있을 때
 
    void OnTriggerStay2D(Collider2D other) {
         if(other.CompareTag("NewsPaper"))
         {
             NewsPaper.Instance.inPaper = true;
             NewsPaper.Instance.PreviewPaper(transform.position);
+        }
+        else if(other.CompareTag("AdvanceBox"))
+        {
+            NewsPaper.Instance.inAdvance = true;
         }
     }
 
@@ -58,8 +60,10 @@ public class PaperDrag : Drag
         {
             NewsPaper.Instance.inPaper = false;
         }
+
+        else if(other.CompareTag("AdvanceBox"))
+        {
+            NewsPaper.Instance.inAdvance = false;
+        }
     }
-
-    
-
 }

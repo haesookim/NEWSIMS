@@ -211,9 +211,7 @@ public class GameManager : Singleton<GameManager>
         for(int i=0; i<company.articles.Count; i++)
         {
             Vector3 publishPosition = new Vector3(Random.Range(-2.0f,5.0f),Random.Range(-3f,3.0f),0); //WorkDesk위 랜덤위치에 등장
-            CreateArticle(publishPosition,i);
-            
-            
+            CreateArticle(publishPosition,i);            
         }
 
         int count = company.articles.Count;

@@ -51,7 +51,8 @@ public class AssignedPaperDrag : Drag
         originData.transform.position = objPosition;
         originData.SetActive(true); //배정 시 숨겨 둔 기사 오브젝트를 복원
 
-        NewsPaper.Instance.assignedPapers[index.y,index.x] = null; // 지면 인덱스에서 제외
+        //인덱스 내의 데이터를 삭제
+        GetComponentInChildren<SizeChangeDrag>().DeleteDatainPaper();
     }
 
     void OnTriggerEnter2D(Collider2D other){
