@@ -134,6 +134,7 @@ public class SizeChangeDrag : MonoBehaviour
     }
 
 
+
     public void DeleteDatainPaper()
     {
         for(int i = 0; i<beforeScale.x; i++)
