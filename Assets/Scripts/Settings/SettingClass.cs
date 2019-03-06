@@ -13,7 +13,7 @@ public class Setting
     public float fakePossibility = 0.5f; //기사의 검증되지 않은 부분이 실제로 가짜일 확률 
 
 
-    public enum Fields { 정치, 경제, 사회, 연예스포츠, 일반 }; //관심사 종류들
+    public enum Fields { 정치사회, 경제, 연예스포츠, 일반 }; //관심사 종류들
     public enum Names { 저널, 리즘, 엔젤, 파인, 미디어, 테크, 놀로지, GDC, 사이드, 가너, 가데니아, 가델, 가르시아, 가먼, 가스, 가자라, 가펑클, 가필드, 갈린, 강, 넬슨, 나이트, 네이버스, 노리스, 던, 더루이즈, 데이비스, 딜런, 라이블리, 램버트, 램지, 레이시, 레인, 로드먼, 로메로, 로이드, 마이너, 마이트, 마티네즈, 마이어, 머피, 미호크, 밀러, 버기, 베넷, 사도스키, 사반트, 사이토, 섀넌, 소프, 엄복동, 스미스, 스트리머, 아널드, 아이작, 클로바, 오블리비언, 단테, 주니어, 윈터, 윌슨 }; //기자 이름들
     public enum Perks { 제목학원, 천재, 철저함, 학습, 다작, 멀티태스킹 }; //특성들
 
@@ -121,7 +121,7 @@ public class Article
             centerStance = Mathf.Floor(Random.Range(reporter.econStance - 0.1f, reporter.econStance + 0.1f) * 10000) / 10000;
             tolerance = 0.1f + (reporter.logic * 0.01f);
         }
-        else if (article_field == "사회" || article_field == "정치") //사회/정치 기사라면
+        else if (article_field == "정치사회") //사회/정치 기사라면
         {
             centerStance = Mathf.Floor(Random.Range(reporter.socialStance - 0.1f, reporter.socialStance + 0.1f) * 10000) / 10000;
             tolerance = 0.1f + (reporter.logic * 0.01f);
