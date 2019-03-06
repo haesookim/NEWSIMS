@@ -172,7 +172,11 @@ public class Reporter : Human
     {
         if (!advance_news) //심화 취재를 요구하지 않았다면
         {
-            Article article = CreatArticle(company,society);
+            Article article;
+            do
+            {
+                article = CreatArticle(company, society);
+            } while (article.article_name == "");
             company.AddArticleToList(article);
         }
         else //심화 취재를 요구했다면
@@ -209,7 +213,11 @@ public class Reporter : Human
                 {
                     Debug.Log(reporter_index+" 가 멀티태스킹하여 오늘도 기사를 씁니다!");
 
-                    Article article2 = CreatArticle(company,society);
+                    Article article2;
+                    do
+                    {
+                        article2 = CreatArticle(company, society);
+                    } while (article2.article_name == "");
                     company.AddArticleToList(article2);
                     break;
                 }
@@ -224,7 +232,12 @@ public class Reporter : Human
                 if (rand_value_perk > 0.8f)
                 {
                     Debug.Log(reporter_index+" 가 기사를 하나 더 씁니다!");
-                    Article article = CreatArticle(company,society);
+
+                    Article article;
+                    do
+                    {
+                        article = CreatArticle(company, society);
+                    } while (article.article_name == "");
                     company.AddArticleToList(article);
                 }
                 break;

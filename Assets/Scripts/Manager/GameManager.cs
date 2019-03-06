@@ -18,6 +18,8 @@ public class GameManager : Singleton<GameManager>
     [HideInInspector] public bool in_PaperMenu = false; //페이퍼메뉴가 켜져있는가?
     [HideInInspector] public bool in_ReporterMenu = false; //인사관리 창이 켜져있는가?
 
+    [HideInInspector] public List<Dictionary<string, object>> data;
+    [HideInInspector] public List<string> originName; //사용 가능 기사 리스트
 
     /////////////////////////////////////////화면컨트롤용 
     [HideInInspector] public GameObject officeWindow; //오피스 화면
@@ -125,6 +127,12 @@ public class GameManager : Singleton<GameManager>
         point = setting.newsPoint; //뉴스 포인트를 지정
         society = new Society(); //사회 구축
         company = new Company(setting.startingMoney, 50f); //회사 생성
+
+        data = CSVReader.Read("PaperName"); //CSV를 불러옴
+        for (int i = 0; i < data.Count; i++)
+        {
+            originName.Add(data[i]["제목"].ToString());
+        }
 
         for (int i = 0; i < setting.startingReporters; i++) //startingReporters만큼의 회사의 기자 생성
         {

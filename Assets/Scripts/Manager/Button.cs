@@ -215,8 +215,32 @@ public class Button : MonoBehaviour
             GameManager.Instance.details[show - 1].transform.GetChild(6).GetComponent<Text>().text = "필력 : " + rp.writing.ToString();
             GameManager.Instance.details[show - 1].transform.GetChild(7).GetComponent<Text>().text = "논리력 : " + rp.logic.ToString();
             GameManager.Instance.details[show - 1].transform.GetChild(8).GetComponent<Text>().text = "조사력 : " + rp.survey.ToString();
-            GameManager.Instance.details[show - 1].transform.GetChild(9).GetComponent<Text>().text = "경제적 입장 : " + rp.econStance.ToString();
-            GameManager.Instance.details[show - 1].transform.GetChild(10).GetComponent<Text>().text = "사회적 입장 : " + rp.socialStance.ToString();
+
+            if (rp.econStance < 0.35)
+            {
+                GameManager.Instance.details[show - 1].transform.GetChild(9).GetComponent<Text>().text = "경제적 입장 : 보수";
+            } else if (rp.econStance >= 0.65)
+            {
+                GameManager.Instance.details[show - 1].transform.GetChild(9).GetComponent<Text>().text = "경제적 입장 : 진보";
+            }
+            else
+            {
+                GameManager.Instance.details[show - 1].transform.GetChild(9).GetComponent<Text>().text = "경제적 입장 : 중도";
+            }
+
+            if (rp.socialStance < 0.35)
+            {
+                GameManager.Instance.details[show - 1].transform.GetChild(10).GetComponent<Text>().text = "사회적 입장 : 보수";
+            }
+            else if (rp.socialStance >= 0.65)
+            {
+                GameManager.Instance.details[show - 1].transform.GetChild(10).GetComponent<Text>().text = "사회적 입장 : 진보";
+            }
+            else
+            {
+                GameManager.Instance.details[show - 1].transform.GetChild(10).GetComponent<Text>().text = "사회적 입장 : 중도";
+            }
+
             GameManager.Instance.details[show - 1].transform.GetChild(11).GetComponent<Text>().text = "만족도 : " + rp.satisfaction.ToString();
             for (int i = 0; i < rp.perks.Count; i++)
             {
@@ -246,8 +270,33 @@ public class Button : MonoBehaviour
             GameManager.Instance.details[show - 1].transform.GetChild(5).GetComponent<Text>().text = "필력 : " + erp.writing.ToString();
             GameManager.Instance.details[show - 1].transform.GetChild(6).GetComponent<Text>().text = "논리력 : " + erp.logic.ToString();
             GameManager.Instance.details[show - 1].transform.GetChild(7).GetComponent<Text>().text = "조사력 : " + erp.survey.ToString();
-            GameManager.Instance.details[show - 1].transform.GetChild(8).GetComponent<Text>().text = "경제적 입장 : " + erp.econStance.ToString();
-            GameManager.Instance.details[show - 1].transform.GetChild(9).GetComponent<Text>().text = "사회적 입장 : " + erp.socialStance.ToString();
+
+            if (erp.econStance < 0.35)
+            {
+                GameManager.Instance.details[show - 1].transform.GetChild(8).GetComponent<Text>().text = "경제적 입장 : 보수";
+            }
+            else if (erp.econStance >= 0.65)
+            {
+                GameManager.Instance.details[show - 1].transform.GetChild(8).GetComponent<Text>().text = "경제적 입장 : 진보";
+            }
+            else
+            {
+                GameManager.Instance.details[show - 1].transform.GetChild(8).GetComponent<Text>().text = "경제적 입장 : 중도";
+            }
+
+            if (erp.socialStance < 0.35)
+            {
+                GameManager.Instance.details[show - 1].transform.GetChild(9).GetComponent<Text>().text = "사회적 입장 : 보수";
+            }
+            else if (erp.socialStance >= 0.65)
+            {
+                GameManager.Instance.details[show - 1].transform.GetChild(9).GetComponent<Text>().text = "사회적 입장 : 진보";
+            }
+            else
+            {
+                GameManager.Instance.details[show - 1].transform.GetChild(9).GetComponent<Text>().text = "사회적 입장 : 중도";
+            }
+
             GameManager.Instance.details[show - 1].transform.GetChild(10).GetComponent<Text>().text = "가격 : " + erp.buyout.ToString();
             for (int i = 0; i < erp.perks.Count; i++)
             {
