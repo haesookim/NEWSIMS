@@ -61,6 +61,9 @@ public class Company
     public List<EmReporter> em_reporters = new List<EmReporter>(); //고용 가능 기자 목록
     
     public List<Article> articles = new List<Article>(); //현재 가지고 있는 기사 목록
+
+    public List<Article> articlesArchive = new List<Article>(); // 지금까지 써낸 기사 리스트 (기사 백업이 팔요한가..?)
+
     public int index = 0; //기자를 구분하기 위한 인덱스
     public int money; //돈. 기자 1인당 하루에 (기자 레벨 + 1) 지출
     public int circulation = 0; //발행부수
@@ -100,7 +103,6 @@ public class Article
     public float centerStance = 0f; //기사의 입장
     public float tolerance = 0f; //Center로부터 얼마나 떨어진 사람까지 우호적으로 받아들이는가?
 
-    public int assignedPoint; //기사에 할당된 포인트
 
     public bool advance = false; //심화 취재의 대상인가?
     public bool up_virality = false; //심화 취재를 통한 파급력 증가 여부

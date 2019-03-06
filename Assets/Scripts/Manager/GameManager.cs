@@ -40,7 +40,11 @@ public class GameManager : Singleton<GameManager>
     public Text numberOfreporterText;
 
     [Header("Desk Window 오브젝트")]
-    public ScrollRect paperTextView;
+    public Transform textView;
+ 
+    public GameObject scrollviewText;
+    [Space(20)]
+
     public GameObject newspaper;
     public GameObject ReportButton;
     public GameObject[] Pages;
@@ -107,29 +111,11 @@ public class GameManager : Singleton<GameManager>
         officeWindow = window.transform.GetChild(0).gameObject;
         deskWindow = window.transform.GetChild(1).gameObject;
         paperWindow = deskWindow.transform.GetChild(1).gameObject;
-        reporterManager = deskWindow.transform.GetChild(7).gameObject;
+        reporterManager = deskWindow.transform.GetChild(6).gameObject;
 
         SetWindowDefault();
 
         AudioManager.Instance.StartMusic("gameplay");
-    }
-
-    public void SetWindowDefault()
-    {
-        officeWindow.SetActive(true);
-        deskWindow.SetActive(false); 
-        paperWindow.SetActive(false);
-        in_PaperMenu = false;
-        in_DeskMenu = false;
-        //테스트마다 껏다켰다하기 귀찮아서
-    }
-
-    void Update() 
-     {
-         //기본 표시 사항 업데이트
-        dateText.text = society.day.ToString();
-        moneyText.text = company.money.ToString();
-        numberOfreporterText.text = company.reporters.Count.ToString();
     }
 
     public void CreatGame()
@@ -169,6 +155,25 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+
+    public void SetWindowDefault()
+    {
+        officeWindow.SetActive(true);
+        deskWindow.SetActive(false); 
+        paperWindow.SetActive(false);
+        in_PaperMenu = false;
+        in_DeskMenu = false;
+        //테스트마다 껏다켰다하기 귀찮아서
+    }
+
+    void Update() 
+     {
+         //기본 표시 사항 업데이트
+        dateText.text = society.day.ToString();
+        moneyText.text = company.money.ToString();
+        numberOfreporterText.text = company.reporters.Count.ToString();
+    }
+
     public void LoadGame()
     {
         //todo: 저장한 게임 데이터를 불러와 매칭한다.
@@ -178,24 +183,23 @@ public class GameManager : Singleton<GameManager>
     {
         EventManager.Instance.Do_BeginningofDay(society,company); //하루의 시작 이벤트 호출
         PublishArticle();
-        
     }
 
     public void EndofDay()
     {
-        EventManager.Instance.Do_EndofDay(society,company);
-
         while(papers.Count != 0)
         {
-            Destroy(papers[0]);
             papers.RemoveAt(0);
         }
+        EventManager.Instance.Do_EndofDay(society,company);
 
         society.day++;
         SetWindowDefault();
         BeginningofDay();
 
-        //이벤트만 만들어두고 내용은 미구현. todo: 신문발행하고 기자들 액션 취한 후 시민들이 보고 스탯변동. 
+        System.GC.Collect(); //매일 메모리 찌꺼기를 비움.
+
+        //todo: 신문발행하고 기자들 액션 취한 후 시민들이 보고 스탯변동. 
     }
 
     ///<summary>
@@ -204,52 +208,34 @@ public class GameManager : Singleton<GameManager>
     ///</summary>
     public void PublishArticle() 
     {
-        Text view = paperTextView.content.GetComponentInChildren<Text>();
-        while(company.articles.Count != 0)
+        for(int i=0; i<company.articles.Count; i++)
         {
-            Vector3 publishPosition = new Vector3(Random.Range(-1.0f,6.0f),Random.Range(-2f,3.0f),0); //랜덤위치에 등장
-            GameObject paperObject = Instantiate(PaperPrefab,publishPosition,Quaternion.identity,deskWindow.transform);
-            Paper temp_paper = paperObject.GetComponent<Paper>();
-            temp_paper.reporter = company.reporters[company.articles[0].write_reporter_index-1];
-            temp_paper.article = company.articles[0];
-            //기사 오브젝트에 데이터 입력
-
-            Vector3 paprerPosition = new Vector3(paperObject.transform.position.x,paperObject.transform.position.y,temp_paper.reporter.reporter_index);
-            paperObject.transform.position = paprerPosition; //z값 변경
-            papers.Add(paperObject);
-            company.articles.RemoveAt(0);
-
-            view.text += "\n" + temp_paper.article.article_name + "\t" + "배분도: n";
-
+            Vector3 publishPosition = new Vector3(Random.Range(-2.0f,5.0f),Random.Range(-3f,3.0f),0); //WorkDesk위 랜덤위치에 등장
+            CreateArticle(publishPosition,i);            
         }
-            
+
+        int count = company.articles.Count;
+        company.articles.RemoveRange(0,count);
     }
-    
-    public void UpdatePaperInfo() //일단 급하게 find로 때움. 기사 정보 업데이트함수
+
+    public void CreateArticle(Vector3 position, int _article_index)
     {
-        Text totalPoint = GameObject.Find("PointNumber").GetComponent<Text>();
-        totalPoint.text = point.ToString();
-        Text[] info = GameObject.Find("PaperInfo").GetComponentsInChildren<Text>();
-        info[1].text = selectedPaper.reporter.name;
-        info[3].text = selectedPaper.article.article_field;
-        info[5].text = selectedPaper.article.virality.ToString();
-        info[7].text = selectedPaper.article.vertification.ToString();
-        info[9].text = selectedPaper.article.centerStance.ToString();
-        info[11].text = selectedPaper.article.tolerance.ToString();
+        GameObject paperObject = Instantiate(PaperPrefab,position,Quaternion.identity,deskWindow.transform);
+        Paper temp_paper = paperObject.GetComponent<Paper>();
+        temp_paper.reporter = company.reporters[company.articles[_article_index].write_reporter_index-1];
+        temp_paper.article = company.articles[_article_index];
+        //기사 오브젝트에 데이터 입력
+
+        Text view = Instantiate(scrollviewText,scrollviewText.transform.position,Quaternion.identity,textView).GetComponent<Text>();
+        temp_paper.viewText = view;         
+        temp_paper.UpdateViewText("0");
+        //텍스트뷰에 기사 제목 업데이트
+        //지난 기록을 보려면.. 삭제하면 안되고 계속 쌓아야 할듯? 구조도 변경해야 할거고.
+
+        Vector3 paprerPosition = new Vector3(paperObject.transform.position.x,paperObject.transform.position.y,temp_paper.reporter.reporter_index);
+        paperObject.transform.position = paprerPosition; //z값 변경
+        papers.Add(paperObject);
     }
-
-    public void DisplayPaperMenu() //상세 기사화면 띄우기
-   {
-        in_PaperMenu = true;
-        paperWindow.SetActive(true);
-
-        bool advance = selectedPaper.article.advance;
-        paperWindow.transform.GetChild(1).gameObject.SetActive(!advance);
-        paperWindow.transform.GetChild(2).gameObject.SetActive(advance);
-
-        if(!advance)
-            UpdatePaperInfo();
-   }
 
     //인사관리창에서 회사 기자들을 표시하는 프리팹 생성
     public void CreateReporterButton(int number, Reporter reporter)
@@ -401,4 +387,5 @@ public class GameManager : Singleton<GameManager>
             }
         }
     }
+
 }

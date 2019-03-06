@@ -7,6 +7,8 @@ TagManager:
   - Desk
   - Paper
   - NewsPaper
+  - WorkDesk
+  - AdvanceBox
   layers:
   - Default
   - TransparentFX
@@ -43,6 +45,9 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Paper
+    uniqueID: 1602962265
     locked: 0
   - name: Screen
     uniqueID: 1263829931

@@ -7,7 +7,7 @@ public class VisualizeReporter : MonoBehaviour
 {
     [Header("기자 정보 받는 칸")]
     public SpriteRenderer reporterImage;
-    public Text name;
+    public Text reporterName;
     public Text mainField;
     public Text level;
     public Text writing;
@@ -24,7 +24,7 @@ public class VisualizeReporter : MonoBehaviour
 
         reporterImage.sprite = reporter.reporterImage;
 
-        name.text = "이름 : " + reporter.name;
+        reporterName.text = "이름 : " + reporter.name;
         float temp_max = 0;
         for (int i = 0; i < System.Enum.GetValues(typeof(Setting.Fields)).Length; i++)
         {

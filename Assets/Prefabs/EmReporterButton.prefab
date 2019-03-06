@@ -180,7 +180,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   reporterImage: {fileID: 8221028734247672111}
-  name: {fileID: 8206701317707563665}
+  reporterName: {fileID: 8206701317707563665}
   mainField: {fileID: 7459187113068882010}
   level: {fileID: 766098238680019411}
   writing: {fileID: 8173991837071370162}
@@ -503,8 +503,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1263829931
+  m_SortingLayer: 2
   m_SortingOrder: 15
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -819,8 +819,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1263829931
+  m_SortingLayer: 2
   m_SortingOrder: 15
   m_Sprite: {fileID: 21300000, guid: 9191b7e9b6834df49b805e49e22f8c11, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 //실제 게임에 등장하는 기사 오브젝트 정보
 public class Paper : MonoBehaviour
@@ -9,6 +10,7 @@ public class Paper : MonoBehaviour
     public Sprite paperImage;
     public Reporter reporter;
     public Article article;
+    public Text viewText;
     private void Start() {
         
         SetImage();
@@ -25,6 +27,26 @@ public class Paper : MonoBehaviour
         //reporterImage = GameManager.Instance.ReporterImages[randomFace];
         paperImage = GameManager.Instance.PaperImages[randomPaper];
 
+    }
+
+    //발표를 위해 급조된 함수이므로 나중에 고칠것.
+    public void UpdateViewText(string paperRatio)
+    {
+        Text nameText = viewText.transform.GetChild(0).GetComponent<Text>();
+        float ratio = (float.Parse(paperRatio) / 30f) * 100f;
+        nameText.text =   article.article_name ;
+        viewText.text = ratio.ToString("0.0") + " %";
+        if(ratio > 5f)
+        {
+            int nameSize =  Mathf.CeilToInt((0.2f * ratio) + 10);
+            viewText.fontSize = 15; 
+            nameText.fontSize = nameSize;
+        }
+        else
+        {
+            viewText.fontSize = 10; 
+            nameText.fontSize = 10;
+        }
     }
 
 }

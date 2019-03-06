@@ -5,28 +5,28 @@ using UnityEngine.UI;
 
 public class Drag : MonoBehaviour
 {
-    bool inPaper = false; //책상 안에 존재하는가?
-    bool inClick = false;
-    float timer1; //눌렀을 때 시간
-    float timer2; //뗐을 때 시간
+       
+    protected float timer1; //눌렀을 때 시간
+    protected float timer2; //뗐을 때 시간
 
-    Vector3 offset; 
+    protected Vector3 offset; //클릭 시 위치 유지를 위해 필요한 거리
 
-    Vector3 originPosition;
-    Vector3 objPosition;
+    protected Vector3 originPosition; 
+    protected Vector3 objPosition;
 
-    SpriteRenderer spriteRender;
-    public GameObject infoWindow;
-    public Text[] infoText;
+    protected GameObject infoWindow; 
+    protected Text[] infoText;
 
+    protected SpriteRenderer spriteRender;
+    protected bool inClick = false;
 
-    private void Start()
+    protected virtual void Start()
     {
-       spriteRender = GetComponent<SpriteRenderer>();
+       spriteRender = GetComponent<SpriteRenderer>();       
        infoWindow = transform.GetChild(0).gameObject;
        SetInfoText();
+       EventManager.DayEvent_End += EndDay;
     }
-
 
     ///<param name = "infoText[0]"> 기사 제목 </param>
     ///<param name = "infoText[1]"> 기자,분야 등 </param>
@@ -39,7 +39,13 @@ public class Drag : MonoBehaviour
         infoWindow.SetActive(false);
     }
 
-    private void OnMouseDown() //누를 때 클릭된 프리팹을 앞으로 옮김
+    protected virtual void EndDay(Society society, Company company) 
+    {
+        if(this != null)
+            Destroy(gameObject);
+    }
+    
+    protected virtual void OnMouseDown() //누를 때 클릭된 프리팹을 앞으로 옮김
     {
         inClick = true;
         if (!GameManager.Instance.in_PaperMenu && !GameManager.Instance.in_ReporterMenu)
@@ -52,7 +58,7 @@ public class Drag : MonoBehaviour
         }
     }
 
-    private void OnMouseDrag() //드래그했을 때 이동
+    protected virtual void OnMouseDrag() //드래그했을 때 이동
     {
         inClick = true;
         if (!GameManager.Instance.in_PaperMenu && !GameManager.Instance.in_ReporterMenu) 
@@ -64,70 +70,21 @@ public class Drag : MonoBehaviour
     }
 
 
-    private void OnMouseUp() //마우스를 뗐을 때
-    {
-        inClick = false;
-        if (!GameManager.Instance.in_PaperMenu && !GameManager.Instance.in_ReporterMenu)
-        {
-            timer2 = Time.realtimeSinceStartup;
-            
-            if (!inPaper)
-            {
-                originPosition = transform.position;                
-            }
-            else
-            {
-                NewsPaper.Instance.CreatAssignedPaper(GetComponent<Paper>());
-                transform.position = originPosition;
-            }
-
-            spriteRender.sortingOrder = 2;
-
-            if (timer2 - timer1 < 0.13f) //클릭이라면
-            {
-                Paper paper = GetComponent<Paper>();
-                bool advance = paper.article.advance;                
-
-                if (!advance) //심화 취재를 지시하지 않은 기사라면
-                {
-                    GameManager.Instance.selectedPaper = paper;
-                    GameManager.Instance.DisplayPaperMenu();
-                }
-                else //심화 취재를 지시한 기사라면
-                {
-                    GameManager.Instance.selectedPaper = paper;
-                    GameManager.Instance.DisplayPaperMenu();
-                }
-            }
-        }
-    }
-
-    
-    private void OnMouseOver() //마우스 올리고 있을 때
-    {
-        if(!inClick && !GameManager.Instance.in_PaperMenu && !GameManager.Instance.in_ReporterMenu)
-            infoWindow.SetActive(true);  
-        else 
-            infoWindow.SetActive(false);  
-    }   
+    protected virtual void OnMouseUp()  { }  //마우스를 뗐을 때
+   
 
     private void OnMouseExit() 
     {
         if(!inClick)
          infoWindow.SetActive(false);   
     }
- 
-    //지면 위에 오브젝트를 끌고 있을 때
 
-    private void OnTriggerStay2D(Collider2D other) {
-        if(other.CompareTag("NewsPaper"))
-        {
-            inPaper = true;
-            NewsPaper.Instance.PreviewPaper(transform);
-        }
-    }
+    private void OnMouseOver() //마우스 올리고 있을 때
+    {
+        if(!inClick && !GameManager.Instance.in_ReporterMenu)
+            infoWindow.SetActive(true);  
+        else 
+            infoWindow.SetActive(false);  
+    }   
 
-    private void OnTriggerExit2D(Collider2D other) {
-        inPaper = false;
-    }
 }
