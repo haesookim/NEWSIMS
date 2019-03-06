@@ -61,6 +61,7 @@ public class NewsPaper : Singleton<NewsPaper>
     
     void Start()
     {
+        EventManager.DayEvent_Beginning += SetGrid;
         InitPaper();
     }
 
@@ -77,11 +78,16 @@ public class NewsPaper : Singleton<NewsPaper>
         previewSprite = preview.GetComponent<SpriteRenderer>();
         previewOriginColor = previewSprite.color;
 
+        SetGrid(null,null); //필요없어서null대입
+    }
+
+    void SetGrid(Society s,Company c)
+    {
         paperIndex = new Vector3[grid.y+1,grid.x+1];
         assignedPapers = new AssignedPaperData[grid.y+1,grid.x+1];
         outerNULL = new AssignedPaperData(null,null);
 
-       //배열 내부 인덱스당 위치값 설정
+        //배열 내부 인덱스당 위치값 설정
         for(int i = 0 ; i< grid.x ; i++)
         {
             for(int j = 0; j< grid.y ; j++)

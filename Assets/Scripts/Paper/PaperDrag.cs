@@ -21,7 +21,7 @@ public class PaperDrag : Drag
             if(NewsPaper.Instance.inAdvance)
             {
                 gameObject.SetActive(false);
-                
+                NewsPaper.Instance.inAdvance = false;
                 Debug.Log(("심화취재를 지시합니다"));
             }
 
