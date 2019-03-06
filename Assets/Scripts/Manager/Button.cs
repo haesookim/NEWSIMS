@@ -149,6 +149,7 @@ public class Button : MonoBehaviour
 
     public void EndofDay()
     {
+        EventManager.DayEvent_ReporterManage += FireProcess; //해고 과정 이벤트
         GameManager.Instance.EndofDay();
     }
 
@@ -363,6 +364,23 @@ public class Button : MonoBehaviour
         }
 
         BackButton(1);
+    }
+
+    //한솔이 만듬
+    void FireProcess(Society society, Company company)
+    {
+        while (company.reporters.Exists(x => x.is_fired == true)) //리포터 리스트에서 is_fired가 true인 값이 존재한다면
+        {
+            for (int i = 0; i < company.reporters.Count; i++)
+            {
+                if (company.reporters[i].is_fired)
+                {
+                    EventManager.DayEvent_Beginning -= company.reporters[i].WriteArticle; //기사쓰는 이벤트를 지우고
+                    company.RemoveReporterToList(company.reporters[i]); //리스트에서 삭제해라
+                    break;
+                }
+            }
+        }
     }
 
     public void EmploymentButton()
