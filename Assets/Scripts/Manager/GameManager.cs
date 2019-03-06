@@ -230,17 +230,17 @@ public class GameManager : Singleton<GameManager>
     {
         GameObject paperObject = Instantiate(PaperPrefab,position,Quaternion.identity,deskWindow.transform);
         Paper temp_paper = paperObject.GetComponent<Paper>();
-        temp_paper.reporter = company.reporters[company.articles[_article_index].write_reporter_index-1];
         temp_paper.article = company.articles[_article_index];
+        temp_paper.reporter_name = temp_paper.article.write_reporter_name;
+        
         //기사 오브젝트에 데이터 입력
-
         Text view = Instantiate(scrollviewText,scrollviewText.transform.position,Quaternion.identity,textView).GetComponent<Text>();
         temp_paper.viewText = view;         
         temp_paper.UpdateViewText("0");
         //텍스트뷰에 기사 제목 업데이트
         //지난 기록을 보려면.. 삭제하면 안되고 계속 쌓아야 할듯? 구조도 변경해야 할거고.
 
-        Vector3 paprerPosition = new Vector3(paperObject.transform.position.x,paperObject.transform.position.y,temp_paper.reporter.reporter_index);
+        Vector3 paprerPosition = new Vector3(paperObject.transform.position.x,paperObject.transform.position.y,temp_paper.article.write_reporter_index);
         paperObject.transform.position = paprerPosition; //z값 변경
         papers.Add(paperObject);
     }

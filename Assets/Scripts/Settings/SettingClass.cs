@@ -96,6 +96,7 @@ public class Article
 {
     public string article_field; //어떤 관심사의 기사인가?
     public string article_name; //어떤 제목의 기사인가?
+    public string write_reporter_name; //작성한 기자의 이름
     public int write_reporter_index; //어떤 기자에 의해 작성된 기사인가?
     public int virality; //파급력
     public int date; //생성된 날짜
@@ -112,6 +113,7 @@ public class Article
         article_field = _field;
         article_name = "";
         write_reporter_index = reporter.reporter_index;
+        write_reporter_name = reporter.name;
         virality = _virality;
         date = _date;
         vertification = _vertification;

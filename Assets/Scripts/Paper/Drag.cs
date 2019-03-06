@@ -35,7 +35,7 @@ public class Drag : MonoBehaviour
         infoText = GetComponentsInChildren<Text>();
         Paper paper = GetComponent<Paper>();
         infoText[0].text = paper.article.article_name;
-        infoText[1].text = paper.reporter.name + "\n" + paper.article.article_field;
+        infoText[1].text = paper.reporter_name + "\n" + paper.article.article_field;
         infoWindow.SetActive(false);
     }
 

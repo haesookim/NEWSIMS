@@ -8,11 +8,11 @@ public class Paper : MonoBehaviour
 {
     //public Sprite reporterImage;
     public Sprite paperImage;
-    public Reporter reporter;
+    public string reporter_name;
     public Article article;
     public Text viewText;
     private void Start() {
-        
+
         SetImage();
         SpriteRenderer renderer = GetComponent<SpriteRenderer>();
         renderer.sprite = paperImage;

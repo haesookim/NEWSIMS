@@ -62,7 +62,7 @@ public class Button : MonoBehaviour
                 break;
 
             case function.SetDeepenArticle :
-                SetDeepenArticle();
+                //SetDeepenArticle();
                 break;
 
             case function.EndofDay :
@@ -138,14 +138,14 @@ public class Button : MonoBehaviour
    }
 
     
-    public void SetDeepenArticle() //심화취재 버튼 클릭시
+    /*public void SetDeepenArticle() //심화취재 버튼 클릭시
     {
         GameManager.Instance.selectedPaper.reporter.advance_news = true;
         GameManager.Instance.selectedPaper.article.advance = true;
         GameManager.Instance.selectedPaper.reporter.adn = GameManager.Instance.selectedPaper.article;
         GameManager.Instance.temp_point = 0;
         DisappearPaperMenu();
-    }
+    }*/
 
     public void EndofDay()
     {
