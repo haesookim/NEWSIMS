@@ -267,6 +267,30 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    public void UpdateReporterButton(int number)
+    {
+        for (int i = 0; i < number; i++)
+        {
+            switch (i % 3)
+            {
+                case 0:
+                    reporterManager.transform.GetChild(1).GetChild(0).GetChild(i).transform.localPosition = new Vector3(0f, 150f, 0f);
+                    break;
+                case 1:
+                    reporterManager.transform.GetChild(1).GetChild(0).GetChild(i).transform.localPosition = new Vector3(0f, 0f, 0f);
+                    break;
+                case 2:
+                    reporterManager.transform.GetChild(1).GetChild(0).GetChild(i).transform.localPosition = new Vector3(0f, -150f, 0f);
+                    break;
+            }
+        }
+        PageNumberingUpdate(company, 2);
+        HideOtherReporter(2, 0);
+
+        PageNumberingUpdate(company, 1);
+        HideOtherReporter(1, 0);
+    }
+
     public void CreateEmReporterButton(int number, EmReporter emreporter)
     {
         switch (number % 3)
@@ -332,7 +356,10 @@ public class GameManager : Singleton<GameManager>
         {
             Pages[child_num-1].transform.GetChild(i).GetChild(0).GetComponent<Text>().color = new Color(0f, 0f, 0f);
         }
-        Pages[child_num-1].transform.GetChild(a).GetChild(0).GetComponent<Text>().color = new Color(255f,0f,0f);
+        if (Pages[child_num - 1].transform.childCount != 0)
+        {
+            Pages[child_num - 1].transform.GetChild(a).GetChild(0).GetComponent<Text>().color = new Color(255f, 0f, 0f);
+        }
     }
 
     //인사관리창 페이지 넘버 달기
@@ -355,8 +382,8 @@ public class GameManager : Singleton<GameManager>
             }
             else
             {
-                int div = company.reporters.Count / 3;
-                for (int i = 1; i <= div + 1; i++)
+                int div = (company.reporters.Count / 3) + 1;
+                for (int i = 1; i <= div; i++)
                 {
                     GameObject pbt = Instantiate(PageButton, Pages[child_num - 1].transform);
                     pbt.GetComponent<PageButton>().page_num = i;
@@ -383,8 +410,8 @@ public class GameManager : Singleton<GameManager>
             }
             else
             {
-                int div = company.em_reporters.Count / 3;
-                for (int i = 1; i <= div + 1; i++)
+                int div = (company.em_reporters.Count / 3) + 1;
+                for (int i = 1; i <= div; i++)
                 {
                     GameObject pbt = Instantiate(PageButton, Pages[child_num - 1].transform);
                     pbt.GetComponent<PageButton>().page_num = i;
@@ -396,4 +423,121 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    void PageNumberingUpdate(Company company, int child_num)
+    {
+        if (child_num == 1)
+        {
+            int namuge = company.reporters.Count % 3;
+            if (namuge == 0)
+            {
+                int div = company.reporters.Count / 3;
+
+                if (div < Pages[child_num -1].transform.childCount)
+                {
+                    int del = Pages[child_num - 1].transform.childCount - div;
+                    while (del != 0)
+                    {
+                        Destroy(Pages[child_num - 1].transform.GetChild(div+del-1).gameObject);
+                        del--;
+                    }
+                }
+                else if (div > Pages[child_num - 1].transform.childCount)
+                {
+                    int plus = div - Pages[child_num - 1].transform.childCount;
+                    while (plus != 0)
+                    {
+                        GameObject pbt = Instantiate(PageButton, Pages[child_num - 1].transform);
+                        pbt.GetComponent<PageButton>().page_num = div + 1 - plus;
+                        pbt.GetComponent<PageButton>().child_num = child_num;
+                        pbt.transform.GetChild(0).GetComponent<Text>().text = (div + 1 - plus).ToString();
+                        pbt.transform.localPosition = new Vector3(-400f + 45f * ((div + 1 - plus) - 1), -240f, 0f);
+                        plus--;
+                    }
+                }
+            }
+            else
+            {
+                int div = (company.reporters.Count / 3) + 1;
+                if (div < Pages[child_num - 1].transform.childCount)
+                {
+                    int del = Pages[child_num - 1].transform.childCount - div;
+                    while (del != 0)
+                    {
+                        Destroy(Pages[child_num - 1].transform.GetChild(div + del - 1).gameObject);
+                        del--;
+                    }
+                }
+                else if (div > Pages[child_num - 1].transform.childCount)
+                {
+                    int plus = div - Pages[child_num - 1].transform.childCount;
+                    while (plus != 0)
+                    {
+                        GameObject pbt = Instantiate(PageButton, Pages[child_num - 1].transform);
+                        pbt.GetComponent<PageButton>().page_num = div + 1 - plus;
+                        pbt.GetComponent<PageButton>().child_num = child_num;
+                        pbt.transform.GetChild(0).GetComponent<Text>().text = (div + 1 - plus).ToString();
+                        pbt.transform.localPosition = new Vector3(-400f + 45f * ((div + 1 - plus) - 1), -240f, 0f);
+                        plus--;
+                    }
+                }
+            }
+        }
+        else if (child_num == 2)
+        {
+            int namuge = company.em_reporters.Count % 3;
+            if (namuge == 0)
+            {
+                int div = company.em_reporters.Count / 3;
+
+                if (div < Pages[child_num - 1].transform.childCount)
+                {
+                    int del = Pages[child_num - 1].transform.childCount - div;
+                    while (del != 0)
+                    {
+                        Destroy(Pages[child_num - 1].transform.GetChild(div + del - 1).gameObject);
+                        del--;
+                    }
+                }
+                else if (div > Pages[child_num - 1].transform.childCount)
+                {
+                    int plus = div - Pages[child_num - 1].transform.childCount;
+                    while (plus != 0)
+                    {
+                        GameObject pbt = Instantiate(PageButton, Pages[child_num - 1].transform);
+                        pbt.GetComponent<PageButton>().page_num = div + 1 - plus;
+                        pbt.GetComponent<PageButton>().child_num = child_num;
+                        pbt.transform.GetChild(0).GetComponent<Text>().text = (div + 1 - plus).ToString();
+                        pbt.transform.localPosition = new Vector3(-400f + 45f * ((div + 1 - plus) - 1), -240f, 0f);
+                        plus--;
+                    }
+                }
+            }
+            else
+            {
+                int div = (company.em_reporters.Count / 3) + 1;
+                if (div < Pages[child_num - 1].transform.childCount)
+                {
+                    int del = Pages[child_num - 1].transform.childCount - div;
+                    while (del != 0)
+                    {
+                        Destroy(Pages[child_num - 1].transform.GetChild(div + del - 1).gameObject);
+                        del--;
+                    }
+                }
+                else if (div > Pages[child_num - 1].transform.childCount)
+                {
+                    int plus = div - Pages[child_num - 1].transform.childCount;
+                    while (plus != 0)
+                    {
+                        GameObject pbt = Instantiate(PageButton, Pages[child_num - 1].transform);
+                        pbt.GetComponent<PageButton>().page_num = div + 1 - plus;
+                        pbt.GetComponent<PageButton>().child_num = child_num;
+                        pbt.transform.GetChild(0).GetComponent<Text>().text = (div + 1 - plus).ToString();
+                        pbt.transform.localPosition = new Vector3(-400f + 45f * ((div + 1 - plus) - 1), -240f, 0f);
+                        plus--;
+                    }
+                }
+            }
+        }
+    }
 }
