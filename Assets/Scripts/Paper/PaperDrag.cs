@@ -20,8 +20,20 @@ public class PaperDrag : Drag
             
             if(NewsPaper.Instance.inAdvance)
             {
+                Paper paper = GetComponent<Paper>();
+
                 gameObject.SetActive(false);
                 NewsPaper.Instance.inAdvance = false;
+
+                //심화취재하면 기사정보를 기자의 adn으로 넘김
+                foreach (Reporter reporter in GameManager.Instance.company.reporters)
+                {
+                    if(reporter.reporter_index == paper.article.write_reporter_index)
+                    {
+                        reporter.adn = paper.article;
+                        reporter.advance_news = true;
+                    }
+                }
                 Debug.Log(("심화취재를 지시합니다"));
             }
 

@@ -7,7 +7,6 @@ using UnityEngine;
 /// </summary>
 public class AudioManager : Singleton<AudioManager>
 {
-    public static AudioManager instance = null;
 
     //public static AudioManager instance = null;
     public AudioSource musicSou;
@@ -21,15 +20,6 @@ public class AudioManager : Singleton<AudioManager>
 
     public override void Awake()
     {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else if (instance != this)
-        {
-            Destroy(gameObject);
-        }
-
         DontDestroyOnLoad(gameObject); 
     }
 
