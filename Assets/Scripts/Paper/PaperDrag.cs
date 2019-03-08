@@ -6,6 +6,12 @@ using UnityEngine.UI;
 public class PaperDrag : Drag
 {
 
+    protected override void Start() {
+        
+        base.Start();
+        SetInfoText();
+    }
+
     protected override void OnMouseUp() //마우스를 뗐을 때
     {
         inClick = false;
@@ -46,10 +52,8 @@ public class PaperDrag : Drag
             }
         }
     }
-
    
     //지면,심화취재박스 위에 오브젝트를 끌고 있을 때
-
    void OnTriggerStay2D(Collider2D other) {
         if(other.CompareTag("NewsPaper"))
         {

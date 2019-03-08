@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AssignedPaperDrag : Drag
 {
@@ -18,14 +19,19 @@ public class AssignedPaperDrag : Drag
         article = _originData.GetComponent<Paper>().article;
         index = _index;
         originData.SetActive(false);
+
+
+        infoText = GetComponentsInChildren<Text>();
+        infoText[0].text = originData.GetComponent<Paper>().article.article_name;
+        infoText[1].text = GameManager.Instance.company.reporters.Exists(x => x.reporter_index == article.write_reporter_index) + "\n" + article.article_field;
+        if(infoWindow != null)
+        infoWindow.SetActive(false);
     }
 
-    protected override void Start() {
-        base.Start();
-    }
 
     protected override void OnMouseUp() 
     {
+        inClick = false;
         if (!GameManager.Instance.in_ReporterMenu)
         {
             timer2 = Time.realtimeSinceStartup;

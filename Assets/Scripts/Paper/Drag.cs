@@ -24,13 +24,12 @@ public class Drag : MonoBehaviour
     {
        spriteRender = GetComponent<SpriteRenderer>();       
        infoWindow = transform.GetChild(0).gameObject;
-       SetInfoText();
        EventManager.DayEvent_End += EndDay;
     }
 
     ///<param name = "infoText[0]"> 기사 제목 </param>
     ///<param name = "infoText[1]"> 기자,분야 등 </param>
-    void SetInfoText()
+    protected void SetInfoText()
     {
         infoText = GetComponentsInChildren<Text>();
         Paper paper = GetComponent<Paper>();
@@ -70,16 +69,16 @@ public class Drag : MonoBehaviour
     }
 
 
-    protected virtual void OnMouseUp()  { }  //마우스를 뗐을 때
+    protected virtual void OnMouseUp()  {}  //마우스를 뗐을 때
    
 
-    private void OnMouseExit() 
+    protected void OnMouseExit() 
     {
         if(!inClick)
          infoWindow.SetActive(false);   
     }
 
-    private void OnMouseOver() //마우스 올리고 있을 때
+    protected void OnMouseOver() //마우스 올리고 있을 때
     {
         if(!inClick && !GameManager.Instance.in_ReporterMenu)
             infoWindow.SetActive(true);  
