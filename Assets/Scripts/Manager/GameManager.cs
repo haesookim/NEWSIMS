@@ -7,10 +7,6 @@ public class GameManager : Singleton<GameManager>
 {
     [HideInInspector] public Setting setting; // 뉴게임 시작시의 초기 세팅
 
-    private int ending_phase = 0;
-
-    public static GameManager instance = null;
-
     [HideInInspector] public Society society;
     public Company company;
     
@@ -20,7 +16,6 @@ public class GameManager : Singleton<GameManager>
     [HideInInspector] public bool in_ReporterMenu = false; //인사관리 창이 켜져있는가?
 
     [HideInInspector] public List<Dictionary<string, object>> data;
-    [HideInInspector] public List<Dictionary<string, object>> endingText;
     [HideInInspector] public List<string> originName; //사용 가능 기사 리스트
 
     /////////////////////////////////////////화면컨트롤용 
@@ -77,8 +72,6 @@ public class GameManager : Singleton<GameManager>
         reportText.text = tempText;
         tempText = " ";
     }
-     
-
 
     [Tooltip("체크 시 리포터 정보 콘솔에 출력")]
     public bool print_reporter_data;
@@ -87,17 +80,6 @@ public class GameManager : Singleton<GameManager>
     //////////////////////////////////////////////////////////
 
     public override void Awake() {
-
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else if (instance != this)
-        {
-            Destroy(gameObject);
-        }
-
-        DontDestroyOnLoad(gameObject); //파괴되지않아!
 
         CreatGame(); //아직 세이브기능이 없어서 항상 새 게임.
         InitGame();
@@ -179,7 +161,6 @@ public class GameManager : Singleton<GameManager>
         company = new Company(setting.startingMoney, 0f); //회사 생성
 
         data = CSVReader.Read("PaperName"); //CSV를 불러옴
-        endingText = CSVReader.Read("EndingText"); //CSV를 불러옴
         for (int i = 0; i < data.Count; i++)
         {
             originName.Add(data[i]["제목"].ToString());
@@ -242,6 +223,81 @@ public class GameManager : Singleton<GameManager>
         PublishArticle();
     }
 
+    void EndingRoot() //엔딩 분기 판별 함수
+    {
+
+        if (company.money < 0)
+        {
+            EndingManager.instance.ending_phase = 0;
+            LoadingSceneManager.LoadScene("02.Ending");
+        }
+
+        else if (society.day >= 5 && company.fakeRate >= 0.25 * setting.fakePossibility)
+        {
+            EndingManager.instance.ending_phase = 1;
+            LoadingSceneManager.LoadScene("02.Ending");
+        }
+
+        else if (society.day > 7)
+        {
+            float endRate = (float)(company.fieldRate[(Setting.Fields)0] + company.fieldRate[(Setting.Fields)1]) / (company.fieldRate[(Setting.Fields)0] + company.fieldRate[(Setting.Fields)1] + company.fieldRate[(Setting.Fields)2] + company.fieldRate[(Setting.Fields)3]);
+            float endStance = 0f;
+            for (int i = 0; i < company.reporters.Count; i++)
+            {
+                endStance += (company.reporters[i].econStance+company.reporters[i].socialStance) / 2;
+            }
+            endStance = endStance / company.reporters.Count;
+
+            if ((endRate < 2.0 / System.Enum.GetNames(typeof(Setting.Fields)).Length) && (company.fieldRate[(Setting.Fields)2] >= company.fieldRate[(Setting.Fields)3]))
+            {
+                EndingManager.instance.ending_phase = 2;
+            } else if ((endRate < 2.0 / System.Enum.GetNames(typeof(Setting.Fields)).Length) && (company.fieldRate[(Setting.Fields)3] > company.fieldRate[(Setting.Fields)2]))
+            {
+                EndingManager.instance.ending_phase = 3;
+            } else if ((endRate >= 2.0 / System.Enum.GetNames(typeof(Setting.Fields)).Length) && (endStance < 0.35) && (company.fakeRate < 0.05f * setting.fakePossibility))
+            {
+                EndingManager.instance.ending_phase = 4;
+            }
+            else if ((endRate >= 2.0 / System.Enum.GetNames(typeof(Setting.Fields)).Length) && (endStance < 0.35) && (company.fakeRate >= 0.05f * setting.fakePossibility) && (company.fakeRate < 0.15f * setting.fakePossibility))
+            {
+                EndingManager.instance.ending_phase = 5;
+            }
+            else if ((endRate >= 2.0 / System.Enum.GetNames(typeof(Setting.Fields)).Length) && (endStance < 0.35) && (company.fakeRate >= 0.15f * setting.fakePossibility))
+            {
+                EndingManager.instance.ending_phase = 6;
+            }
+            else if ((endRate >= 2.0 / System.Enum.GetNames(typeof(Setting.Fields)).Length) && (endStance >= 0.35) && (endStance < 0.65) && (company.fakeRate < 0.05f * setting.fakePossibility))
+            {
+                EndingManager.instance.ending_phase = 7;
+            }
+            else if ((endRate >= 2.0 / System.Enum.GetNames(typeof(Setting.Fields)).Length) && (endStance >= 0.35) && (endStance < 0.65) && (company.fakeRate >= 0.05f * setting.fakePossibility) && (company.fakeRate < 0.15f * setting.fakePossibility))
+            {
+                EndingManager.instance.ending_phase = 8;
+            }
+            else if ((endRate >= 2.0 / System.Enum.GetNames(typeof(Setting.Fields)).Length) && (endStance >= 0.35) && (endStance < 0.65) && (company.fakeRate >= 0.15f * setting.fakePossibility))
+            {
+                EndingManager.instance.ending_phase = 9;
+            }
+            else if ((endRate >= 2.0 / System.Enum.GetNames(typeof(Setting.Fields)).Length) && (endStance >= 0.65) && (company.fakeRate < 0.05f * setting.fakePossibility))
+            {
+                EndingManager.instance.ending_phase = 10;
+            }
+            else if ((endRate >= 2.0 / System.Enum.GetNames(typeof(Setting.Fields)).Length) && (endStance >= 0.65) && (company.fakeRate >= 0.05f * setting.fakePossibility) && (company.fakeRate < 0.15f * setting.fakePossibility))
+            {
+                EndingManager.instance.ending_phase = 11;
+            }
+            else if ((endRate >= 2.0 / System.Enum.GetNames(typeof(Setting.Fields)).Length) && (endStance >= 0.65) && (company.fakeRate >= 0.15f * setting.fakePossibility))
+            {
+                EndingManager.instance.ending_phase = 12;
+            }
+            else
+            {
+                EndingManager.instance.ending_phase = 13;
+            }
+            LoadingSceneManager.LoadScene("02.Ending");
+        }
+    }
+
     public void EndofDay()
     {
         while(papers.Count != 0)
@@ -250,22 +306,12 @@ public class GameManager : Singleton<GameManager>
         }
         EventManager.Instance.Do_EndofDay(society,company);
 
-        if (company.money < 0)
-        {
-            ending_phase = 0;
-            LoadingSceneManager.LoadScene("02.Ending");
-        }
-
-        society.day++;
-
-        if (society.day > 7)
-        {
-            ending_phase = 0;
-            LoadingSceneManager.LoadScene("02.Ending");
-        }
+        society.day++;   
 
         SetWindowDefault();
         BeginningofDay();
+
+        EndingRoot();
 
         //기본 표시 사항 업데이트
         dateText.text = society.day.ToString();

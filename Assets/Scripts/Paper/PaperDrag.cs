@@ -6,11 +6,6 @@ using UnityEngine.UI;
 public class PaperDrag : Drag
 {
 
-    protected override void Start()
-    {
-        base.Start();
-    }
-
     protected override void OnMouseUp() //마우스를 뗐을 때
     {
         inClick = false;

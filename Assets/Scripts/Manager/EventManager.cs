@@ -4,18 +4,19 @@ using UnityEngine;
 
 public class EventManager : Singleton<EventManager>
 {
+
     public delegate void DayHandler(Society society, Company company);
     public static event DayHandler DayEvent_Beginning = delegate{};
     public static event DayHandler DayEvent_End = delegate{};
     public static event DayHandler DayEvent_Publication = delegate{};
     public static event DayHandler DayEvent_ReporterManage = delegate{};
 
-    ///<summary>
-    ///하루가 시작할 때 호출하는 이벤트.   
-    ///날짜 애니메이션이 출력되고 기자가 기사를 써낸다.
-    ///</summary>
-    ///<param name = "society"> 사회 클래스를 대입 </param>
-    public void Do_BeginningofDay(Society society, Company company)
+        ///<summary>
+        ///하루가 시작할 때 호출하는 이벤트.   
+        ///날짜 애니메이션이 출력되고 기자가 기사를 써낸다.
+        ///</summary>
+        ///<param name = "society"> 사회 클래스를 대입 </param>
+        public void Do_BeginningofDay(Society society, Company company)
     {
         DayEvent_Beginning(society,company);
     }

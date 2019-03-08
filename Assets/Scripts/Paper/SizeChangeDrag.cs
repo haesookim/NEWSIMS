@@ -35,6 +35,7 @@ public class SizeChangeDrag : MonoBehaviour
     }
 
     private void OnMouseDrag() {
+        if(GameManager.Instance.in_ReporterMenu) return;
         Vector3 mousePosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10);
         Vector3 objPosition = Camera.main.ScreenToWorldPoint(mousePosition);
         
@@ -43,6 +44,8 @@ public class SizeChangeDrag : MonoBehaviour
     }
 
     private void OnMouseUp() {
+        if(GameManager.Instance.in_ReporterMenu) return;
+
         preview.localScale = new Vector3(1,1,0);
         NewsPaper.Instance.inPaper = false;
 
@@ -69,7 +72,7 @@ public class SizeChangeDrag : MonoBehaviour
                 
                 Vector2 aa = new Vector2((int)beforeScale.x,(int)beforeScale.y);
                 Debug.Log(aa.x + " " + aa.y);
-                paper.spriteRender.sprite = GameManager.instance.AssignedPaperToSize[aa];
+                paper.spriteRender.sprite = GameManager.Instance.AssignedPaperToSize[aa];
                 BoxCollider2D collider = paper.GetComponent<BoxCollider2D>();
                 collider.offset = new Vector2(0.28f*beforeScale.x,-0.4f*beforeScale.y);
                 collider.size = new Vector2(0.55f*beforeScale.x,0.78f*beforeScale.y);

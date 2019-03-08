@@ -20,11 +20,13 @@ public class AssignedPaperDrag : Drag
         originData.SetActive(false);
     }
 
-
+    protected override void Start() {
+        base.Start();
+    }
 
     protected override void OnMouseUp() 
     {
-        if (!GameManager.Instance.in_PaperMenu)
+        if (!GameManager.Instance.in_ReporterMenu)
         {
             timer2 = Time.realtimeSinceStartup;
             
