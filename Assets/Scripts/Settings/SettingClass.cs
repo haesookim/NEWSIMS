@@ -53,6 +53,20 @@ public class Society
             citizens_knowledge[3]++;
         }
     }
+
+    public float CalculateAverageApproval()
+    {
+        float socialAverageApproval = 0f;
+
+        for (int i = 0; i < citizens.Count; i++)
+        {
+            socialAverageApproval += citizens[i].approval;
+        }
+
+        socialAverageApproval = Mathf.Floor((socialAverageApproval / citizens.Count) * 10000) / 10000;
+
+        return socialAverageApproval;
+    }
 }
 
 public class Company
@@ -67,19 +81,12 @@ public class Company
     public int index = 0; //기자를 구분하기 위한 인덱스
     public int money; //돈. 기자 1인당 하루에 (기자 레벨 + 1) 지출
     public int circulation = 0; //발행부수
-    public float falseRate; //오보율
-    public Dictionary<Setting.Fields, int> usePoints; //각 관심사 기사에 대한 사용량
+    float credibility; //신뢰도
 
-    public Company(int _money, float _falseRate)
+    public Company(int _money, float _credibility)
     {
         money = _money;
-        falseRate = _falseRate;
-
-        usePoints = new Dictionary<Setting.Fields, int>();
-        foreach (Setting.Fields field in System.Enum.GetValues(typeof(Setting.Fields)))
-        {
-            usePoints.Add(field, 0);
-        }
+        credibility = _credibility;
     }
 
     public void AddReporterToList(Reporter _reporter) //Reporter를 리스트에 추가하는 함수

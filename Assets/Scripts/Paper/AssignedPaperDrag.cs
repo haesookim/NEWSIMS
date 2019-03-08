@@ -5,14 +5,16 @@ using UnityEngine;
 public class AssignedPaperDrag : Drag
 {
     public GameObject originData;
+    public Article article;
     public Grid index;
-    public Grid size = new Grid(1,1);  //기본 생성되는 기사의 사이즈
+    public Grid size = new Grid(1,1);  //기사의 사이즈
 
     bool inWorkDesk;
 
     public void SetPaper(GameObject _originData, Grid _index)
     {
         originData = _originData;
+        article = _originData.GetComponent<Paper>().article;
         index = _index;
         originData.SetActive(false);
     }
@@ -51,7 +53,10 @@ public class AssignedPaperDrag : Drag
         originData.transform.position = objPosition;
         originData.SetActive(true); //배정 시 숨겨 둔 기사 오브젝트를 복원
 
+
         //인덱스 내의 데이터를 삭제
+        
+        NewsPaper.Instance.ArticlesInAssignedPaper.Remove(this);
         GetComponentInChildren<SizeChangeDrag>().DeleteDatainPaper();
     }
 

@@ -5,14 +5,11 @@ using UnityEngine.UI;
 
 public class GameManager : Singleton<GameManager>
 {
-    public static GameManager instance = null;
-
-    private int ending_num = 0; //엔딩 번호
-
     [HideInInspector] public Setting setting; // 뉴게임 시작시의 초기 세팅
 
-    [HideInInspector] public int point; //남은 포인트
-    [HideInInspector] public int temp_point; //배정할 포인트의 임시 저장공간
+    private int ending_phase = 0;
+
+    public static GameManager instance = null;
 
     [HideInInspector] public Society society;
     public Company company;
@@ -60,6 +57,23 @@ public class GameManager : Singleton<GameManager>
 
     ///////////////////////////////////////////////////////////디버그용. 나중에 삭제
     [Header("FOR DEBUG")]
+    public Text reportText;
+    string tempText;
+    
+    public void AddReportText(string _text)
+    {
+        tempText += _text;
+        tempText += "\n";
+    }
+
+    public void DisplayReportText()
+    {
+        reportText.text = tempText;
+        tempText = " ";
+    }
+     
+
+
     [Tooltip("체크 시 리포터 정보 콘솔에 출력")]
     public bool print_reporter_data;
     [Tooltip("체크 시 사람수,기자수,기사정보 콘솔에 출력")]
@@ -77,7 +91,7 @@ public class GameManager : Singleton<GameManager>
             Destroy(gameObject);
         }
 
-        DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(gameObject); //파괴되지않아!
 
         CreatGame(); //아직 세이브기능이 없어서 항상 새 게임.
         InitGame();
@@ -140,9 +154,8 @@ public class GameManager : Singleton<GameManager>
     {
         /* 게임 최초 생성시 */
         setting = new Setting();
-        point = setting.newsPoint; //뉴스 포인트를 지정
         society = new Society(); //사회 구축
-        company = new Company(setting.startingMoney, 0f); //회사 생성
+        company = new Company(setting.startingMoney, 50f); //회사 생성
 
         data = CSVReader.Read("PaperName"); //CSV를 불러옴
         for (int i = 0; i < data.Count; i++)
@@ -177,10 +190,6 @@ public class GameManager : Singleton<GameManager>
             Citizen who = new Citizen();
             society.AddCitizenToList(who);
         }
-
-        dateText.text = society.day.ToString();
-        moneyText.text = company.money.ToString();
-        numberOfreporterText.text = company.reporters.Count.ToString();
     }
 
 
@@ -194,6 +203,14 @@ public class GameManager : Singleton<GameManager>
         //테스트마다 껏다켰다하기 귀찮아서
     }
 
+    void Update() 
+     {
+         //기본 표시 사항 업데이트
+        dateText.text = society.day.ToString();
+        moneyText.text = company.money.ToString();
+        numberOfreporterText.text = company.reporters.Count.ToString();
+    }
+
     public void LoadGame()
     {
         //todo: 저장한 게임 데이터를 불러와 매칭한다.
@@ -201,6 +218,7 @@ public class GameManager : Singleton<GameManager>
 
     public void BeginningofDay()
     {
+        DisplayReportText();
         EventManager.Instance.Do_BeginningofDay(society,company); //하루의 시작 이벤트 호출
         PublishArticle();
     }
@@ -213,27 +231,10 @@ public class GameManager : Singleton<GameManager>
         }
         EventManager.Instance.Do_EndofDay(society,company);
 
-        if (company.money < 0) //파산하면 엔딩으로
-        {
-            ending_num = 0; //파산 엔딩
-            LoadingSceneManager.LoadScene("02.Ending");
-        }
-
         society.day++;
-
-        if (society.day > 7) //7일 이후가 되면 엔딩으로
-        {
-            LoadingSceneManager.LoadScene("02.Ending");
-        }
-
-        dateText.text = society.day.ToString();
-        moneyText.text = company.money.ToString();
-        numberOfreporterText.text = company.reporters.Count.ToString();
-
         SetWindowDefault();
         BeginningofDay();
 
-        EventManager.DayEvent_ReporterManage -= Process;
         System.GC.Collect(); //매일 메모리 찌꺼기를 비움.
 
         //todo: 신문발행하고 기자들 액션 취한 후 시민들이 보고 스탯변동. 
@@ -567,105 +568,6 @@ public class GameManager : Singleton<GameManager>
                     }
                 }
             }
-        }
-    }
-
-    public void Process(Society society, Company company)
-    {
-        while (company.reporters.Exists(x => x.is_fired == true)) //리포터 리스트에서 is_fired가 true인 값이 존재한다면
-        {
-            for (int i = 0; i < company.reporters.Count; i++)
-            {
-                if (company.reporters[i].is_fired)
-                {
-                    for (int j = 0; j < ReporterManager.Instance.vrs.Count; j++)
-                    {
-                        if (ReporterManager.Instance.vrs[j].reporter.reporter_index == company.reporters[i].reporter_index)
-                        {
-                            Destroy(ReporterManager.Instance.vrs[j].gameObject);
-                            ReporterManager.Instance.RemoveVrsToList(ReporterManager.Instance.vrs[j]);
-                            break;
-                        }
-                    }
-                    EventManager.DayEvent_Beginning -= company.reporters[i].WriteArticle; //기사쓰는 이벤트를 지우고
-
-                    Debug.Log(company.reporters[i].name + "이 해고당했습니다.");
-
-                    company.RemoveReporterToList(company.reporters[i]); //리스트에서 삭제해라
-                    break;
-                }
-            }
-        }
-
-        while (company.em_reporters.Exists(x => x.is_employed == true))
-        {
-            for (int i = 0; i < company.em_reporters.Count; i++)
-            {
-                if (company.em_reporters[i].is_employed)
-                {
-                    if (company.money >= company.em_reporters[i].buyout)
-                    {
-                        company.money -= company.em_reporters[i].buyout;
-                        company.index++;
-                        Reporter newReporter = new Reporter(setting, company, company.index);
-
-                        ReporterOverwrite(newReporter, company.em_reporters[i]);
-
-                        company.AddReporterToList(newReporter);
-                        CreateReporterButton(company.reporters.Count - 1, newReporter);
-
-                        company.em_reporters[i].is_employed = false;
-                        Debug.Log(newReporter.name + "을/를 고용했습니다.");
-                        break;
-                    }
-                    else
-                    {
-                        company.em_reporters[i].is_employed = false;
-                        Debug.Log("돈이 부족해 고용할 수 없습니다.");
-                        break;
-                    }
-                }
-            }
-        }
-
-        for (int i = 0; i < ReporterManager.Instance.vrs.Count; i++)
-        {
-            ReporterManager.Instance.vrs[i].UpdateStatus();
-        }
-
-        company.em_reporters.Clear();
-        while (ReporterManager.Instance.evrs.Count != 0)
-        {
-            Destroy(ReporterManager.Instance.evrs[0].gameObject);
-            ReporterManager.Instance.RemoveeVrsToList(ReporterManager.Instance.evrs[0]);
-        }
-        for (int i = 0; i < 6; i++) //고용 가능한 기자 생성
-        {
-            EmReporter emReporter = new EmReporter(GameManager.Instance.setting, company, i);
-            company.em_reporters.Add(emReporter);
-            CreateEmReporterButton(i, emReporter);
-        }
-    }
-
-    void ReporterOverwrite(Reporter reporter, EmReporter emReporter)
-    {
-        reporter.reporterImage = emReporter.reporterImage;
-        reporter.name = emReporter.name;
-        reporter.level = emReporter.level;
-        reporter.perks.Clear();
-        for (int i = 0; i < emReporter.perks.Count; i++)
-        {
-            reporter.AddPerkToList(emReporter.perks[i]);
-        }
-        reporter.writing = emReporter.writing;
-        reporter.logic = emReporter.logic;
-        reporter.survey = emReporter.survey;
-        reporter.econStance = emReporter.econStance;
-        reporter.socialStance = emReporter.socialStance;
-        reporter.interests.Clear();
-        foreach (Setting.Fields field in System.Enum.GetValues(typeof(Setting.Fields)))
-        {
-            reporter.interests.Add(field, emReporter.interests[field]);
         }
     }
 }

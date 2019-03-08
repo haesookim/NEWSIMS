@@ -149,7 +149,7 @@ public class Button : MonoBehaviour
 
     public void EndofDay()
     {
-        EventManager.DayEvent_ReporterManage += GameManager.instance.Process; //해고/고용 과정 이벤트
+        EventManager.DayEvent_ReporterManage += Process; //해고/고용 과정 이벤트
         GameManager.Instance.EndofDay();
     }
 
@@ -366,6 +366,110 @@ public class Button : MonoBehaviour
         }
 
         BackButton(1);
+    }
+
+    //한솔이 만듬
+    void Process(Society society, Company company)
+    {
+        while (company.reporters.Exists(x => x.is_fired == true)) //리포터 리스트에서 is_fired가 true인 값이 존재한다면
+        {
+            for (int i = 0; i < company.reporters.Count; i++)
+            {
+                if (company.reporters[i].is_fired)
+                {
+                    for (int j = 0; j < ReporterManager.Instance.vrs.Count; j++)
+                    {
+                        if (ReporterManager.Instance.vrs[j].reporter.reporter_index == company.reporters[i].reporter_index)
+                        {
+                            Destroy(ReporterManager.Instance.vrs[j].gameObject);
+                            ReporterManager.Instance.RemoveVrsToList(ReporterManager.Instance.vrs[j]);
+                            break;
+                        }
+                    }
+                    EventManager.DayEvent_Beginning -= company.reporters[i].WriteArticle; //기사쓰는 이벤트를 지우고
+
+                    Debug.Log(company.reporters[i].name + "이 해고당했습니다.");
+                    GameManager.Instance.AddReportText(company.reporters[i].name + "이 해고당했습니다.");
+
+                    company.RemoveReporterToList(company.reporters[i]); //리스트에서 삭제해라
+                    break;
+                }
+            }
+        }
+
+        while (company.em_reporters.Exists(x => x.is_employed == true))
+        {
+            for (int i = 0; i < company.em_reporters.Count; i++)
+            {
+                if (company.em_reporters[i].is_employed)
+                {
+                    if (company.money >= company.em_reporters[i].buyout)
+                    {
+                        company.money -= company.em_reporters[i].buyout;
+                        company.index++;
+                        Reporter newReporter = new Reporter(GameManager.Instance.setting, company, company.index);
+
+                        ReporterOverwrite(newReporter, company.em_reporters[i]);
+
+                        company.AddReporterToList(newReporter);
+                        GameManager.Instance.CreateReporterButton(company.reporters.Count - 1, newReporter);
+
+                        company.em_reporters[i].is_employed = false;
+                        Debug.Log(newReporter.name + "을/를 고용했습니다.");
+                        GameManager.Instance.AddReportText(newReporter.name + "을/를 고용했습니다.");
+                        break;
+                    }
+                    else
+                    {
+                        company.em_reporters[i].is_employed = false;
+                        Debug.Log("돈이 부족해 고용할 수 없습니다.");
+                        GameManager.Instance.AddReportText("돈이 부족해 고용할 수 없습니다.");
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < ReporterManager.Instance.vrs.Count; i++)
+        {
+            ReporterManager.Instance.vrs[i].UpdateStatus();
+        }
+
+        company.em_reporters.Clear();
+        while (ReporterManager.Instance.evrs.Count != 0)
+        {
+            Destroy(ReporterManager.Instance.evrs[0].gameObject);
+            ReporterManager.Instance.RemoveeVrsToList(ReporterManager.Instance.evrs[0]);
+        }
+        for (int i = 0; i < 6; i++) //고용 가능한 기자 생성
+        {
+            EmReporter emReporter = new EmReporter(GameManager.Instance.setting, company, i);
+            company.em_reporters.Add(emReporter);
+            GameManager.Instance.CreateEmReporterButton(i, emReporter);
+        }
+    }
+
+    void ReporterOverwrite(Reporter reporter, EmReporter emReporter)
+    {
+        reporter.reporterImage = emReporter.reporterImage;
+        reporter.name = emReporter.name;
+        reporter.level = emReporter.level;
+        reporter.perks.Clear();
+        for (int i = 0; i < emReporter.perks.Count; i++)
+        {
+            reporter.AddPerkToList(emReporter.perks[i]);
+        }
+        reporter.writing = emReporter.writing;
+        reporter.logic = emReporter.logic;
+        reporter.survey = emReporter.survey;
+        reporter.econStance = emReporter.econStance;
+        reporter.socialStance = emReporter.socialStance;
+        reporter.interests.Clear();
+        foreach (Setting.Fields field in System.Enum.GetValues(typeof(Setting.Fields)))
+        {
+            reporter.interests.Add(field, emReporter.interests[field]);
+        }
     }
 
     public void EmploymentButton()

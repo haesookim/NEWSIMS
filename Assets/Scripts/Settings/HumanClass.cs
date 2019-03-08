@@ -51,6 +51,71 @@ public class Citizen : Human
         {
             approval = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
         }
+
+        EventManager.DayEvent_End += EndofDay;
+    }
+
+    void EndofDay(Society society, Company company)
+    {
+        if(knowledge <= 0 ) return;
+        
+       //신문을 사는 식
+        foreach(AssignedPaperDrag assigned in NewsPaper.Instance.ArticlesInAssignedPaper)
+        {
+            Article article= assigned.article;
+            int size = assigned.size.x * assigned.size.y;
+            if(interests[(Setting.Fields)System.Enum.Parse(typeof(Setting.Fields), article.article_field)] 
+            >= (10-article.virality)*0.003f / (approval * ((float)size/4*5)))
+            {
+                int moneyBonus = 1;
+                if(approval > 0.9f) moneyBonus = 3;
+                company.money += knowledge * moneyBonus;
+                Debug.Log(company.money);
+                company.circulation++;
+
+                float difference;
+                float socialAverageApproval = society.CalculateAverageApproval();
+                switch(article.article_field)
+                {
+                    case "정치사회":
+                        difference = Mathf.Abs(socialStance - article.centerStance);
+                        if(article.tolerance >= difference)
+                        {
+                            approval = 1-((1-approval)*(1*0.1f*article.tolerance*socialAverageApproval/difference));
+                            socialStance += (article.centerStance - socialStance) / 10;
+                        }
+                        else approval *= 1-(0.1f*difference);
+                    break;
+
+                    case "경제":
+                        difference = Mathf.Abs(econStance - article.centerStance);
+                        if(article.tolerance >= difference)
+                        {
+                            approval = 1-((1-approval)*(1*0.1f*article.tolerance*socialAverageApproval/difference));
+                            econStance += (article.centerStance - econStance) / 10;
+                        }
+                        else approval *= 1-(0.1f*difference);
+                    break;
+                }
+
+                 int sum = 0; //사회 전체에서 자기보다 인지도가 높은 시민의 수
+                    for (int k = 3; k >= 0; k--)
+                    {
+                        if (k == knowledge)
+                        {
+                            break;
+                        }
+                        sum += society.citizens_knowledge[k];
+                    }
+                    float rand_value = Random.Range(0.0f, 1.0f);
+                    if (rand_value <= (Mathf.Pow(2, article.virality)*((float)sum/society.citizens.Count)*Mathf.Pow(3, (float)size/4*5))/100) //(2 ^ 파급력) * (사회 전체에서 자기보다 인지도가 높은 시민의 비율) * 3^(지면 갯수/totalPaper)%의 확률
+                    {
+                        society.citizens_knowledge[knowledge]--;
+                        knowledge++;
+                        society.citizens_knowledge[knowledge]++; //인지도 상승
+                    }
+            }
+        }
     }
 }
 
@@ -64,8 +129,33 @@ public class Reporter : Human
     public int logic; //논리력, 시작할 때 0~20 사이의 무작위 값
     public int survey; //조사 능력, 시작할 때 0~20 사이의 무작위 값
     public int level; //레벨
-    public int exp; //경험치. (2^level)*totalPaper만큼의 경험치를 쌓으면 레벨업
-    public int satisfaction = 100; //만족도 (0이 되면 퇴사)
+    public int EXP; //경험치. (2^level)*totalPaper만큼의 경험치를 쌓으면 레벨업
+    public int exp{ //경험치가 쌓이면 레벨이 오르는 속성
+        get{ return EXP; }
+        set{
+            EXP += value;
+            if(EXP >= Mathf.Pow(2,level)* 4*5) 
+            {
+               int overExp = EXP - (int)Mathf.Pow(2,level)* 4*5;
+                LevelUp();
+                EXP = 0 ;
+                EXP += overExp;
+            }
+        }
+    } 
+    public int SATISFACTION = 100; 
+    public int satisfaction //만족도가 0보다 내려가면 퇴사
+    {
+        get{ return SATISFACTION; }
+        set{
+            SATISFACTION += value;
+            if(SATISFACTION<0)
+                //인사관리창에서도 보내줘야됨
+                GameManager.Instance.company.RemoveReporterToList(this);
+
+        }
+    }
+     //만족도 (0이 되면 퇴사)
     public bool advance_news; //심화 취재 체크 여부
     public bool is_fired; //해고되었는지 여부
 
@@ -90,7 +180,7 @@ public class Reporter : Human
         reporterImage = GameManager.Instance.ReporterImages[randomFace];
 
         level = 0; //레벨 0에서 시작
-        exp = 0; //경험치 0에서 시작
+        EXP = 0; //경험치 0에서 시작
 
         writing = Random.Range(0, 21);
         logic = Random.Range(0, 21);
@@ -112,6 +202,7 @@ public class Reporter : Human
 
         //DayEvent이벤트를 구독 . 이벤트 발생 시 WriteArticle 함수를 호출한다.
         EventManager.DayEvent_Beginning += WriteArticle; 
+        EventManager.DayEvent_End += EndofDay;
 
     }
 
@@ -212,6 +303,7 @@ public class Reporter : Human
                 if (perks[i] == "멀티태스킹")
                 {
                     Debug.Log(reporter_index+" 가 멀티태스킹하여 오늘도 기사를 씁니다!");
+                    GameManager.Instance.AddReportText(reporter_index+" 가 멀티태스킹하여 오늘도 기사를 씁니다!");
 
                     Article article2;
                     do
@@ -232,6 +324,7 @@ public class Reporter : Human
                 if (rand_value_perk > 0.8f)
                 {
                     Debug.Log(reporter_index+" 가 기사를 하나 더 씁니다!");
+                    GameManager.Instance.AddReportText(reporter_index+" 가 기사를 하나 더 씁니다!");
 
                     Article article;
                     do
@@ -292,6 +385,47 @@ public class Reporter : Human
         Article article = new Article(temp_field, temp_virality, society.day, temp_vertification, this);
 
         return article;
+    }
+
+    public void EndofDay(Society society, Company company)
+    {
+        //자기 기사가 있으면 해당 지분만큼 경험치 상승. 없으면 만족도 -5
+        
+        int getExp =0;
+        foreach(AssignedPaperDrag assigned in NewsPaper.Instance.ArticlesInAssignedPaper)
+        {
+            if(assigned.article.write_reporter_index == reporter_index)
+            {
+                int size = assigned.size.x * assigned.size.y;
+                float temp_rand_value = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
+                if (temp_rand_value < (1 - assigned.article.vertification)* GameManager.Instance.setting.fakePossibility) //오보가 난 경우
+                {
+                    company.money -= (int)(company.circulation * 3 * ((float)size / 4*5));
+                    satisfaction = -20;
+                    Debug.Log(name + "이/가 오보를 냈습니다!");
+
+
+                    GameManager.Instance.AddReportText(name + "이/가 오보를 냈습니다!");
+                    
+                }
+                else //오보가 아니면 경험치를 제대로 얻음.
+                {
+                    getExp += size;
+                }
+            }
+        }
+        if(getExp == 0) satisfaction = -5;
+        else
+        {
+            exp += getExp;
+            if(perks.Contains("학습"))
+            {
+                exp += getExp;
+                 Debug.Log(name + "이/가 학습하여 경험치를 더 얻습니다.");
+                    GameManager.Instance.AddReportText(name +"이/가 학습하여 경험치를 더 얻습니다.");
+            }
+        }
+
     }
 }
 
