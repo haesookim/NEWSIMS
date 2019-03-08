@@ -63,7 +63,7 @@ public class SizeChangeDrag : MonoBehaviour
                     for(int j =0; j<scale.y; j++)
                     {
                         NewsPaper.Instance.assignedPapers[assignedPaper.index.y+j,assignedPaper.index.x+i] = data;
-                        assignedPaper.size = new Grid((int)beforeScale.x,(int)beforeScale.y);
+                        assignedPaper.size = new Grid((int)scale.x,(int)scale.y);
                     }
                 }
                 beforeScale = scale;
@@ -71,7 +71,7 @@ public class SizeChangeDrag : MonoBehaviour
                 AssignedPaperDrag paper = assignedPaper.GetComponent<AssignedPaperDrag>();
                 
                 Vector2 aa = new Vector2((int)beforeScale.x,(int)beforeScale.y);
-                Debug.Log(aa.x + " " + aa.y);
+
                 paper.spriteRender.sprite = GameManager.Instance.AssignedPaperToSize[aa];
                 BoxCollider2D collider = paper.GetComponent<BoxCollider2D>();
                 collider.offset = new Vector2(0.28f*beforeScale.x,-0.4f*beforeScale.y);

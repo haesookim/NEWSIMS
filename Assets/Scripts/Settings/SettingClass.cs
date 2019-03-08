@@ -10,7 +10,7 @@ public class Setting
 
 
     public float startingPerkChance = 0.5f; //시작할 때 퍽을 가질 수 있는 확률
-    public float fakePossibility = 0.5f; //기사의 검증되지 않은 부분이 실제로 가짜일 확률 
+    public float fakePossibility = 0.3f/*0.5f*/; //기사의 검증되지 않은 부분이 실제로 가짜일 확률 //수정 : 개빡쳐서 수정함
 
 
     public enum Fields { 정치사회, 경제, 연예스포츠, 일반 }; //관심사 종류들

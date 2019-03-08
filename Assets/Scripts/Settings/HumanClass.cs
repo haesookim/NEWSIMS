@@ -164,7 +164,7 @@ public class Reporter : Human
                 }
                 EventManager.DayEvent_Beginning -= WriteArticle; //기사쓰는 이벤트를 지우고
                 Debug.Log(name + "이/가 퇴사했습니다.");
-                GameManager.Instance.AddReportText(name + "이 퇴사했습니다.");
+                GameManager.Instance.AddReportText(name + "이/가 퇴사했습니다.");
 
                 GameManager.Instance.company.RemoveReporterToList(this); //리스트에서 삭제해라
                             
@@ -440,18 +440,19 @@ public class Reporter : Human
                         tem = 3;
                         break;
                 }
-                company.fieldRate[(Setting.Fields)tem] += 1;
 
                 int size = assigned.size.x * assigned.size.y;
+                company.fieldRate[(Setting.Fields)tem] += size;
+
                 float temp_rand_value = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
                 //오보가 난 경우
                 if (temp_rand_value < (1 - assigned.article.vertification)* GameManager.Instance.setting.fakePossibility) 
                 {
-                    company.money -= (int)(company.circulation * 3 * ((float)size / 4*5));
+                    company.money -= (int)(company.circulation * /*3 **/ ((float)size / 4*5)); //수정 : 돈 개많이 깨져서 수정함
                     satisfaction = -20;
                     Debug.Log(name + "이/가 오보를 냈습니다!");
                     GameManager.Instance.AddReportText(name + "이/가 오보를 냈습니다!");
-                    GameManager.Instance.AddReportText("배상금을 " + ((int)(company.circulation * 3 * ((float)size / 4*5))).ToString() + " 만큼 지불합니다." );
+                    GameManager.Instance.AddReportText("배상금을 " + ((int)(company.circulation * /*3 **/ ((float)size / 4*5))).ToString() + " 만큼 지불합니다." ); //수정 : 돈 개많이 깨져서 수정함
 
                     company.obo += Mathf.Pow(2, assigned.article.virality-1);
                 }
