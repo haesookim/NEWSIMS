@@ -56,6 +56,12 @@ public class Drag : MonoBehaviour
             Vector3 mousePosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10);
             offset = originPosition - Camera.main.ScreenToWorldPoint(mousePosition);
         }
+
+        ////사운드
+        if (gameObject.CompareTag("Paper"))
+        {
+            AudioManager.instance.StartSFX("paperclick");
+        }
     }
 
     protected virtual void OnMouseDrag() //드래그했을 때 이동

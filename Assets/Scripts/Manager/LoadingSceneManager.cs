@@ -22,6 +22,19 @@ public class LoadingSceneManager : MonoBehaviour
     {
         nextScene = sceneName;
         SceneManager.LoadScene("Loading");
+
+
+        /////사운드
+        if (sceneName == "02.Ending")
+        {
+            int ending_phase = EndingManager.instance.ending_phase;
+            if (ending_phase == 0 || ending_phase == 1 || ending_phase == 13)
+                AudioManager.instance.StartMusic("Ending_Loop_Sad_cut");
+            else if (ending_phase == 8 || ending_phase == 9 || ending_phase == 10 || ending_phase == 11 || ending_phase == 12)
+                AudioManager.instance.StartMusic("Ending_Loop_Happy_cut");
+            else
+                AudioManager.instance.StartMusic("Ending_Loop_Basic_cut");
+        }
     }
 
     IEnumerator LoadScene() //로딩씬에서 로딩할 씬을 불러오게 하는 함수 및 로딩바가 차오르는 함수

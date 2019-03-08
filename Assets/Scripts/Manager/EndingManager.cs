@@ -26,5 +26,8 @@ public class EndingManager : Singleton<EndingManager>
         DontDestroyOnLoad(gameObject); //파괴되지않아!
 
         endingText = CSVReader.Read("EndingText"); //CSV를 불러옴
+
+
+
     }
 }
