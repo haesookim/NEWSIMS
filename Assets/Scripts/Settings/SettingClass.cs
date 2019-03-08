@@ -84,7 +84,8 @@ public class Company
     public List<Article> articlesArchive = new List<Article>(); // 지금까지 써낸 기사 리스트 (기사 백업이 팔요한가..?)
 
     public int index = 0; //기자를 구분하기 위한 인덱스
-    public int money; //돈. 기자 1인당 하루에 (기자 레벨 + 1) 지출
+    public int money; //돈. 기자 1인당 하루에 (기자 레벨 + salary) 지출 <<이부분 
+    public int salary = 5;
     public int totalCirculation;
     public int circulation = 0; //발행부수
     float fakeRate; //오보율
@@ -109,7 +110,18 @@ public class Company
     void Beginning(Society society, Company company)
     {
         totalCirculation += circulation;
+<<<<<<< HEAD
         circulation = 0;
+>>>>>>> origin/PT
+=======
+        circulation = 0;  //누적 발행부수에 당일 발행부수를 더해주고, 당일 발행부수 초기화
+
+        if(GameManager.instance.society.day == 1) return; //첫날은 월급 안줌
+        foreach (Reporter reporter in company.reporters)
+        {
+            money -= (reporter.level+1) * salary;
+            Debug.Log(reporter.name + " 의 월급으로 " + (reporter.level+1) * salary + " 을 지출합니다");
+        }
 >>>>>>> origin/PT
     }
 

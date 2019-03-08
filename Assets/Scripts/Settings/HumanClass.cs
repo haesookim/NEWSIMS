@@ -300,7 +300,6 @@ public class Reporter : Human
             float temp_rand_value = Random.Range(0.0f, 1.0f);
 
             if (temp_rand_value > new_vertification * GameManager.Instance.setting.fakePossibility)
-
             {
                 if (!article.up_virality) //파급력 상승
                 {
@@ -315,15 +314,14 @@ public class Reporter : Human
                         GameManager.instance.AddReportText("심화취재에 성공하여 기사의 파급력이 증가합니다!");
                     }
                 }
-                else //강화 실패
+                article.vertification = 1 - ((1 - article.vertification) * (1 - new_vertification));
+                company.AddArticleToList(article);
+            }
+            else //강화 실패
                 {
                     Debug.Log("심화취재를 했지만 성과가 없습니다.");
                     GameManager.instance.AddReportText("심화취재를 했지만 성과가 없습니다.");
                 }
-
-                article.vertification = 1 - ((1 - article.vertification) * (1 - new_vertification));
-                company.AddArticleToList(article);
-            }
             
             advance_news = false; //심화 취재 여부 체크 해제
 
