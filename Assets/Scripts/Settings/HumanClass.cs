@@ -330,7 +330,7 @@ public class Reporter : Human
                 if (perks[i] == "멀티태스킹")
                 {
                     Debug.Log(reporter_index+" 가 멀티태스킹하여 오늘도 기사를 씁니다!");
-                    GameManager.Instance.AddReportText(reporter_index+" 가 멀티태스킹하여 오늘도 기사를 씁니다!");
+                    GameManager.Instance.AddReportText(name+" 이/가 멀티태스킹하여 오늘도 기사를 씁니다!");
 
                     Article article2;
                     do
@@ -351,7 +351,7 @@ public class Reporter : Human
                 if (rand_value_perk > 0.8f)
                 {
                     Debug.Log(reporter_index+" 가 기사를 하나 더 씁니다!");
-                    GameManager.Instance.AddReportText(reporter_index+" 가 기사를 하나 더 씁니다!");
+                    GameManager.Instance.AddReportText(name + " 이/가 기사를 하나 더 씁니다!");
 
                     Article article;
                     do

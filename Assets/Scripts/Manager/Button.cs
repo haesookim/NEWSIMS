@@ -300,7 +300,7 @@ public class Button : MonoBehaviour
                 GameManager.Instance.details[show - 1].transform.GetChild(9).GetComponent<Text>().text = "사회적 입장 : 중도";
             }
 
-            GameManager.Instance.details[show - 1].transform.GetChild(10).GetComponent<Text>().text = "가격 : " + erp.buyout.ToString();
+            GameManager.Instance.details[show - 1].transform.GetChild(10).GetComponent<Text>().text = erp.buyout.ToString();
             for (int i = 0; i < erp.perks.Count; i++)
             {
                 GameManager.Instance.details[show - 1].transform.GetChild(12).GetChild(i).GetComponent<Text>().text = erp.perks[i];
