@@ -61,9 +61,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\DayScreen.cs" />
+    <Compile Include="Assets\Scripts\EndGame.cs" />
+    <Compile Include="Assets\Scripts\EndingText.cs" />
     <Compile Include="Assets\Scripts\Manager\AudioManager.cs" />
     <Compile Include="Assets\Scripts\Manager\Button.cs" />
     <Compile Include="Assets\Scripts\Manager\CSVReader.cs" />
+    <Compile Include="Assets\Scripts\Manager\EndingManager.cs" />
     <Compile Include="Assets\Scripts\Manager\EventManager.cs" />
     <Compile Include="Assets\Scripts\Manager\GameManager.cs" />
     <Compile Include="Assets\Scripts\Manager\LoadingSceneManager.cs" />

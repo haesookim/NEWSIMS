@@ -149,7 +149,7 @@ public class Button : MonoBehaviour
 
     public void EndofDay()
     {
-        EventManager.DayEvent_ReporterManage += GameManager.instance.Process; //해고/고용 과정 이벤트
+        EventManager.DayEvent_ReporterManage += GameManager.Instance.Process; //해고/고용 과정 이벤트
         GameManager.Instance.EndofDay();
     }
 

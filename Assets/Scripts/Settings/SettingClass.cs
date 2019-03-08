@@ -83,7 +83,10 @@ public class Company
     public int salary = 5;
     public int totalCirculation;
     public int circulation = 0; //발행부수
-    float fakeRate; //오보율
+
+    public float obo = 0; //오보 웨이트 합
+    public float gisa = 0; //발행한 모든 기사 웨이트 합
+    public float fakeRate; //오보율
 
     public Dictionary<Setting.Fields, int> fieldRate; //각 관심사에 대한 기사배정 수
 
@@ -105,11 +108,16 @@ public class Company
 
         circulation = 0;  //누적 발행부수에 당일 발행부수를 더해주고, 당일 발행부수 초기화
 
-        if(GameManager.instance.society.day == 1) return; //첫날은 월급 안줌
+        if(GameManager.Instance.society.day == 1) return; //첫날은 월급 안줌
         foreach (Reporter reporter in company.reporters)
         {
             money -= (reporter.level+1) * salary;
             Debug.Log(reporter.name + " 의 월급으로 " + (reporter.level+1) * salary + " 을 지출합니다");
+        }
+
+        if (gisa != 0)
+        {
+            fakeRate = obo / gisa;
         }
     }
 

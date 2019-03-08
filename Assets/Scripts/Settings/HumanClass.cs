@@ -166,7 +166,7 @@ public class Reporter : Human
                 Debug.Log(name + "이/가 퇴사했습니다.");
                 GameManager.Instance.AddReportText(name + "이 퇴사했습니다.");
 
-                GameManager.instance.company.RemoveReporterToList(this); //리스트에서 삭제해라
+                GameManager.Instance.company.RemoveReporterToList(this); //리스트에서 삭제해라
                             
 
                 for (int i = 0; i < ReporterManager.Instance.vrs.Count; i++)
@@ -311,7 +311,7 @@ public class Reporter : Human
                         article.up_virality = true;
 
                         Debug.Log("심화취재에 성공하여 기사의 파급력이 증가합니다!");
-                        GameManager.instance.AddReportText("심화취재에 성공하여 기사의 파급력이 증가합니다!");
+                        GameManager.Instance.AddReportText("심화취재에 성공하여 기사의 파급력이 증가합니다!");
                     }
                 }
                 article.vertification = 1 - ((1 - article.vertification) * (1 - new_vertification));
@@ -320,7 +320,7 @@ public class Reporter : Human
             else //강화 실패
                 {
                     Debug.Log("심화취재를 했지만 성과가 없습니다.");
-                    GameManager.instance.AddReportText("심화취재를 했지만 성과가 없습니다.");
+                    GameManager.Instance.AddReportText("심화취재를 했지만 성과가 없습니다.");
                 }
             
             advance_news = false; //심화 취재 여부 체크 해제
@@ -423,6 +423,25 @@ public class Reporter : Human
         {
             if(assigned.article.write_reporter_index == reporter_index)
             {
+                company.gisa += Mathf.Pow(2, assigned.article.virality - 1);
+                int tem = 0;
+                switch (assigned.article.article_field)
+                {
+                    case "정치사회":
+                        tem = 0;
+                        break;
+                    case "경제":
+                        tem = 1;
+                        break;
+                    case "연예스포츠":
+                        tem = 2;
+                        break;
+                    case "일반":
+                        tem = 3;
+                        break;
+                }
+                company.fieldRate[(Setting.Fields)tem] += 1;
+
                 int size = assigned.size.x * assigned.size.y;
                 float temp_rand_value = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
                 //오보가 난 경우
@@ -432,8 +451,9 @@ public class Reporter : Human
                     satisfaction = -20;
                     Debug.Log(name + "이/가 오보를 냈습니다!");
                     GameManager.Instance.AddReportText(name + "이/가 오보를 냈습니다!");
-                    GameManager.instance.AddReportText("배상금을 " + ((int)(company.circulation * 3 * ((float)size / 4*5))).ToString() + " 만큼 지불합니다." );
-                    
+                    GameManager.Instance.AddReportText("배상금을 " + ((int)(company.circulation * 3 * ((float)size / 4*5))).ToString() + " 만큼 지불합니다." );
+
+                    company.obo += Mathf.Pow(2, assigned.article.virality-1);
                 }
                 else //오보가 아니면 경험치를 제대로 얻음.
                 {
@@ -505,7 +525,7 @@ public class EmReporter : Human
             }
             LevelUp();
         }
-        buyout = (writing + logic + survey) / 2;
+        buyout = (writing + logic + survey) * 2;
     }
 
     public void AddPerkToList(string perk) //특성을 리스트에 추가하는 함수
