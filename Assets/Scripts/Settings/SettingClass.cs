@@ -99,7 +99,7 @@ public class Company
         {
             fieldRate.Add(field, 0);
         }
-        EventManager.DayEvent_Beginning += Beginning;
+        EventManager.Instance.DayEvent_Beginning += Beginning;
     }
 
     void Beginning(Society society, Company company)

@@ -52,7 +52,7 @@ public class Citizen : Human
             approval = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
         }
 
-        EventManager.DayEvent_End += EndofDay;
+        EventManager.Instance.DayEvent_End += EndofDay;
     }
 
     void EndofDay(Society society, Company company)
@@ -162,7 +162,7 @@ public class Reporter : Human
                         break;
                     }
                 }
-                EventManager.DayEvent_Beginning -= WriteArticle; //기사쓰는 이벤트를 지우고
+                EventManager.Instance.DayEvent_Beginning -= WriteArticle; //기사쓰는 이벤트를 지우고
                 Debug.Log(name + "이/가 퇴사했습니다.");
                 GameManager.Instance.AddReportText(name + "이/가 퇴사했습니다.");
 
@@ -222,8 +222,8 @@ public class Reporter : Human
         }
 
         //DayEvent이벤트를 구독 . 이벤트 발생 시 WriteArticle 함수를 호출한다.
-        EventManager.DayEvent_Beginning += WriteArticle; 
-        EventManager.DayEvent_Publication += Publication;
+        EventManager.Instance.DayEvent_Beginning += WriteArticle; 
+        EventManager.Instance.DayEvent_Publication += Publication;
 
     }
 

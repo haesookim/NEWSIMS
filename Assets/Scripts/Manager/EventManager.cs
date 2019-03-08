@@ -6,10 +6,10 @@ public class EventManager : Singleton<EventManager>
 {
 
     public delegate void DayHandler(Society society, Company company);
-    public static event DayHandler DayEvent_Beginning = delegate{};
-    public static event DayHandler DayEvent_End = delegate{};
-    public static event DayHandler DayEvent_Publication = delegate{};
-    public static event DayHandler DayEvent_ReporterManage = delegate{};
+    public event DayHandler DayEvent_Beginning = delegate{};
+    public event DayHandler DayEvent_End = delegate{};
+    public event DayHandler DayEvent_Publication = delegate{};
+    public event DayHandler DayEvent_ReporterManage = delegate{};
 
         ///<summary>
         ///하루가 시작할 때 호출하는 이벤트.   

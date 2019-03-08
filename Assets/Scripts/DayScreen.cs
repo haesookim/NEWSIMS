@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class DayScreen : MonoBehaviour
 {
     void Awake() {
-        EventManager.DayEvent_Beginning += FadeIn;
+        EventManager.Instance.DayEvent_Beginning += FadeIn;
     }
 
     

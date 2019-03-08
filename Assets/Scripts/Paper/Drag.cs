@@ -25,7 +25,7 @@ public class Drag : MonoBehaviour
        spriteRender = GetComponent<SpriteRenderer>();       
        infoWindow = transform.GetChild(0).gameObject;
        SetInfoText();
-       EventManager.DayEvent_End += EndDay;
+       EventManager.Instance.DayEvent_End += EndDay;
     }
 
     ///<param name = "infoText[0]"> 기사 제목 </param>

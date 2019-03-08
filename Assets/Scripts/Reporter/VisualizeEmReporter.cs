@@ -21,8 +21,6 @@ public class VisualizeEmReporter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ReporterManager.Instance.AddeVrsToList(this);
-
         reporterImage.sprite = emreporter.reporterImage;
 
         reporterName.text = "이름 : " + emreporter.name;

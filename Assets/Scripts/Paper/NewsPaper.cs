@@ -65,7 +65,7 @@ public class NewsPaper : Singleton<NewsPaper>
     
     void Start()
     {
-        EventManager.DayEvent_Beginning += SetGrid;
+        EventManager.Instance.DayEvent_Beginning += SetGrid;
         InitPaper();
     }
 

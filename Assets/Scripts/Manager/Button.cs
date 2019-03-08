@@ -152,12 +152,13 @@ public class Button : MonoBehaviour
 
     public void EndofDay()
     {
-        EventManager.DayEvent_ReporterManage += GameManager.Instance.Process; //해고/고용 과정 이벤트
+        EventManager.Instance.DayEvent_ReporterManage += GameManager.Instance.Process; //해고/고용 과정 이벤트
         GameManager.Instance.EndofDay();
     }
 
     public void ReporterWindow() //인사관리 명부 클릭시
     {
+
         if (GameManager.Instance.in_DeskMenu && !GameManager.Instance.in_ReporterMenu)
         {
             GameManager.Instance.reporterManager.SetActive(true);

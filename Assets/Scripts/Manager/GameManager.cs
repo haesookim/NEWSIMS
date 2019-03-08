@@ -315,7 +315,7 @@ public class GameManager : Singleton<GameManager>
         dateText.text = society.day.ToString() + "일";
         moneyText.text = company.money.ToString();
 
-        EventManager.DayEvent_ReporterManage -= Process;
+        EventManager.Instance.DayEvent_ReporterManage -= Process;
         System.GC.Collect(); //매일 메모리 찌꺼기를 비움.
 
         //todo: 신문발행하고 기자들 액션 취한 후 시민들이 보고 스탯변동. 
@@ -410,16 +410,19 @@ public class GameManager : Singleton<GameManager>
             case 0:
                 GameObject temp_rep = Instantiate(EmReportButton, reporterManager.transform.GetChild(2).GetChild(0));
                 temp_rep.GetComponent<VisualizeEmReporter>().emreporter = emreporter;
+                ReporterManager.Instance.AddeVrsToList(temp_rep.GetComponent<VisualizeEmReporter>());
                 break;
             case 1:
                 GameObject temp_rep2 = Instantiate(EmReportButton, reporterManager.transform.GetChild(2).GetChild(0));
                 temp_rep2.transform.localPosition = new Vector3(0f, 0f, 0f);
                 temp_rep2.GetComponent<VisualizeEmReporter>().emreporter = emreporter;
+                ReporterManager.Instance.AddeVrsToList(temp_rep2.GetComponent<VisualizeEmReporter>());
                 break;
             case 2:
                 GameObject temp_rep3 = Instantiate(EmReportButton, reporterManager.transform.GetChild(2).GetChild(0));
                 temp_rep3.transform.localPosition = new Vector3(0f, -150f, 0f);
                 temp_rep3.GetComponent<VisualizeEmReporter>().emreporter = emreporter;
+                ReporterManager.Instance.AddeVrsToList(temp_rep3.GetComponent<VisualizeEmReporter>());
                 break;
         }
     }
@@ -671,7 +674,7 @@ public class GameManager : Singleton<GameManager>
                             break;
                         }
                     }
-                    EventManager.DayEvent_Beginning -= company.reporters[i].WriteArticle; //기사쓰는 이벤트를 지우고
+                    EventManager.Instance.DayEvent_Beginning -= company.reporters[i].WriteArticle; //기사쓰는 이벤트를 지우고
 
                     Debug.Log(company.reporters[i].name + "이 해고당했습니다.");
                     AddReportText(company.reporters[i].name + "이/가 해고당했습니다.");
@@ -720,7 +723,6 @@ public class GameManager : Singleton<GameManager>
         {
             ReporterManager.Instance.vrs[i].UpdateStatus();
         }
-
         company.em_reporters.Clear();
         while (ReporterManager.Instance.evrs.Count != 0)
         {
