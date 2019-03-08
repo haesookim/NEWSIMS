@@ -40,8 +40,6 @@ ExportedObj/
 *.opendb
 *.VC.db
 
-# Rayout files
-*.dwlt
 
 # Unity3D generated meta files
 *.pidb.meta
