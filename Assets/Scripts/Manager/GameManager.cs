@@ -217,8 +217,8 @@ public class GameManager : Singleton<GameManager>
 
     public void BeginningofDay()
     {
-        DisplayReportText();
         EventManager.Instance.Do_BeginningofDay(society,company); //하루의 시작 이벤트 호출
+        DisplayReportText();
         PublishArticle();
     }
 

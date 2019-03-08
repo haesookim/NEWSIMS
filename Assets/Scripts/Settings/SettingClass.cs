@@ -5,8 +5,13 @@ using UnityEngine;
 public class Setting
 {
     public int startingReporters = 6 ; //시작할 때, 기자의 수
+<<<<<<< HEAD
     public int startingMoney = 20; //시작할 때, 시작 금액
     //public int newsPoint= 100; //신문에 기사를 배정할 수 있는 포인트
+=======
+    public int startingMoney = 400; //시작할 때, 시작 금액
+    public int newsPoint= 100; //신문에 기사를 배정할 수 있는 포인트
+>>>>>>> origin/PT
 
 
     public float startingPerkChance = 0.5f; //시작할 때 퍽을 가질 수 있는 확률
@@ -80,6 +85,7 @@ public class Company
 
     public int index = 0; //기자를 구분하기 위한 인덱스
     public int money; //돈. 기자 1인당 하루에 (기자 레벨 + 1) 지출
+    public int totalCirculation;
     public int circulation = 0; //발행부수
     float fakeRate; //오보율
 
@@ -88,12 +94,23 @@ public class Company
     public Company(int _money, float _fakeRate)
     {
         money = _money;
+<<<<<<< HEAD
         fakeRate = _fakeRate;
         fieldRate = new Dictionary<Setting.Fields, int>();
         foreach (Setting.Fields field in System.Enum.GetValues(typeof(Setting.Fields)))
         {
             fieldRate.Add(field, 0);
         }
+=======
+        credibility = _credibility;
+        EventManager.DayEvent_Beginning += Beginning;
+    }
+
+    void Beginning(Society society, Company company)
+    {
+        totalCirculation += circulation;
+        circulation = 0;
+>>>>>>> origin/PT
     }
 
     public void AddReporterToList(Reporter _reporter) //Reporter를 리스트에 추가하는 함수
@@ -110,6 +127,7 @@ public class Company
     {
         articles.Add(_article);
     }
+
 }
 
 [System.Serializable]
