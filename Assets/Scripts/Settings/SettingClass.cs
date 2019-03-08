@@ -5,7 +5,7 @@ using UnityEngine;
 public class Setting
 {
     public int startingReporters = 6 ; //시작할 때, 기자의 수
-    public int startingMoney = 20; //시작할 때, 시작 금액
+    public int startingMoney = 400; //시작할 때, 시작 금액
     public int newsPoint= 100; //신문에 기사를 배정할 수 있는 포인트
 
 
@@ -80,6 +80,7 @@ public class Company
 
     public int index = 0; //기자를 구분하기 위한 인덱스
     public int money; //돈. 기자 1인당 하루에 (기자 레벨 + 1) 지출
+    public int totalCirculation;
     public int circulation = 0; //발행부수
     float credibility; //신뢰도
 
@@ -87,6 +88,13 @@ public class Company
     {
         money = _money;
         credibility = _credibility;
+        EventManager.DayEvent_Beginning += Beginning;
+    }
+
+    void Beginning(Society society, Company company)
+    {
+        totalCirculation += circulation;
+        circulation = 0;
     }
 
     public void AddReporterToList(Reporter _reporter) //Reporter를 리스트에 추가하는 함수
@@ -103,6 +111,7 @@ public class Company
     {
         articles.Add(_article);
     }
+
 }
 
 [System.Serializable]

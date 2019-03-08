@@ -27,8 +27,8 @@ public class EventManager : Singleton<EventManager>
     ///<param name = "society"> 사회 클래스를 대입 </param>
     public void Do_EndofDay(Society society, Company company)
     {
-        DayEvent_Publication(society,company);
         DayEvent_End(society,company);
+        DayEvent_Publication(society,company); 
         DayEvent_ReporterManage(society,company);
     }
 }

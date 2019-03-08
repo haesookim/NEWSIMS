@@ -99,21 +99,23 @@ public class Citizen : Human
                 }
 
                  int sum = 0; //사회 전체에서 자기보다 인지도가 높은 시민의 수
-                    for (int k = 3; k >= 0; k--)
+                for (int k = 3; k >= 0; k--)
+                {
+                    if (k == knowledge)
                     {
-                        if (k == knowledge)
-                        {
-                            break;
-                        }
-                        sum += society.citizens_knowledge[k];
+                        break;
                     }
-                    float rand_value = Random.Range(0.0f, 1.0f);
-                    if (rand_value <= (Mathf.Pow(2, article.virality)*((float)sum/society.citizens.Count)*Mathf.Pow(3, (float)size/4*5))/100) //(2 ^ 파급력) * (사회 전체에서 자기보다 인지도가 높은 시민의 비율) * 3^(지면 갯수/totalPaper)%의 확률
-                    {
-                        society.citizens_knowledge[knowledge]--;
-                        knowledge++;
-                        society.citizens_knowledge[knowledge]++; //인지도 상승
-                    }
+                    sum += society.citizens_knowledge[k];
+                }
+                float rand_value = Random.Range(0.0f, 1.0f);
+                if (rand_value <= (Mathf.Pow(2, article.virality)*((float)sum/society.citizens.Count)*Mathf.Pow(3, (float)size/4*5))/100) //(2 ^ 파급력) * (사회 전체에서 자기보다 인지도가 높은 시민의 비율) * 3^(지면 갯수/totalPaper)%의 확률
+                {
+                    society.citizens_knowledge[knowledge]--;
+                    knowledge++;
+                    society.citizens_knowledge[knowledge]++; //인지도 상승
+                }
+
+                break;
             }
         }
     }
@@ -202,7 +204,7 @@ public class Reporter : Human
 
         //DayEvent이벤트를 구독 . 이벤트 발생 시 WriteArticle 함수를 호출한다.
         EventManager.DayEvent_Beginning += WriteArticle; 
-        EventManager.DayEvent_End += EndofDay;
+        EventManager.DayEvent_Publication += Publication;
 
     }
 
@@ -289,7 +291,15 @@ public class Reporter : Human
                     {
                         article.virality++;
                         article.up_virality = true;
+
+                        Debug.Log("심화취재에 성공하여 기사의 파급력이 증가합니다!");
+                        GameManager.instance.AddReportText("심화취재에 성공하여 기사의 파급력이 증가합니다!");
                     }
+                }
+                else //강화 실패
+                {
+                    Debug.Log("심화취재를 했지만 성과가 없습니다.");
+                    GameManager.instance.AddReportText("심화취재를 했지만 성과가 없습니다.");
                 }
 
                 article.vertification = 1 - ((1 - article.vertification) * (1 - new_vertification));
@@ -387,7 +397,7 @@ public class Reporter : Human
         return article;
     }
 
-    public void EndofDay(Society society, Company company)
+    public void Publication(Society society, Company company)
     {
         //자기 기사가 있으면 해당 지분만큼 경험치 상승. 없으면 만족도 -5
         
@@ -398,14 +408,14 @@ public class Reporter : Human
             {
                 int size = assigned.size.x * assigned.size.y;
                 float temp_rand_value = Mathf.Floor(Random.Range(0.0f, 1.0f) * 10000) / 10000;
-                if (temp_rand_value < (1 - assigned.article.vertification)* GameManager.Instance.setting.fakePossibility) //오보가 난 경우
+                //오보가 난 경우
+                if (temp_rand_value < (1 - assigned.article.vertification)* GameManager.Instance.setting.fakePossibility) 
                 {
                     company.money -= (int)(company.circulation * 3 * ((float)size / 4*5));
                     satisfaction = -20;
                     Debug.Log(name + "이/가 오보를 냈습니다!");
-
-
                     GameManager.Instance.AddReportText(name + "이/가 오보를 냈습니다!");
+                    GameManager.instance.AddReportText("배상금을 " + ((int)(company.circulation * 3 * ((float)size / 4*5))).ToString() + " 만큼 지불합니다." );
                     
                 }
                 else //오보가 아니면 경험치를 제대로 얻음.
