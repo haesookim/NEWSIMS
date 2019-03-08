@@ -34,7 +34,7 @@ public class GameManager : Singleton<GameManager>
     public GameObject PaperPrefab; //게임 내에 생성될 기사 오브젝트의 프리팹
 
     public Sprite[] AssignedPaperPrefab; //사이즈별 기사 프리팹 모음
-    public Dictionary<Vector2,Sprite> AssignedPaperToSize; // assignedPaperPrefab을 사이즈값으로 변환하여 저장한 딕셔너리
+    public Dictionary<Vector2,Sprite> AssignedPaperToSize; // assignedPaperPrefab을 사이즈값 벡터로 변환하여 저장한 딕셔너리
 
 
 

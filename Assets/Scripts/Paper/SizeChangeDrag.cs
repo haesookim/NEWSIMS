@@ -163,17 +163,4 @@ public class SizeChangeDrag : MonoBehaviour
 
     }
 
-            /////DEBUG_전체 지면 훑기
-    void DEBUG_DisplayAllPaperArray()
-    {
-        Debug.Log("---시작");
-        for(int i =0; i < 6; i++)
-        {
-            for(int j =0; j<5; j++)
-            {
-                Debug.Log("(" + j + " , " + i + " )  " + NewsPaper.Instance.assignedPapers[j,i]);
-            }
-        }
-        Debug.Log("---끝");
-    }
 }
