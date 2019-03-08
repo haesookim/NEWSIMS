@@ -111,6 +111,9 @@ public class Button : MonoBehaviour
    {
        if(!GameManager.Instance.in_DeskMenu)
        {
+
+           GameManager.Instance.EndingRoot();
+
            AudioManager.Instance.StartSFX("DeskClick");
 
            GameManager.Instance.deskWindow.SetActive(true);

@@ -41,7 +41,7 @@ public class GameManager : Singleton<GameManager>
     [Header("Office Window 오브젝트")]
     public Text dateText;
     public Text moneyText;
-    public Text numberOfreporterText;
+    //public Text numberOfreporterText;
 
     [Header("Desk Window 오브젝트")]
     public Transform textView;
@@ -195,9 +195,8 @@ public class GameManager : Singleton<GameManager>
         }
 
         //기본 표시 사항 업데이트
-        dateText.text = society.day.ToString();
+        dateText.text = society.day.ToString() + "일";
         moneyText.text = company.money.ToString();
-        numberOfreporterText.text = company.reporters.Count.ToString();
     }
 
 
@@ -219,11 +218,12 @@ public class GameManager : Singleton<GameManager>
     public void BeginningofDay()
     {
         EventManager.Instance.Do_BeginningofDay(society,company); //하루의 시작 이벤트 호출
+        AddReportText("현재 자금 : " + company.money);
         DisplayReportText();
         PublishArticle();
     }
 
-    void EndingRoot() //엔딩 분기 판별 함수
+    public void EndingRoot() //엔딩 분기 판별 함수
     {
 
         if (company.money < 0)
@@ -311,12 +311,9 @@ public class GameManager : Singleton<GameManager>
         SetWindowDefault();
         BeginningofDay();
 
-        EndingRoot();
-
         //기본 표시 사항 업데이트
-        dateText.text = society.day.ToString();
+        dateText.text = society.day.ToString() + "일";
         moneyText.text = company.money.ToString();
-        numberOfreporterText.text = company.reporters.Count.ToString();
 
         EventManager.DayEvent_ReporterManage -= Process;
         System.GC.Collect(); //매일 메모리 찌꺼기를 비움.
