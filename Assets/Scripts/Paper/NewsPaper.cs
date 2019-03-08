@@ -44,9 +44,11 @@ public class NewsPaper : Singleton<NewsPaper>
     public bool inPaper; //지면위에 있는가
     public bool inAdvance; //심화박스위에 있는가
 
-    Grid grid = new Grid(); 
+    public Grid grid = new Grid(); 
     public Vector3[,] paperIndex; //인덱스에 따른 위치좌표를 저장한 배열
     public AssignedPaperData[,] assignedPapers; //실제 인덱스에 들어있는 기사오브젝트 정보
+
+    public List<AssignedPaperDrag> ArticlesInAssignedPaper; //배정되어있는 기사의 리스트(순서무관)
 
     AssignedPaperData outerNULL; //배열의 외곽 체크용 NULL 데이터
    
@@ -56,6 +58,8 @@ public class NewsPaper : Singleton<NewsPaper>
     public GameObject preview; //미리보기 오브젝트
     SpriteRenderer previewSprite;
     Color previewOriginColor;
+
+    public GameObject adjustPaper;
     
 
     
@@ -86,6 +90,7 @@ public class NewsPaper : Singleton<NewsPaper>
         paperIndex = new Vector3[grid.y+1,grid.x+1];
         assignedPapers = new AssignedPaperData[grid.y+1,grid.x+1];
         outerNULL = new AssignedPaperData(null,null);
+        ArticlesInAssignedPaper = new List<AssignedPaperDrag>();
 
         //배열 내부 인덱스당 위치값 설정
         for(int i = 0 ; i< grid.x ; i++)
@@ -115,9 +120,11 @@ public class NewsPaper : Singleton<NewsPaper>
         {
             GameObject paperObject = Instantiate(assignedPaperPrefab,paperIndex[index.y,index.x],Quaternion.identity,transform);
             AssignedPaperData assignedPaper = new AssignedPaperData(paper,index);
-            paperObject.GetComponent<AssignedPaperDrag>().SetPaper(paper,index);
+            AssignedPaperDrag drag = paperObject.GetComponent<AssignedPaperDrag>();
+            drag.SetPaper(paper,index);
 
             assignedPapers[index.y,index.x] = assignedPaper;
+            ArticlesInAssignedPaper.Add(drag);
         }
         inPaper = false;
     }
@@ -154,6 +161,14 @@ public class NewsPaper : Singleton<NewsPaper>
             previewSprite.color = new Color32(255,0,0,80);
         else 
             previewSprite.color = previewOriginColor;
+    }
+
+    public void AdjustPaperToMiss(Grid size) //오보 발생시 정정보도 칸 차지
+    {
+        GameObject paperObject = Instantiate(adjustPaper,paperIndex[0,0],Quaternion.identity,transform);
+        paperObject.transform.localScale = new Vector3(size.x,size.y,0);
+
+        //여기 고치던중 ~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 
 

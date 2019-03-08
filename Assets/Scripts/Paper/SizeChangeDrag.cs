@@ -145,6 +145,7 @@ public class SizeChangeDrag : MonoBehaviour
             }
         }    
         paperData.UpdateViewText("0");
+
     }
 
             /////DEBUG_전체 지면 훑기
