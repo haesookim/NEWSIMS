@@ -7,6 +7,9 @@ public class GameManager : Singleton<GameManager>
 {
     [HideInInspector] public Setting setting; // 뉴게임 시작시의 초기 세팅
 
+    private int ending_phase = 0;
+
+    public static GameManager instance = null;
 
     [HideInInspector] public Society society;
     public Company company;
@@ -78,6 +81,18 @@ public class GameManager : Singleton<GameManager>
     //////////////////////////////////////////////////////////
 
     public override void Awake() {
+
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+        }
+
+        DontDestroyOnLoad(gameObject); //파괴되지않아!
+
         CreatGame(); //아직 세이브기능이 없어서 항상 새 게임.
         InitGame();
     }

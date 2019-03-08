@@ -65,23 +65,24 @@ public class Citizen : Human
             Article article= assigned.article;
             int size = assigned.size.x * assigned.size.y;
             if(interests[(Setting.Fields)System.Enum.Parse(typeof(Setting.Fields), article.article_field)] 
-            >= (10-article.virality)*0.02f / (approval * ((float)size/4*5)))
+            >= (10-article.virality)*0.003f / (approval * ((float)size/4*5)))
             {
                 int moneyBonus = 1;
                 if(approval > 0.9f) moneyBonus = 3;
                 company.money += knowledge * moneyBonus;
+                Debug.Log(company.money);
                 company.circulation++;
 
                 float difference;
                 float socialAverageApproval = society.CalculateAverageApproval();
                 switch(article.article_field)
                 {
-                    case "사회":
+                    case "정치사회":
                         difference = Mathf.Abs(socialStance - article.centerStance);
                         if(article.tolerance >= difference)
                         {
                             approval = 1-((1-approval)*(1*0.1f*article.tolerance*socialAverageApproval/difference));
-                            socialStance += article.centerStance - socialStance / 10;
+                            socialStance += (article.centerStance - socialStance) / 10;
                         }
                         else approval *= 1-(0.1f*difference);
                     break;
@@ -91,7 +92,7 @@ public class Citizen : Human
                         if(article.tolerance >= difference)
                         {
                             approval = 1-((1-approval)*(1*0.1f*article.tolerance*socialAverageApproval/difference));
-                            econStance += article.centerStance - econStance / 10;
+                            econStance += (article.centerStance - econStance) / 10;
                         }
                         else approval *= 1-(0.1f*difference);
                     break;
@@ -149,6 +150,7 @@ public class Reporter : Human
         set{
             SATISFACTION += value;
             if(SATISFACTION<0)
+                //인사관리창에서도 보내줘야됨
                 GameManager.Instance.company.RemoveReporterToList(this);
 
         }
