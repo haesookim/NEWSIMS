@@ -13,19 +13,17 @@ public class Paper : MonoBehaviour
     public Text viewText;
     private void Start() {
 
-        SetImage();
-        SpriteRenderer renderer = GetComponent<SpriteRenderer>();
-        renderer.sprite = paperImage;
-
     }
 
-    void SetImage() //랜덤으로 기자 이미지와 기사 이미지 설정
+    public void SetImage() //랜덤으로 기자 이미지와 기사 이미지 설정
     {
         //int randomFace = Random.Range(0,GameManager.Instance.ReporterImages.Length);
         int randomPaper = Random.Range(0,GameManager.Instance.PaperImages.Length);
         
         //reporterImage = GameManager.Instance.ReporterImages[randomFace];
         paperImage = GameManager.Instance.PaperImages[randomPaper];
+       SpriteRenderer renderer = GetComponent<SpriteRenderer>();
+        renderer.sprite = paperImage;
 
     }
 

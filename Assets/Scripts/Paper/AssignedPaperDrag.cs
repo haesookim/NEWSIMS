@@ -4,14 +4,15 @@ using UnityEngine;
 
 public class AssignedPaperDrag : Drag
 {
-    public GameObject originData;
+    public GameObject originData; //배정되기 전의 원본 기사 오브젝트
     public Article article;
-    public Grid index;
+    public Grid index; //배정된 위치인덱스
     public Grid size = new Grid(1,1);  //기사의 사이즈
+
 
     bool inWorkDesk;
 
-    public void SetPaper(GameObject _originData, Grid _index)
+    public void SetPaper(GameObject _originData, Grid _index) 
     {
         originData = _originData;
         article = _originData.GetComponent<Paper>().article;
@@ -19,11 +20,13 @@ public class AssignedPaperDrag : Drag
         originData.SetActive(false);
     }
 
-
+    protected override void Start() {
+        base.Start();
+    }
 
     protected override void OnMouseUp() 
     {
-        if (!GameManager.Instance.in_PaperMenu)
+        if (!GameManager.Instance.in_ReporterMenu)
         {
             timer2 = Time.realtimeSinceStartup;
             

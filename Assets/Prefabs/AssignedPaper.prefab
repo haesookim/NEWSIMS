@@ -206,8 +206,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3352745779548577893}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.4423, y: -0.6938, z: -1}
-  m_LocalScale: {x: 0.027778834, y: 0.41028625, z: 1}
+  m_LocalPosition: {x: 0.5522, y: -0.7924, z: -1}
+  m_LocalScale: {x: 0.01514527, y: 0.15588109, z: 1}
   m_Children: []
   m_Father: {fileID: 110620936925519956}
   m_RootOrder: 1
@@ -249,8 +249,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 3
-  m_Sprite: {fileID: 21300000, guid: fba55d265a617c04ab217179bf35c072, type: 3}
-  m_Color: {r: 0.8490566, g: 0, b: 0.6345463, a: 1}
+  m_Sprite: {fileID: 21300000, guid: e7e760ff76896744f858b1f7b88bf0e8, type: 3}
+  m_Color: {r: 0.8490566, g: 0, b: 0.6345463, a: 0.34901962}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -273,10 +273,10 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -4.511556, y: 0.30890754}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 1, y: 0}
     oldSize: {x: 8.42, y: 0.53}
     newSize: {x: 2.1, y: 1.81}
     adaptiveTilingThreshold: 0.5
@@ -284,7 +284,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 8.3, y: 0.5}
+  m_Size: {x: 9.010484, y: 0.58628696}
   m_EdgeRadius: 0
 --- !u!50 &39177057256943268
 Rigidbody2D:
@@ -320,7 +320,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   assignedPaper: {fileID: 0}
-  paperData: {fileID: 0}
 --- !u!1 &4924173150597159686
 GameObject:
   m_ObjectHideFlags: 0
@@ -334,7 +333,7 @@ GameObject:
   - component: {fileID: 531253677297371980}
   - component: {fileID: 9148575112200282840}
   - component: {fileID: 225414188062621653}
-  - component: {fileID: 107749947676525252}
+  - component: {fileID: 7161418767604898658}
   m_Layer: 0
   m_Name: AssignedPaper
   m_TagString: Paper
@@ -395,8 +394,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: 1f111caa872631d4ca7a31332b202daa, type: 3}
-  m_Color: {r: 0.9695743, g: 1, b: 0.5424528, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 98734a6e64af8d348806edd51fea6aa6, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -439,7 +438,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 049c55a4788418640ae4626583df062a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spriteRender: {fileID: 0}
   originData: {fileID: 0}
+  article:
+    article_field: 
+    article_name: 
+    write_reporter_name: 
+    write_reporter_index: 0
+    virality: 0
+    date: 0
+    vertification: 0
+    centerStance: 0
+    tolerance: 0
+    advance: 0
+    up_virality: 0
 --- !u!114 &225414188062621653
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -453,35 +465,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   paperImage: {fileID: 0}
-  reporter:
-    econStance: 0
-    socialStance: 0
-    reporterImage: {fileID: 0}
-    reporter_index: 0
-    name: 
-    writing: 0
-    logic: 0
-    survey: 0
-    level: 0
-    exp: 0
-    satisfaction: 0
-    advance_news: 0
-    is_fired: 0
-    adn:
-      article_field: 
-      article_name: 
-      write_reporter_index: 0
-      virality: 0
-      date: 0
-      vertification: 0
-      centerStance: 0
-      tolerance: 0
-      advance: 0
-      up_virality: 0
-    perks: []
+  reporter_name: 
   article:
     article_field: 
     article_name: 
+    write_reporter_name: 
     write_reporter_index: 0
     virality: 0
     date: 0
@@ -491,8 +479,8 @@ MonoBehaviour:
     advance: 0
     up_virality: 0
   viewText: {fileID: 0}
---- !u!60 &107749947676525252
-PolygonCollider2D:
+--- !u!61 &7161418767604898658
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -504,7 +492,7 @@ PolygonCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.28, y: -0.4}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 1}
@@ -514,15 +502,9 @@ PolygonCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: 0.012760952, y: -0.011697531}
-      - {x: 0.013794735, y: -0.78620523}
-      - {x: 0.30797327, y: -0.781163}
-      - {x: 0.3067543, y: -0.5632316}
-      - {x: 0.5454889, y: -0.5679298}
-      - {x: 0.53679, y: -0.051639557}
-      - {x: 0.5101445, y: -0.007856727}
+  serializedVersion: 2
+  m_Size: {x: 0.55, y: 0.78}
+  m_EdgeRadius: 0
 --- !u!1 &8026873925805837034
 GameObject:
   m_ObjectHideFlags: 0

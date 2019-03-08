@@ -6,11 +6,6 @@ using UnityEngine.UI;
 public class PaperDrag : Drag
 {
 
-    protected override void Start()
-    {
-        base.Start();
-    }
-
     protected override void OnMouseUp() //마우스를 뗐을 때
     {
         inClick = false;
@@ -38,7 +33,7 @@ public class PaperDrag : Drag
             }
 
 
-            if (!NewsPaper.Instance.inPaper)
+            if (!NewsPaper.Instance.inPaper) //지면 배정 
                 originPosition = transform.position;                
             else
                 NewsPaper.Instance.CreatAssignedPaper(gameObject);

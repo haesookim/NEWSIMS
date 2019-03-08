@@ -33,6 +33,11 @@ public class GameManager : Singleton<GameManager>
     public Sprite[] ReporterImages; //이미지 데이터
     public GameObject PaperPrefab; //게임 내에 생성될 기사 오브젝트의 프리팹
 
+    public Sprite[] AssignedPaperPrefab; //사이즈별 기사 프리팹 모음
+    public Dictionary<Vector2,Sprite> AssignedPaperToSize; // assignedPaperPrefab을 사이즈값 벡터로 변환하여 저장한 딕셔너리
+
+
+
     [Header("Office Window 오브젝트")]
     public Text dateText;
     public Text moneyText;
@@ -127,6 +132,21 @@ public class GameManager : Singleton<GameManager>
         deskWindow = window.transform.GetChild(1).gameObject;
         paperWindow = deskWindow.transform.GetChild(1).gameObject;
         reporterManager = deskWindow.transform.GetChild(6).gameObject;
+
+        //지면배정 기사 프리팹을 사이즈로 변환하여 저장하는 초기화
+        // 이후부턴 AssignedPaperToSie(Grid grid) 를 호출하여 사이즈별로 바로 해당 프리팹을 불러올 수 있음.
+        AssignedPaperToSize = new Dictionary<Vector2, Sprite>();
+        int t =0;
+        for(int i=0; i<4; i++)
+        {
+            for(int j =0; j<5; j++)
+            {
+                Vector2 size = new Vector2(i+1,j+1);
+                AssignedPaperToSize.Add(size,AssignedPaperPrefab[t]);
+                t++;
+            }
+        }
+
 
         SetWindowDefault();
 
@@ -324,6 +344,7 @@ public class GameManager : Singleton<GameManager>
     {
         GameObject paperObject = Instantiate(PaperPrefab,position,Quaternion.identity,deskWindow.transform);
         Paper temp_paper = paperObject.GetComponent<Paper>();
+        temp_paper.SetImage();
         temp_paper.article = company.articles[_article_index];
         temp_paper.reporter_name = temp_paper.article.write_reporter_name;
         
