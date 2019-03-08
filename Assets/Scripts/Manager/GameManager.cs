@@ -244,13 +244,13 @@ public class GameManager : Singleton<GameManager>
             LoadingSceneManager.LoadScene("02.Ending");
         }
 
+        SetWindowDefault();
+        BeginningofDay();
+
         //기본 표시 사항 업데이트
         dateText.text = society.day.ToString();
         moneyText.text = company.money.ToString();
         numberOfreporterText.text = company.reporters.Count.ToString();
-
-        SetWindowDefault();
-        BeginningofDay();
 
         EventManager.DayEvent_ReporterManage -= Process;
         System.GC.Collect(); //매일 메모리 찌꺼기를 비움.

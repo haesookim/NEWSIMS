@@ -5,13 +5,8 @@ using UnityEngine;
 public class Setting
 {
     public int startingReporters = 6 ; //시작할 때, 기자의 수
-<<<<<<< HEAD
-    public int startingMoney = 20; //시작할 때, 시작 금액
-    //public int newsPoint= 100; //신문에 기사를 배정할 수 있는 포인트
-=======
     public int startingMoney = 400; //시작할 때, 시작 금액
-    public int newsPoint= 100; //신문에 기사를 배정할 수 있는 포인트
->>>>>>> origin/PT
+    //public int newsPoint= 100; //신문에 기사를 배정할 수 있는 포인트
 
 
     public float startingPerkChance = 0.5f; //시작할 때 퍽을 가질 수 있는 확률
@@ -95,25 +90,19 @@ public class Company
     public Company(int _money, float _fakeRate)
     {
         money = _money;
-<<<<<<< HEAD
         fakeRate = _fakeRate;
         fieldRate = new Dictionary<Setting.Fields, int>();
         foreach (Setting.Fields field in System.Enum.GetValues(typeof(Setting.Fields)))
         {
             fieldRate.Add(field, 0);
         }
-=======
-        credibility = _credibility;
         EventManager.DayEvent_Beginning += Beginning;
     }
 
     void Beginning(Society society, Company company)
     {
         totalCirculation += circulation;
-<<<<<<< HEAD
-        circulation = 0;
->>>>>>> origin/PT
-=======
+
         circulation = 0;  //누적 발행부수에 당일 발행부수를 더해주고, 당일 발행부수 초기화
 
         if(GameManager.instance.society.day == 1) return; //첫날은 월급 안줌
@@ -122,7 +111,6 @@ public class Company
             money -= (reporter.level+1) * salary;
             Debug.Log(reporter.name + " 의 월급으로 " + (reporter.level+1) * salary + " 을 지출합니다");
         }
->>>>>>> origin/PT
     }
 
     public void AddReporterToList(Reporter _reporter) //Reporter를 리스트에 추가하는 함수
