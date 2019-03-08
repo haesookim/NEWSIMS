@@ -70,7 +70,7 @@ public class GameManager : Singleton<GameManager>
     public void DisplayReportText()
     {
         reportText.text = tempText;
-        tempText = " ";
+        tempText = "";
     }
 
     [Tooltip("체크 시 리포터 정보 콘솔에 출력")]
