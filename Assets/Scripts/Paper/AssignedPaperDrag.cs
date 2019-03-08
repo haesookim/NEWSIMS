@@ -23,7 +23,7 @@ public class AssignedPaperDrag : Drag
 
         infoText = GetComponentsInChildren<Text>();
         infoText[0].text = originData.GetComponent<Paper>().article.article_name;
-        infoText[1].text = GameManager.Instance.company.reporters.Exists(x => x.reporter_index == article.write_reporter_index) + "\n" + article.article_field;
+        infoText[1].text = originData.GetComponent<Paper>().reporter_name + "\n" + article.article_field;
         if(infoWindow != null)
         infoWindow.SetActive(false);
     }
