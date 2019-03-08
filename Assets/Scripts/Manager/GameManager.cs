@@ -20,6 +20,7 @@ public class GameManager : Singleton<GameManager>
     [HideInInspector] public bool in_ReporterMenu = false; //인사관리 창이 켜져있는가?
 
     [HideInInspector] public List<Dictionary<string, object>> data;
+    [HideInInspector] public List<Dictionary<string, object>> endingText;
     [HideInInspector] public List<string> originName; //사용 가능 기사 리스트
 
     /////////////////////////////////////////화면컨트롤용 
@@ -155,9 +156,10 @@ public class GameManager : Singleton<GameManager>
         /* 게임 최초 생성시 */
         setting = new Setting();
         society = new Society(); //사회 구축
-        company = new Company(setting.startingMoney, 50f); //회사 생성
+        company = new Company(setting.startingMoney, 0f); //회사 생성
 
         data = CSVReader.Read("PaperName"); //CSV를 불러옴
+        endingText = CSVReader.Read("EndingText"); //CSV를 불러옴
         for (int i = 0; i < data.Count; i++)
         {
             originName.Add(data[i]["제목"].ToString());
@@ -190,6 +192,11 @@ public class GameManager : Singleton<GameManager>
             Citizen who = new Citizen();
             society.AddCitizenToList(who);
         }
+
+        //기본 표시 사항 업데이트
+        dateText.text = society.day.ToString();
+        moneyText.text = company.money.ToString();
+        numberOfreporterText.text = company.reporters.Count.ToString();
     }
 
 
@@ -201,14 +208,6 @@ public class GameManager : Singleton<GameManager>
         in_PaperMenu = false;
         in_DeskMenu = false;
         //테스트마다 껏다켰다하기 귀찮아서
-    }
-
-    void Update() 
-     {
-         //기본 표시 사항 업데이트
-        dateText.text = society.day.ToString();
-        moneyText.text = company.money.ToString();
-        numberOfreporterText.text = company.reporters.Count.ToString();
     }
 
     public void LoadGame()
@@ -231,9 +230,26 @@ public class GameManager : Singleton<GameManager>
         }
         EventManager.Instance.Do_EndofDay(society,company);
 
+        if (company.money < 0)
+        {
+            ending_phase = 0;
+            LoadingSceneManager.LoadScene("02.Ending");
+        }
+
         society.day++;
         SetWindowDefault();
         BeginningofDay();
+
+        if (society.day > 7)
+        {
+            ending_phase = 0;
+            LoadingSceneManager.LoadScene("02.Ending");
+        }
+
+        //기본 표시 사항 업데이트
+        dateText.text = society.day.ToString();
+        moneyText.text = company.money.ToString();
+        numberOfreporterText.text = company.reporters.Count.ToString();
 
         System.GC.Collect(); //매일 메모리 찌꺼기를 비움.
 

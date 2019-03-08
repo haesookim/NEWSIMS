@@ -51,6 +51,7 @@ public class LoadingSceneManager : MonoBehaviour
 
                 if (progressBar.fillAmount == 1.0f)
                 {
+                    yield return new WaitForSeconds(0.68f);
                     op.allowSceneActivation = true;
                 }
             }

@@ -6,7 +6,7 @@ public class Setting
 {
     public int startingReporters = 6 ; //시작할 때, 기자의 수
     public int startingMoney = 20; //시작할 때, 시작 금액
-    public int newsPoint= 100; //신문에 기사를 배정할 수 있는 포인트
+    //public int newsPoint= 100; //신문에 기사를 배정할 수 있는 포인트
 
 
     public float startingPerkChance = 0.5f; //시작할 때 퍽을 가질 수 있는 확률
@@ -81,12 +81,19 @@ public class Company
     public int index = 0; //기자를 구분하기 위한 인덱스
     public int money; //돈. 기자 1인당 하루에 (기자 레벨 + 1) 지출
     public int circulation = 0; //발행부수
-    float credibility; //신뢰도
+    float fakeRate; //오보율
 
-    public Company(int _money, float _credibility)
+    public Dictionary<Setting.Fields, int> fieldRate; //각 관심사에 대한 기사배정 수
+
+    public Company(int _money, float _fakeRate)
     {
         money = _money;
-        credibility = _credibility;
+        fakeRate = _fakeRate;
+        fieldRate = new Dictionary<Setting.Fields, int>();
+        foreach (Setting.Fields field in System.Enum.GetValues(typeof(Setting.Fields)))
+        {
+            fieldRate.Add(field, 0);
+        }
     }
 
     public void AddReporterToList(Reporter _reporter) //Reporter를 리스트에 추가하는 함수

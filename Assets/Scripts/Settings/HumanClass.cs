@@ -70,7 +70,6 @@ public class Citizen : Human
                 int moneyBonus = 1;
                 if(approval > 0.9f) moneyBonus = 3;
                 company.money += knowledge * moneyBonus;
-                Debug.Log(company.money);
                 company.circulation++;
 
                 float difference;
@@ -146,16 +145,36 @@ public class Reporter : Human
     public int SATISFACTION = 100; 
     public int satisfaction //만족도가 0보다 내려가면 퇴사
     {
-        get{ return SATISFACTION; }
+        //만족도 (0이 되면 퇴사)
+        get { return SATISFACTION; }
         set{
             SATISFACTION += value;
-            if(SATISFACTION<0)
-                //인사관리창에서도 보내줘야됨
-                GameManager.Instance.company.RemoveReporterToList(this);
+            if (SATISFACTION <= 0)
+            {
+                for (int j = 0; j < ReporterManager.Instance.vrs.Count; j++)
+                {
+                    if (ReporterManager.Instance.vrs[j].reporter.reporter_index == reporter_index)
+                    {
+                        GameObject.Destroy(ReporterManager.Instance.vrs[j].gameObject);
+                        ReporterManager.Instance.RemoveVrsToList(ReporterManager.Instance.vrs[j]);
+                        break;
+                    }
+                }
+                EventManager.DayEvent_Beginning -= WriteArticle; //기사쓰는 이벤트를 지우고
+                Debug.Log(name + "이/가 퇴사했습니다.");
+                GameManager.Instance.AddReportText(name + "이 퇴사했습니다.");
 
+                GameManager.instance.company.RemoveReporterToList(this); //리스트에서 삭제해라
+                            
+
+                for (int i = 0; i < ReporterManager.Instance.vrs.Count; i++)
+                {
+                    ReporterManager.Instance.vrs[i].UpdateStatus();
+                }
+            }
         }
     }
-     //만족도 (0이 되면 퇴사)
+
     public bool advance_news; //심화 취재 체크 여부
     public bool is_fired; //해고되었는지 여부
 
