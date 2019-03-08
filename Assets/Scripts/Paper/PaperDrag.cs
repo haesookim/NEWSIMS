@@ -38,7 +38,7 @@ public class PaperDrag : Drag
             }
 
 
-            if (!NewsPaper.Instance.inPaper)
+            if (!NewsPaper.Instance.inPaper) //지면 배정 
                 originPosition = transform.position;                
             else
                 NewsPaper.Instance.CreatAssignedPaper(gameObject);

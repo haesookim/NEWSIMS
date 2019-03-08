@@ -110,7 +110,7 @@ public class NewsPaper : Singleton<NewsPaper>
         
     }
 
-    public void CreatAssignedPaper(GameObject paper) // 기사를 놓은 곳에 할당된 기사오브젝트를 생성해 배치
+    public void CreatAssignedPaper(GameObject paper) // 기사를 놓은 곳에 배정된 기사오브젝트를 생성해 배치
     {
         if(assignedPapers[index.y,index.x] != null)
         {

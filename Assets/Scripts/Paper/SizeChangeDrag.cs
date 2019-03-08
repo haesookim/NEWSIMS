@@ -6,7 +6,7 @@ public class SizeChangeDrag : MonoBehaviour
 {
     Grid mouseIndex ; //현재 마우스위치의 인덱스
     public AssignedPaperDrag assignedPaper; // 기사 오브젝트
-    public Paper paperData ; //배분도 업데이트를 위해서... 일단은 급조. 나중에 Ratio를 쓰던가 해서 고칠것.
+    //public Paper paperData ; //배분도 업데이트를 위해서... 일단은 급조. 나중에 Ratio를 쓰던가 해서 고칠것.
 
     ///// 미리보기 이미지 컨트롤
     Transform preview; 
@@ -21,10 +21,10 @@ public class SizeChangeDrag : MonoBehaviour
 
     private void Start() {
         assignedPaper = GetComponentInParent<AssignedPaperDrag>();
-        paperData = assignedPaper.originData.GetComponent<Paper>();
+       // paperData = assignedPaper.originData.GetComponent<Paper>();
         
         //급조된 부분.ㅋㅋ
-        paperData.UpdateViewText("1");
+        //paperData.UpdateViewText("1");
 
         preview = NewsPaper.Instance.preview.GetComponent<Transform>();
         originPosition = assignedPaper.gameObject.transform.position;
@@ -54,7 +54,6 @@ public class SizeChangeDrag : MonoBehaviour
                 //기존 범위의 데이터를 삭제하고 1*1사이즈 기준으로 되돌림.
                 DeleteDatainPaper();
                 NewsPaper.Instance.assignedPapers[assignedPaper.index.y,assignedPaper.index.x] = data;
-
                 //새로운 범위로 저장
                 for(int i = 0; i<scale.x; i++)
                 {
@@ -65,8 +64,21 @@ public class SizeChangeDrag : MonoBehaviour
                     }
                 }
                 beforeScale = scale;
-                assignedPaper.gameObject.transform.localScale = scale;
-                paperData.UpdateViewText((beforeScale.x * beforeScale.y).ToString());
+
+                AssignedPaperDrag paper = assignedPaper.GetComponent<AssignedPaperDrag>();
+                
+                Vector2 aa = new Vector2((int)beforeScale.x,(int)beforeScale.y);
+                Debug.Log(aa.x + " " + aa.y);
+                paper.spriteRender.sprite = GameManager.instance.AssignedPaperToSize[aa];
+                BoxCollider2D collider = paper.GetComponent<BoxCollider2D>();
+                collider.offset = new Vector2(0.28f*beforeScale.x,-0.4f*beforeScale.y);
+                collider.size = new Vector2(0.55f*beforeScale.x,0.78f*beforeScale.y);
+                transform.localPosition =  new Vector3(0.56f*beforeScale.x,-0.8f*beforeScale.y,0);
+                
+
+                //assignedPaper.gameObject.transform.localScale = scale;
+
+               // paperData.UpdateViewText((beforeScale.x * beforeScale.y).ToString());
             }
     }
 
@@ -144,7 +156,7 @@ public class SizeChangeDrag : MonoBehaviour
                 NewsPaper.Instance.assignedPapers[assignedPaper.index.y+j,assignedPaper.index.x+i] = null;
             }
         }    
-        paperData.UpdateViewText("0");
+        //paperData.UpdateViewText("0");
 
     }
 

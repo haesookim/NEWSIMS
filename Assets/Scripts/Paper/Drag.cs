@@ -17,7 +17,7 @@ public class Drag : MonoBehaviour
     protected GameObject infoWindow; 
     protected Text[] infoText;
 
-    protected SpriteRenderer spriteRender;
+    public SpriteRenderer spriteRender;
     protected bool inClick = false;
 
     protected virtual void Start()
