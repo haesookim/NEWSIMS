@@ -352,7 +352,7 @@ public class GameManager : Singleton<GameManager>
         //텍스트뷰에 기사 제목 업데이트
         //지난 기록을 보려면.. 삭제하면 안되고 계속 쌓아야 할듯? 구조도 변경해야 할거고.
 
-        Vector3 paprerPosition = new Vector3(paperObject.transform.position.x,paperObject.transform.position.y,temp_paper.article.write_reporter_index);
+        Vector3 paprerPosition = new Vector3(paperObject.transform.position.x,paperObject.transform.position.y,temp_paper.article.write_reporter_index*0.01f);
         paperObject.transform.position = paprerPosition; //z값 변경
         papers.Add(paperObject);
     }
