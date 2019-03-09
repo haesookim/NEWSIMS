@@ -165,6 +165,12 @@ public class Button : MonoBehaviour
             GameManager.Instance.in_ReporterMenu = true;
 
             GameManager.Instance.UpdateReporterButton(GameManager.Instance.company.reporters.Count);
+
+
+            /////사운드
+            AudioManager.instance.StartSFX("paperopen");
+
+
         }
     }
 
@@ -347,6 +353,10 @@ public class Button : MonoBehaviour
                 if (ReporterManager.Instance.myReporter.reporter_index == GameManager.Instance.company.reporters[i].reporter_index)
                 {
                     GameManager.Instance.company.reporters[i].is_fired = true;
+
+                    //////사운드
+                    AudioManager.instance.StartSFX("fire");
+
                     break;
                 }
             }
@@ -369,6 +379,9 @@ public class Button : MonoBehaviour
             ReporterManager.Instance.vrs[i].DisplayFireIcon();
         }
 
+
+
+
         BackButton(1);
     }
 
@@ -381,6 +394,11 @@ public class Button : MonoBehaviour
                 if (ReporterManager.Instance.employReporter.reporter_index == GameManager.Instance.company.em_reporters[i].reporter_index)
                 {
                     GameManager.Instance.company.em_reporters[i].is_employed = true;
+
+                    /////사운드
+                    AudioManager.instance.StartSFX("employ");
+
+
                     break;
                 }
             }
@@ -402,6 +420,9 @@ public class Button : MonoBehaviour
             ReporterManager.Instance.evrs[i].UpdateStatus();
             ReporterManager.Instance.evrs[i].DisplayFireIcon();
         }
+
+
+
 
         BackButton(2);
     }

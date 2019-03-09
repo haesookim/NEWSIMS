@@ -51,9 +51,18 @@ MonoBehaviour:
   sfxSou2: {fileID: 620069597261203016}
   SFX:
   - {fileID: 8300000, guid: 56b7cfe7ca0b59e419926e1f5421a6e5, type: 3}
+  - {fileID: 8300000, guid: 57f46056a818c794586fd7d8ead6d86d, type: 3}
+  - {fileID: 8300000, guid: eace4dd19428cc94ca2fc8b2e905a55e, type: 3}
+  - {fileID: 8300000, guid: 8b7b6d18973d8194a92a0bfa0f616d43, type: 3}
+  - {fileID: 8300000, guid: ce550568c3bcc48479ae23a6b3732b94, type: 3}
+  - {fileID: 8300000, guid: 5277436f6af21bb47989fc683f84587f, type: 3}
+  - {fileID: 8300000, guid: 5bca061c9e8108247b2c0ab80210db22, type: 3}
   music:
-  - {fileID: 8300000, guid: ab5759cea39b8bc4ba4176b2b09e8186, type: 3}
+  - {fileID: 8300000, guid: 65dccac58240a424b89a5ba9d5c2299e, type: 3}
   - {fileID: 8300000, guid: 72b1d28f4a38789418a30720dd3e5183, type: 3}
+  - {fileID: 8300000, guid: 0049b9f0878e8544585e1d3ab8d03a45, type: 3}
+  - {fileID: 8300000, guid: 1bede43709bff0a4a9afe7732e7ab481, type: 3}
+  - {fileID: 8300000, guid: 51ff6da20f1ae874a8ca54e25577ac56, type: 3}
   fadeSpeed: 1
 --- !u!82 &8579847883770586517
 AudioSource:

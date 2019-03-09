@@ -300,6 +300,11 @@ public class GameManager : Singleton<GameManager>
 
     public void EndofDay()
     {
+
+        //////사운드
+        AudioManager.instance.StartSFX("publish");
+
+
         while(papers.Count != 0)
         {
             papers.RemoveAt(0);

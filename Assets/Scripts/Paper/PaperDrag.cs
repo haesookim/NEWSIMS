@@ -15,6 +15,12 @@ public class PaperDrag : Drag
     protected override void OnMouseUp() //마우스를 뗐을 때
     {
         inClick = false;
+
+
+
+        /////사운드
+        AudioManager.instance.StartSFX("paperdown");
+
         if (!GameManager.Instance.in_PaperMenu && !GameManager.Instance.in_ReporterMenu)
         {
             timer2 = Time.realtimeSinceStartup;

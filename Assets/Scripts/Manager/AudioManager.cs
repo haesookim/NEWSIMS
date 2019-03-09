@@ -54,6 +54,8 @@ public class AudioManager : Singleton<AudioManager>
             }
     }
 
+    
+
     public void StartMusic(string name)
     {
         /*if (musicSou.clip != null)
