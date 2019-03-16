@@ -248,13 +248,7 @@ public class GameManager : Singleton<GameManager>
             }
             endStance = endStance / company.reporters.Count;
 
-            if ((endRate < 2.0 / System.Enum.GetNames(typeof(Setting.Fields)).Length) && (company.fieldRate[(Setting.Fields)2] >= company.fieldRate[(Setting.Fields)3]))
-            {
-                EndingManager.instance.ending_phase = 2;
-            } else if ((endRate < 2.0 / System.Enum.GetNames(typeof(Setting.Fields)).Length) && (company.fieldRate[(Setting.Fields)3] > company.fieldRate[(Setting.Fields)2]))
-            {
-                EndingManager.instance.ending_phase = 3;
-            } else if ((endRate >= 2.0 / System.Enum.GetNames(typeof(Setting.Fields)).Length) && (endStance < 0.35) && (company.fakeRate < 0.05f * setting.fakePossibility))
+            if ((endRate >= 2.0 / System.Enum.GetNames(typeof(Setting.Fields)).Length) && (endStance < 0.35) && (company.fakeRate < 0.05f * setting.fakePossibility))
             {
                 EndingManager.instance.ending_phase = 4;
             }
@@ -289,6 +283,13 @@ public class GameManager : Singleton<GameManager>
             else if ((endRate >= 2.0 / System.Enum.GetNames(typeof(Setting.Fields)).Length) && (endStance >= 0.65) && (company.fakeRate >= 0.15f * setting.fakePossibility))
             {
                 EndingManager.instance.ending_phase = 12;
+            } else if ((endRate < 2.0 / System.Enum.GetNames(typeof(Setting.Fields)).Length) && (company.fieldRate[(Setting.Fields)2] >= company.fieldRate[(Setting.Fields)3]))
+            {
+                EndingManager.instance.ending_phase = 2;
+            }
+            else if ((endRate < 2.0 / System.Enum.GetNames(typeof(Setting.Fields)).Length) && (company.fieldRate[(Setting.Fields)3] > company.fieldRate[(Setting.Fields)2]))
+            {
+                EndingManager.instance.ending_phase = 3;
             }
             else
             {
